@@ -1,0 +1,7 @@
+# This file defines directories containing classes to be autoloaded by the
+# application. It is used by Superload to automagically generate a mapping
+# file.
+
+vendor/base-php/inc
+framework/classes
+app

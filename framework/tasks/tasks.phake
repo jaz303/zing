@@ -1,0 +1,39 @@
+<?php
+desc('Load the application environment');
+task('environment', function() {
+    require dirname(__FILE__) . '/../../config/boot.php';
+});
+
+desc('Regenerate everything');
+group('core', function() {
+    task('kick', 'regenerate_autoload_map');
+    
+    desc('Regenerate class autoload map');
+    task('regenerate_autoload_map', 'environment', function() {
+
+        $app_root = realpath(dirname(__FILE__) . '/../..');
+        $config_dir = $app_root . '/config';
+
+        $paths = array_filter(array_map('trim', file($config_dir . '/CLASS_PATHS')), function($path) {
+            return ($path[0] != '#' && strlen(trim($path)) > 0);
+        });
+        
+        require $app_root . '/vendor/superload/superload.php';
+        $superload = new superload\Superload($app_root);
+        foreach ($paths as $p) {
+            $superload->add_rule($p);
+        }
+    	
+    	$superload->write($config_dir . '/boot.php');
+
+    });
+
+    // desc('Regenerate model code');
+    // task('regenerate_models', 'environment', function() {
+    //     require APP_ROOT . '/vendor/spitfire/backend.php';
+    //     $builder = new spitfire\Builder;
+    //     // TODO: set this thing up
+    //     $builder->build();
+    // });
+});
+?>
