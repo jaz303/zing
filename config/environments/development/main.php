@@ -4,7 +4,7 @@
  */
 $ENV['config.gdb'] = array(
     'driver'    => 'mysql',
-    'host'      => 'localhost',
+    'host'      => '127.0.0.1',
     'username'  => 'root',
     'password'  => '',
     'database'  => 'zing_app_development'

@@ -19,7 +19,7 @@ date_default_timezone_set('Europe/London');
 // End customisable bits
 
 // Config array.
-$_ZING = array();
+$GLOBALS['_ZING'] = array();
 
 define('ZING_VERSION',      '0.0.1');
 define('ZING_SIGNATURE',    'Zing! Framework v' . ZING_VERSION);
@@ -40,6 +40,13 @@ set_include_path('.:' . ZING_ROOT);
 
 zing_lib('common');
 zing_load_environment('main');
+
+//
+// Export GDB config if present
+
+if (isset($GLOBALS['_ZING']['config.gdb'])) {
+    $GLOBALS['_GDB'] = array('default' => $GLOBALS['_ZING']['config.gdb']);
+}
 
 //
 // Essentials!
