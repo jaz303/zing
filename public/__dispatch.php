@@ -17,10 +17,6 @@ try {
     $request    = new zing\http\Request;
     $route      = zing\routing\Recognizer::recognize($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
     
-    echo "<pre>";
-    var_dump($route);
-    die();
-    
     if ($route === null) {
         zing\http\Exception::not_found();
     }
@@ -29,8 +25,13 @@ try {
     $controller         = new $controller_class;
     
     $response = $controller->invoke($request, $route['action']);
-    $response->set_header('X-Powered-By', ZING_SIGNATURE);
-    $response->send();
+    
+    // Controller can elect not to return a response - in this case the controller
+    // should have sent any response itself.
+    if ($response) {
+        $response->set_header('X-Powered-By', ZING_SIGNATURE);
+        $response->send();
+    }
     
 } catch (zing\http\Exception $http_exception) {
     
