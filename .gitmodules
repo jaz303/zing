@@ -1,0 +1,12 @@
+[submodule "vendor/superload"]
+	path = vendor/superload
+	url = git://github.com/jaz303/superload.git
+[submodule "vendor/base-php"]
+	path = vendor/base-php
+	url = git://github.com/jaz303/base-php.git
+[submodule "vendor/phake"]
+	path = vendor/phake
+	url = git://github.com/jaz303/phake.git
+[submodule "vendor/ztest"]
+	path = vendor/ztest
+	url = git://github.com/jaz303/ztest.git
