@@ -1,4 +1,9 @@
 <?php
+// Zing! Framework
+// This is the standard entry-point for all web requests.
+// You can also bypass the router and just require boot.php directly from your
+// own scripts.
+
 require dirname(__FILE__) . '/../config/boot.php';
 
 try {
@@ -14,8 +19,8 @@ try {
     
     require $compiled_routes;
     
-    $request    = new zing\http\Request;
-    $route      = zing\routing\Recognizer::recognize($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+    $request    = zing\http\Request::build_request_from_input();
+    $route      = zing\routing\Recognizer::recognize($request->path(), $request->method());
     
     if ($route === null) {
         zing\http\Exception::not_found();
@@ -25,10 +30,14 @@ try {
         die('invalid route - ' . var_dump($route, true));
     }
     
-    $controller_class   = $route['controller'] . 'Controller';
-    $controller         = new $controller_class;
+    $controller_class   = preg_replace('/(^|_)([a-z])/e', 'strtoupper(\'$2\')', $route['controller']) . 'Controller';
     
-    $response = $controller->invoke($request, $route['action']);
+    if (!class_exists($controller_class, true)) {
+        zing\http\Exception::not_found();
+    }
+    
+    $controller         = new $controller_class;
+    $response           = $controller->invoke($request, $route['action']);
     
     // Controller can elect not to return a response - in this case the controller
     // should have sent any response itself.

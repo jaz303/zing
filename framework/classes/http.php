@@ -15,59 +15,62 @@ class Constants
     const ERROR                 = 500;
 
     public static $STATUS_CODES = array(
-        100 => 'CONTINUE',
-        101 => 'SWITCHING_PROTOCOLS',
-        102 => 'PROCESSING',
+        100 => 'Continue',
+        101 => 'Switching Protocols',
+        102 => 'Processing',
 
         200 => 'OK',
-        201 => 'CREATED',
-        202 => 'ACCEPTED',
-        203 => 'NON_AUTHORITATIVE',
-        204 => 'NO_CONTENT',
-        205 => 'RESET_CONTENT',
-        206 => 'PARTIAL_CONTENT',
-        207 => 'MULTI_STATUS',
+        201 => 'Created',
+        202 => 'Accepted',
+        203 => 'Non-Authoritative',
+        204 => 'No Content',
+        205 => 'Reset Content',
+        206 => 'Partial Content',
+        207 => 'Multi-Status',
 
-        300 => 'MULTIPLE_CHOICES',
-        301 => 'MOVED_PERMANENTLY',
-        302 => 'MOVED_TEMPORARILY',
-        303 => 'SEE_OTHER',
-        304 => 'NOT_MODIFIED',
-        305 => 'USE_PROXY',
-        307 => 'TEMPORARY_REDIRECT',
+        300 => 'Multiple Choices',
+        301 => 'Moved Permanently',
+        302 => 'Moved Temporarily',
+        303 => 'See Other',
+        304 => 'Not Modified',
+        305 => 'Use Proxy',
+        307 => 'Temporary Redirect',
 
-        400 => 'BAD_REQUEST',
-        401 => 'UNAUTHORIZED',
-        402 => 'PAYMENT_REQUIRED',
-        403 => 'FORBIDDEN',
-        404 => 'NOT_FOUND',
-        405 => 'METHOD_NOT_ALLOWED',
-        406 => 'NOT_ACCEPTABLE',
-        407 => 'PROXY_AUTHENTICATION_REQUIRED',
-        408 => 'REQUEST_TIME_OUT',
-        409 => 'CONFLICT',
-        410 => 'GONE',
-        411 => 'LENGTH_REQUIRED',
-        412 => 'PRECONDITION_FAILED',
-        413 => 'REQUEST_ENTITY_TOO_LARGE',
-        414 => 'REQUEST_URI_TOO_LARGE',
-        415 => 'UNSUPPORTED_MEDIA_TYPE',
-        416 => 'RANGE_NOT_SATISFIABLE',
-        417 => 'EXPECTATION_FAILED',
-        422 => 'UNPROCESSABLE_ENTITY',
-        423 => 'LOCKED',
-        424 => 'FAILED_DEPENDENCY',
-        426 => 'UPGRADE_REQUIRED',
+        400 => 'Bad Request',
+        401 => 'Unauthorized',
+        402 => 'Payment Required',
+        403 => 'Forbidden',
+        404 => 'Not Found',
+        405 => 'Method Not Allowed',
+        406 => 'Not Acceptable',
+        407 => 'Proxy Authentication Required',
+        408 => 'Request Time Out',
+        409 => 'Conflict',
+        410 => 'Gone',
+        411 => 'Length Required',
+        412 => 'Precondition Failed',
+        413 => 'Request Entity Too Large',
+        414 => 'Request URI Too Large',
+        415 => 'Unsupported Media Type',
+        416 => 'Range Not Satisfiable',
+        417 => 'Expectation Failed',
+        418 => 'I\'m a teapot',
+        422 => 'Unprocessable Entity',
+        423 => 'Locked',
+        424 => 'Failed Dependency',
+        426 => 'Upgrade Required',
 
-        500 => 'INTERNAL_SERVER_ERROR',
-        501 => 'NOT_IMPLEMENTED',
-        502 => 'BAD_GATEWAY',
-        503 => 'SERVICE_UNAVAILABLE',
-        504 => 'GATEWAY_TIME_OUT',
-        505 => 'VERSION_NOT_SUPPORTED',
-        506 => 'VARIANT_ALSO_VARIES',
-        507 => 'INSUFFICIENT_STORAGE',
-        510 => 'NOT_EXTENDED'
+        500 => 'Internal Server Error',
+        501 => 'Not Implemented',
+        502 => 'Bad Gateway',
+        503 => 'Service Unavailable',
+        504 => 'Gateway Time Out',
+        505 => 'Version Not Supported',
+        506 => 'Variant Also Varies',
+        507 => 'Insufficient Storage',
+        509 => 'Bandwidth Limit Exceeded',
+        510 => 'Not Extended',
+        530 => 'User access denied'
     );
     
     public static function text_for_status($status) {
@@ -186,22 +189,86 @@ class Headers implements \ArrayAccess, \IteratorAggregate
 
 class Request
 {
-    public static function factory() {
+    public static function build_request_from_input() {
+        $r = new self;
         
+        $host = $_SERVER['HTTP_HOST'];
+        if ($p = strpos($host, ':')) $host = substr($host, 0, $p);
+        
+        $path = $_SERVER['REQUEST_URI'];
+        if ($p = strpos($path, '?')) $path = substr($path, 0, $p);
+        
+        $r->host        = $host;
+        $r->port        = (int) $_SERVER['SERVER_PORT'];
+        $r->path        = $path;
+        $r->request_uri = $_SERVER['REQUEST_URI'];
+        
+        $r->method      = strtolower($_SERVER['REQUEST_METHOD']);
+        
+        $r->is_secure   = isset($_SERVER['HTTPS']);
+        
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            $r->requested_with = $_SERVER['HTTP_X_REQUESTED_WITH'];
+        }
+        
+        $r->timestamp   = isset($_SERVER['REQUEST_TIME']) ? $_SERVER['REQUEST_TIME'] : time();
+        
+        $r->client_ip   = $_SERVER['REMOTE_ADDR'];
+        $r->client_port = $_SERVER['REMOTE_PORT'];
+        
+        return $r;
     }
     
+    private $host;
+    private $port;
     private $path;
-    private $method;
+    private $request_uri;
     
+    private $method;
+    private $is_secure;
+    private $requested_with     = null;
+    
+    private $timestamp;
+    
+    private $client_ip;
+    private $client_port;
+    
+    public function url() {
+        $url = 'http';
+        if ($this->is_secure) $url .= 's';
+        $url .= $this->host;
+        if ($this->port != 80) $url .= ':' . $this->port;
+        $url .= $this->path;
+        return $url;
+    }
+    
+    public function host() { return $this->host; }
+    public function port() { return $this->port; }
     public function path() { return $this->path; }
+    public function request_uri() { return $this->request_uri; }
+    
     public function method() { return $this->method; }
+    public function is_secure() { return $this->is_secure; }
+    
+    public function is_get() { return $this->method == 'get'; }
+    public function is_post() { return $this->method == 'post'; }
+    public function is_put() { return $this->method == 'put'; }
+    public function is_delete() { return $this->method == 'delete'; }
+    public function is_head() { return $this->method == 'head'; }
+    
+    public function is_xhr() { return $this->requested_with == 'xmlhttprequest'; }
+    
+    public function timestamp() { return $this->timestamp; }
+    
+    public function client_ip() { return $this->client_ip; }
+    public function client_port() { return $this->client_port; }
 }
 
 class Response
 {
     public static function redirect($absolute_url, $permanent = false) {
         $response = new Response;
-        $response->set_status($permanent ? 301 : 302);
+        $response->set_status($permanent ? Constants::MOVED_PERMANENTLY : Constants::MOVED_TEMPORARILY);
         $response->set_header('Location', $absolute_url);
         return $response;
     }
@@ -211,7 +278,7 @@ class Response
     private $body;
     
     public function __construct() {
-        $this->status   = 200;
+        $this->status   = Constants::OK;
         $this->headers  = new Headers;
         $this->body     = '';
         
