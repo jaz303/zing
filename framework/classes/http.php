@@ -80,40 +80,40 @@ class Exception extends \Exception
     //
     // Client errors
     
-    public static function bad_request() { throw new HTTP_Exception(400); }
-    public static function unauthorized() { throw new HTTP_Exception(401); }
-    public static function forbidden() { throw new HTTP_Exception(403); }
-    public static function not_found() { throw new HTTP_Exception(404); }
-    public static function method_not_allowed() { throw new HTTP_Exception(405); }
-    public static function not_acceptable() { throw new HTTP_Exception(406); }
-    public static function proxy_authentication_required() { throw new HTTP_Exception(407); }
-    public static function request_time_out() { throw new HTTP_Exception(408); }
-    public static function conflict() { throw new HTTP_Exception(409); }
-    public static function gone() { throw new HTTP_Exception(410); }
-    public static function length_required() { throw new HTTP_Exception(411); }
-    public static function precondition_failed() { throw new HTTP_Exception(412); }
-    public static function request_entity_too_large() { throw new HTTP_Exception(413); }
-    public static function request_uri_too_large() { throw new HTTP_Exception(414); }
-    public static function unsupported_media_type() { throw new HTTP_Exception(415); }
-    public static function range_not_satisfiable() { throw new HTTP_Exception(416); }
-    public static function expectation_failed() { throw new HTTP_Exception(417); }
-    public static function unprocessable_entity() { throw new HTTP_Exception(422); }
-    public static function locked() { throw new HTTP_Exception(423); }
-    public static function failed_dependency() { throw new HTTP_Exception(424); }
-    public static function upgrade_required() { throw new HTTP_Exception(426); }
+    public static function bad_request() { throw new Exception(400); }
+    public static function unauthorized() { throw new Exception(401); }
+    public static function forbidden() { throw new Exception(403); }
+    public static function not_found() { throw new Exception(404); }
+    public static function method_not_allowed() { throw new Exception(405); }
+    public static function not_acceptable() { throw new Exception(406); }
+    public static function proxy_authentication_required() { throw new Exception(407); }
+    public static function request_time_out() { throw new Exception(408); }
+    public static function conflict() { throw new Exception(409); }
+    public static function gone() { throw new Exception(410); }
+    public static function length_required() { throw new Exception(411); }
+    public static function precondition_failed() { throw new Exception(412); }
+    public static function request_entity_too_large() { throw new Exception(413); }
+    public static function request_uri_too_large() { throw new Exception(414); }
+    public static function unsupported_media_type() { throw new Exception(415); }
+    public static function range_not_satisfiable() { throw new Exception(416); }
+    public static function expectation_failed() { throw new Exception(417); }
+    public static function unprocessable_entity() { throw new Exception(422); }
+    public static function locked() { throw new Exception(423); }
+    public static function failed_dependency() { throw new Exception(424); }
+    public static function upgrade_required() { throw new Exception(426); }
     
     //
     // Server errors
     
-    public static function internal_server_error() { throw new HTTP_Exception(500); }
-    public static function not_implemented() { throw new HTTP_Exception(501); }
-    public static function bad_gateway() { throw new HTTP_Exception(502); }
-    public static function service_unavailable() { throw new HTTP_Exception(503); }
-    public static function gateway_time_out() { throw new HTTP_Exception(504); }
-    public static function version_not_supported() { throw new HTTP_Exception(505); }
-    public static function variant_also_varies() { throw new HTTP_Exception(506); }
-    public static function insufficient_storage() { throw new HTTP_Exception(507); }
-    public static function not_extended() { throw new HTTP_Exception(510); }
+    public static function internal_server_error() { throw new Exception(500); }
+    public static function not_implemented() { throw new Exception(501); }
+    public static function bad_gateway() { throw new Exception(502); }
+    public static function service_unavailable() { throw new Exception(503); }
+    public static function gateway_time_out() { throw new Exception(504); }
+    public static function version_not_supported() { throw new Exception(505); }
+    public static function variant_also_varies() { throw new Exception(506); }
+    public static function insufficient_storage() { throw new Exception(507); }
+    public static function not_extended() { throw new Exception(510); }
     
     //
     //
