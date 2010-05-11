@@ -1,0 +1,9 @@
+<?php
+group("db", function() {
+    task("migrate", "environment", function() {
+        
+        zing\db\MigrationSupport::create_migration_table();
+        
+    });
+});
+?>

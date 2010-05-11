@@ -162,6 +162,7 @@ function __autoload($class) {
 	  'zing\\helpers\\HTMLHelper' => 'framework/classes/helpers/common.php',
 	  'zing\\helpers\\FormHelper' => 'framework/classes/helpers/common.php',
 	  'zing\\helpers\\AssetHelper' => 'framework/classes/helpers/common.php',
+	  'zing\\db\\MigrationSupport' => 'framework/classes/db/migration.php',
 	  'TestController' => 'app/TestController.php',
 	);
 	// SUPERLOAD-END
