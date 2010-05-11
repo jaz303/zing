@@ -18,16 +18,16 @@ Features (complete and planned)
 -------------------------------
 
   * Fast & efficient, although I have no data to back up this claim
-  * Rapid Rails-style router (matcher code is compiled to PHP)
-  * Database access with **no ORM**
-  * Database migrations (yes, even for plugins)
-  * Transparent request parameter handling for date, money and file types
-  * Plugin API (inc. centralised online repository)
-  * Raw PHP templating with cascaded static helpers
-  * Full console integration (tasks, generators, console)
-  * Task management via phake
-  * Class autoloading management via superload
-  * Multi-environment aware
+  * Rapid Rails-style router (matcher code is compiled to PHP) _(almost complete)_
+  * Database access with **no ORM** _(complete)_
+  * Database migrations (yes, even for plugins) _(incomplete)_
+  * Transparent request parameter handling for date, money and file types _(incomplete)_
+  * Plugin API (inc. centralised online repository) _(incomplete)_
+  * Raw PHP templating with cascaded static helpers _(complete)_
+  * Full console integration (tasks, generators, console) _(generators incomplete)_
+  * Task management via phake _(complete)_
+  * Class autoloading management via superload _(complete)_
+  * Multi-environment aware _(complete)_
   * Engineered from the ground-up for PHP 5.3
   
 Quickstart
