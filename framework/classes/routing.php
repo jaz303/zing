@@ -37,7 +37,14 @@ class Router
         
     }
     
-    const DYNAMIC_CHUNK         = '/^:(\w+)$/';
+    private $default_defaults = array(
+        'action'    => 'index'
+    );
+    
+    private $default_requirements = array(
+        'action'    => '/^\w+$/',
+        'id'        => '/^\d+/', // $ deliberately omitted
+    );
     
     private $root;
     
@@ -71,12 +78,27 @@ class Router
             $node->set_endpoint($defaults);
         } else {
             foreach (explode('/', $path) as $route_chunk) {
-                if (preg_match(self::DYNAMIC_CHUNK, $route_chunk, $matches)) {
+                if (preg_match('/^:(\w+)$/', $route_chunk, $matches)) {
+                    
                     $capture = $matches[1];
-                    $requirement = isset($requirements[$capture]) ? $requirements[$capture] : null;
-                    $default = isset($defaults[$capture]) ? $defaults[$capture] : null;
+                    
+                    $requirement = null;
+                    if (array_key_exists($capture, $requirements)) {
+                        $requirement = $requirements[$capture];
+                    } elseif (isset($this->default_requirements[$capture])) {
+                        $requirement = $this->default_requirements[$capture];
+                    }
+                    
+                    $default = null;
+                    if (array_key_exists($capture, $defaults)) {
+                        $default = $defaults[$capture];
+                        unset($defaults[$capture]);
+                    } elseif (isset($this->default_defaults[$capture])) {
+                        $default = $this->default_defaults[$capture];
+                    }
+                    
                     $node = $node->add_child(new DynamicNode($capture, $requirement, $default));
-                    unset($defaults[$capture]);
+                    
                 } else {
                     $node = $node->add_child(new StaticNode($route_chunk));
                 }
