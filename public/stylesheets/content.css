@@ -1,0 +1,30 @@
+.content { font: 12px/1.4 Helvetica, Arial, sans-serif; }
+
+.content strong { font-weight: bold; }
+.content em { font-style: italic; }
+.content big { }
+.content small { }
+
+.content h1 { }
+.content h2 { }
+.content h3 { }
+.content h4 { }
+.content h5 { }
+.content h6 { }
+.content p { }
+.content a { }
+
+.content ul,
+.content ol { }
+.content li { }
+.content ul { }
+  .content ul li { }
+.content ol { }
+  .content ol li { }
+
+.content table { }
+  .content tr { }
+  .content th,
+  .content td { }
+  .content th { }
+  .content td { }

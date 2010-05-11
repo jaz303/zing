@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+require_once dirname(__FILE__) . '/boot_console.php';
+require_once ZING_VENDOR_DIR . '/php_repl/PHP/Repl.php';
+
+$__repl__ = new PHP_Repl();
+$__repl__->run();
+?>

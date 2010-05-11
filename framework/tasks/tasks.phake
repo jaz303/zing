@@ -1,11 +1,7 @@
 <?php
-desc('Load the application environment');
-task('environment', function() {
-    require dirname(__FILE__) . '/../../config/boot.php';
-});
-
-desc('Regenerate everything');
 group('core', function() {
+    
+    desc('Regenerate everything');
     task('kick', 'regenerate_autoload_map');
     
     desc('Regenerate class autoload map');
@@ -28,12 +24,5 @@ group('core', function() {
 
     });
 
-    // desc('Regenerate model code');
-    // task('regenerate_models', 'environment', function() {
-    //     require APP_ROOT . '/vendor/spitfire/backend.php';
-    //     $builder = new spitfire\Builder;
-    //     // TODO: set this thing up
-    //     $builder->build();
-    // });
 });
 ?>

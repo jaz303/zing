@@ -1,0 +1,41 @@
+Router
+------
+[X] Get it "working"
+[X] Optimisation/compilation
+[ ] Prune static routes from dynamic table
+[ ] Support for null defaults
+[ ] Support * globbing
+
+Dispatcher
+----------
+[ ] Exception handling
+
+Request
+-------
+[ ] Request class
+[ ] Content negotiation
+
+Views
+-----
+[ ] Template types
+[ ] PHP templates - partials, layouts
+
+Ancillaries
+-----------
+[ ] Finish Date_Time class (BasePHP)
+
+Database
+--------
+[ ] Migrations
+
+Plugins
+-------
+[ ] Port plugin framework from Freefall
+[ ] Distribution format
+
+[ ] Write work-queue plugin as example
+
+Release
+-------
+[ ] Website
+[ ] Getting started

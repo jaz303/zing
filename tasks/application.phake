@@ -1,0 +1,5 @@
+<?php
+task('default', function() {
+	echo "This is default task!\nEdit me in " . __FILE__ . "\n";
+});
+?>

@@ -1,0 +1,1 @@
+<?php require dirname(__FILE__) . '/framework/tasks/boot.php'; ?>
