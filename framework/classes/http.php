@@ -192,6 +192,10 @@ class Request
     public static function build_request_from_input() {
         $r = new self;
         
+        if (isset($_SERVER['AUTH_TYPE']))       $r->auth_type = $_SERVER['AUTH_TYPE'];
+        if (isset($_SERVER['PHP_AUTH_USER']))   $r->username = $_SERVER['PHP_AUTH_USER'];
+        if (isset($_SERVER['PHP_AUTH_PW']))     $r->password = $_SERVER['PHP_AUTH_PW'];
+        
         $host = $_SERVER['HTTP_HOST'];
         if ($p = strpos($host, ':')) $host = substr($host, 0, $p);
         
@@ -201,11 +205,17 @@ class Request
         $r->host        = $host;
         $r->port        = (int) $_SERVER['SERVER_PORT'];
         $r->path        = $path;
+        
+        if (!empty($_SERVER['QUERY_STRING'])) {
+            $r->query = $_SERVER['QUERY_STRING'];
+        } elseif ($p) {
+            $r->query = substr($_SERVER['REQUEST_URI'], $p + 1);
+        }
+        
         $r->request_uri = $_SERVER['REQUEST_URI'];
         
         $r->method      = strtolower($_SERVER['REQUEST_METHOD']);
-        
-        $r->is_secure   = isset($_SERVER['HTTPS']);
+        $r->is_secure   = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off';
         
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
             $r->requested_with = $_SERVER['HTTP_X_REQUESTED_WITH'];
@@ -219,9 +229,16 @@ class Request
         return $r;
     }
     
+    private $auth_type          = null;
+    private $username           = '';
+    private $password           = '';
+    
+    private $url                = null;
+    
     private $host;
     private $port;
     private $path;
+    private $query              = null;
     private $request_uri;
     
     private $method;
@@ -234,18 +251,41 @@ class Request
     private $client_port;
     
     public function url() {
-        $url = 'http';
-        if ($this->is_secure) $url .= 's';
-        $url .= $this->host;
-        if ($this->port != 80) $url .= ':' . $this->port;
-        $url .= $this->path;
-        return $url;
+        if ($this->url === null) {
+            $url = 'http';
+            if ($this->is_secure) $url .= 's';
+            $url .= '://';
+            if ($this->username) {
+                $url .= $this->username;
+                if ($this->password) {
+                    $url .= ':' . $this->password;
+                }
+                $url .= '@';
+            }
+            $url .= $this->host;
+            if ($this->port != 80) $url .= ':' . $this->port;
+            $url .= $this->path;
+            if ($this->query !== null) {
+                $url .= '?' . $this->query;
+            }
+            $this->url = $url;
+        }
+        return $this->url;
     }
+    
+    public function auth_type() { return $this->auth_type; }
+    public function username() { return $this->username; }
+    public function password() { return $this->password; }
     
     public function host() { return $this->host; }
     public function port() { return $this->port; }
     public function path() { return $this->path; }
+    public function query() { return $this->query; }
     public function request_uri() { return $this->request_uri; }
+    
+    public function host_and_port($force80 = false) {
+        return $this->host . (($this->port != 80 || $force80) ? (':' . $this->port) : '');
+    }
     
     public function method() { return $this->method; }
     public function is_secure() { return $this->is_secure; }

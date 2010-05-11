@@ -12,7 +12,7 @@ Dispatcher
 
 Request
 -------
-[ ] Request class
+[X] Request class
 [ ] Content negotiation
 
 Views
