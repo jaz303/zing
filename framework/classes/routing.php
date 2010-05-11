@@ -366,6 +366,11 @@ class Recognizer
             }
         }
         
+        // HACK
+        if ($path == '') {
+            return null;
+        }
+        
         self::$method = $method;
         self::$chunks = explode('/', $path);
         self::$end_index = count(self::$chunks) - 1;
