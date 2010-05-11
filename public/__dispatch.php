@@ -21,6 +21,10 @@ try {
         zing\http\Exception::not_found();
     }
     
+    if (!isset($route['controller']) || !isset($route['action'])) {
+        die('invalid route - ' . var_dump($route, true));
+    }
+    
     $controller_class   = $route['controller'] . 'Controller';
     $controller         = new $controller_class;
     
@@ -35,9 +39,17 @@ try {
     
 } catch (zing\http\Exception $http_exception) {
     
-    // TODO: check for error template and display
-
+    $response = new zing\http\Response;
+    $response->set_status($http_exception->get_status());
+    $response->send();
+    
+    // TODO: check for error template & display
+    
 } catch (\Exception $exception) {
+    
+    $response = new zing\http\Response;
+    $response->set_status(500);
+    $response->send();
     
     // TODO: check for internal error and display
     
