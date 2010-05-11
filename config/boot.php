@@ -133,6 +133,8 @@ function __autoload($class) {
 	  'gdb\\Migration' => 'vendor/base-php/inc/gdb/migration.php',
 	  'gdb\\SchemaBuilder' => 'vendor/base-php/inc/gdb/schema_builder.php',
 	  'gdb\\TableDefinition' => 'vendor/base-php/inc/gdb/table_definition.php',
+	  'zing\\DoublePerformException' => 'framework/classes/controller.php',
+	  'zing\\NoPerformException' => 'framework/classes/controller.php',
 	  'zing\\Controller' => 'framework/classes/controller.php',
 	  'zing\\http\\Constants' => 'framework/classes/http.php',
 	  'zing\\http\\Exception' => 'framework/classes/http.php',
