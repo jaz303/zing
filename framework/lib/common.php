@@ -296,4 +296,16 @@ function mkdir_p($directory, $mode = 0777) {
         mkdir($directory, $mode, true);
     }
 }
+
+//
+// Options
+
+function parse_options($options) {
+    if (is_array($options)) {
+        return $options;
+    } else {
+        $parser = new OptionParser;
+        return $parser->parse($options);
+    }
+}
 ?>
