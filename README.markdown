@@ -90,6 +90,32 @@ Doing ORM in PHP is full of so many trade-offs - manual labour vs. runtime data 
 
 FWIW, my take on the subject is spitfire, which will eventually be packaged as a Zing! plugin, but please use whatever makes you happy.
 
+Migrations
+----------
+
+Database migrations allow changes to be made to your database schema in an automated, repeatable fashion through operations defined in PHP code. For anyone familiar with Ruby on Rails, the syntax will be immediately familiar:
+
+    <?php
+    class CreateUsers extends zing\db\Migration
+    {
+        public function up() {
+            $this->create_table('users', function($t) {
+                $t->string('username');
+                $t->string('email');
+                $t->datetime('date_of_birth');
+                $t->text('bio', array('mysql.size' => 'long'));
+            });
+        
+            $this->add_index('users', 'username', array('unique' => true));
+            $this->add_index('users', 'email', array('unique' => true));
+        }
+        
+        public function down() {
+            $this->drop_table('users');
+        }
+    }
+    ?>
+
 Why another PHP framework?
 --------------------------
 

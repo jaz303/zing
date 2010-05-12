@@ -3,6 +3,8 @@ Router
 [X] Get it "working"
 [X] Optimisation/compilation
 [ ] Prune static routes from dynamic table
+[ ] Blocks for inheriting options
+[ ] Namespace support
 [ ] Support for null defaults
 [ ] Support * globbing
 
@@ -26,7 +28,8 @@ Ancillaries
 
 Database
 --------
-[ ] Migrations
+[X] Migrations (app)
+[ ] Migrations (plugin)
 
 Plugins
 -------

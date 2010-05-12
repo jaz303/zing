@@ -158,11 +158,14 @@ function __autoload($class) {
 	  'zing\\plugin\\Plugin' => 'framework/classes/plugin/plugin.php',
 	  'zing\\plugin\\PluginStub' => 'framework/classes/plugin/plugin_stub.php',
 	  'zing\\plugin\\Utils' => 'framework/classes/plugin/utils.php',
+	  'gdb\\lang\\OptionParser' => 'framework/classes/lang/options.php',
 	  'zing\\lang\\Reflection' => 'framework/classes/lang/reflection.php',
 	  'zing\\helpers\\HTMLHelper' => 'framework/classes/helpers/common.php',
 	  'zing\\helpers\\FormHelper' => 'framework/classes/helpers/common.php',
 	  'zing\\helpers\\AssetHelper' => 'framework/classes/helpers/common.php',
-	  'zing\\db\\MigrationSupport' => 'framework/classes/db/migration.php',
+	  'zing\\db\\Migrator' => 'framework/classes/db/migration.php',
+	  'zing\\db\\MigrationLocator' => 'framework/classes/db/migration.php',
+	  'zing\\db\\Migration' => 'framework/classes/db/migration.php',
 	  'TestController' => 'app/TestController.php',
 	);
 	// SUPERLOAD-END
