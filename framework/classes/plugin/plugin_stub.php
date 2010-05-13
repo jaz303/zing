@@ -51,8 +51,8 @@ class PluginStub
     
     public function plugin() {
         $this->load();
-        $class = $this->class;
-        return new $class;
+        $class = $this->class_name;
+        return new $class($this->directory);
     }
 }
 ?>

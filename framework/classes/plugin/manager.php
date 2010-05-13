@@ -4,13 +4,12 @@ namespace zing\plugin;
 class Manager
 {
     protected $stubs = null;
-    private $loaded = false;
     
     public function plugins() {
-        $this->load();
+        $this->locate();
         $plugins = array();
-        foreach ($this->plugin_classes() as $plugin_class) {
-            $plugins[] = new $plugin_class;
+        foreach ($this->stubs as $stub) {
+            $plugins[] = $stub->plugin();
         }
         return $plugins;
     }
@@ -52,14 +51,6 @@ class Manager
         if ($this->stubs === null) {
             $locator = new Locator;
             $this->stubs = $locator->locate_plugins();
-        }
-    }
-    
-    private function load() {
-        if (!$this->loaded) {
-            $this->locate();
-            foreach ($this->stubs as $stub) $stub->load();
-            $this->loaded = true;
         }
     }
 }
