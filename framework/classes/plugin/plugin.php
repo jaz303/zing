@@ -71,5 +71,9 @@ abstract class Plugin
     public function get_class_path() { return $this->directory . '/classes'; }
     public function get_file_path() { return $this->directory . '/files'; }
     public function get_migration_path() { return $this->directory . '/db/migrations'; }
+    
+    public function has_classes() { return is_dir($this->get_class_path()); }
+    public function has_files() { return is_dir($this->get_file_path()); }
+    public function has_migrations() { return is_dir($this->get_migration_path()); }
 }
 ?>
