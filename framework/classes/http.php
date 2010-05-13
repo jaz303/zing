@@ -304,25 +304,14 @@ class Request
     public function client_port() { return $this->client_port; }
 }
 
-class Response
+class AbstractResponse
 {
-    public static function redirect($absolute_url, $permanent = false) {
-        $response = new Response;
-        $response->set_status($permanent ? Constants::MOVED_PERMANENTLY : Constants::MOVED_TEMPORARILY);
-        $response->set_header('Location', $absolute_url);
-        return $response;
-    }
-    
-    private $status;
-    private $headers;
-    private $body;
+    protected $status;
+    protected $headers;
     
     public function __construct() {
         $this->status   = Constants::OK;
         $this->headers  = new Headers;
-        $this->body     = '';
-        
-        $this->headers->set('Content-Type', 'text/html');
     }
     
     public function get_status() { return $this->status; }
@@ -336,6 +325,31 @@ class Response
     public function add_header($header, $value) { $this->headers->add($header, $value); }
     public function set_header($header, $value) { $this->headers->set($header, $value); }
     
+    protected function send_headers() {
+        header(Constants::PROTOCOL_VERSION . " " . $this->status . Constants::text_for_status($this->status));
+        foreach ($this->headers as $h) {
+            header($h);
+        }
+    }
+}
+
+class Response extends AbstractResponse
+{
+    public static function redirect($absolute_url, $permanent = false) {
+        $response = new Response;
+        $response->set_status($permanent ? Constants::MOVED_PERMANENTLY : Constants::MOVED_TEMPORARILY);
+        $response->set_header('Location', $absolute_url);
+        return $response;
+    }
+    
+    private $body;
+    
+    public function __construct() {
+        parent::__construct();
+        $this->body = '';
+        $this->headers->set('Content-Type', 'text/html');
+    }
+    
     public function get_body() { return $this->body; }
     public function set_body($body) { $this->body = $body; }
     public function write($string) { $this->body .= $string; }
@@ -347,13 +361,59 @@ class Response
             $this->headers->set("Content-Length", strlen($this->body));
         }
         
-        header(Constants::PROTOCOL_VERSION . " " . $this->status . Constants::text_for_status($this->status));
-        foreach ($this->headers as $h) {
-            header($h);
-        }
-        
+        $this->send_headers();
         echo $this->body;
     
+    }
+}
+
+class FileResponse extends AbstractResponse
+{
+    private $path;
+    
+    private $size           = null;
+    private $filename       = null;
+    private $file_type      = null;
+    
+    public function __construct($path) {
+        parent::__construct();
+        $this->path = $path;
+    }
+    
+    public function get_size() {
+        return $this->size === null
+                ? filesize($this->path)
+                : $this->size;
+    }
+    
+    public function get_filename() {
+        return $this->filename === null
+                ? basename($this->path)
+                : $this->filename;
+    }
+    
+    public function get_file_type() {
+        return $this->file_type === null
+                ? \MIME::for_filename($this->path)
+                : $this->file_type;
+    }
+    
+    public function set_size($sz) { $this->size = (int) $sz; }
+    public function set_filename($f) { $this->filename = $f; }
+    public function set_file_type($t) { $this->file_type = $c; }
+    
+    public function send() {
+        $this->set_content_type($this->get_file_type());
+        $this->set_header('Content-Length', $this->get_size());
+        
+        $this->send_headers();
+        
+        if (!$fd = fopen($this->path, 'r')) {
+            throw new \IOException("couldn't open $this->path for reading");
+        }
+        
+        fpassthru($fd);
+        fclose($fd);
     }
 }
 ?>
