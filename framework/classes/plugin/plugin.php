@@ -55,5 +55,9 @@ interface Plugin
      */
     public function has($thing);
     
+    /**
+     * Perform any post-install tasks here
+     */
+    public function post_install();
 }
 ?>

@@ -21,7 +21,7 @@ class Locator
             while (($file = readdir($dh)) !== false) {
                 if ($file == '.' || $file == '..') continue;
                 $abs_plugin_path = $plugin_path . '/' . $file;
-                if (Utils::is_plugin($abs_plugin_path)) {
+                if (PluginStub::is_plugin($abs_plugin_path)) {
                     $plugins[] = new PluginStub($abs_plugin_path);
                 }
             }

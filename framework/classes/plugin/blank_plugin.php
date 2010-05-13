@@ -18,5 +18,7 @@ abstract class BlankPlugin implements Plugin
     public function has($thing) {
         return method_exists($this, "get_exported_$thing");
     }
+    
+    public function post_install() {}
 }
 ?>
