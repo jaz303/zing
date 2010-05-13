@@ -119,12 +119,20 @@ class MigrationLocator
     }
     
     // Returns a list of all migration sources
-    // In the future we can add plugin migrations in here, e.g.
-    // 'plugin.cms' => PATH_TO_PLUGIN_MIGRATION_DIR
     protected function sources() {
-        return array(
-            'app'       => Migrator::application_migration_dir()
-        );
+        
+        $sources = array('app' => Migrator::application_migration_dir());
+        
+        $plugin_manager = new \zing\plugin\Manager;
+        foreach ($plugin_manager->plugins() as $plugin) {
+            $plugin_migration_path = $plugin->migration_path();
+            if (is_dir($plugin_migration_path)) {
+                $sources["plugin.{$plugin->id()}"] = $plugin_migration_path;
+            }
+         }
+         
+         return $sources;   
+         
     }
 }
 
