@@ -32,6 +32,7 @@ class Migrator
             $locator = new MigrationLocator;
             $locator->set_applied_migrations($this->applied_migrations());
             $this->migrations = $locator->locate_migrations();
+            $this->migrations->sort();
         }
         return $this->migrations;
     }
@@ -78,14 +79,27 @@ class Migrator
     }
 }
 
+/**
+ * A MigrationLocator locates migrations. Hurr.
+ *
+ * In the future it will be possible to provide an alternative locator via a
+ * configuration option, for circumstances where people want to flip and twist
+ * the framework.
+ */
 class MigrationLocator
 {
     protected $applied_migrations;
     
+    /**
+     * Sets the array of applied migrations.
+     */
     public function set_applied_migrations(array $applied_migrations) {
         $this->applied_migrations = $applied_migrations;
     }
     
+    /**
+     * Locate migrations and return a populated MigrationList
+     */
     public function locate_migrations() {
         $list  = new MigrationList;
         foreach ($this->sources() as $source => $path) {
@@ -101,14 +115,13 @@ class MigrationLocator
                 }
             }
         }
-        $list->sort();
         return $list;
     }
     
     // Returns a list of all migration sources
     // In the future we can add plugin migrations in here, e.g.
     // 'plugin.cms' => PATH_TO_PLUGIN_MIGRATION_DIR
-    public function sources() {
+    protected function sources() {
         return array(
             'app'       => Migrator::application_migration_dir()
         );
