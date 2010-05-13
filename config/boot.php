@@ -143,13 +143,14 @@ function __autoload($class) {
 	  'gdb\\SchemaBuilder' => 'vendor/base-php/inc/gdb/schema_builder.php',
 	  'gdb\\TableDefinition' => 'vendor/base-php/inc/gdb/table_definition.php',
 	  'zing\\DoublePerformException' => 'framework/classes/controller.php',
-	  'zing\\NoPerformException' => 'framework/classes/controller.php',
 	  'zing\\Controller' => 'framework/classes/controller.php',
 	  'zing\\http\\Constants' => 'framework/classes/http.php',
 	  'zing\\http\\Exception' => 'framework/classes/http.php',
 	  'zing\\http\\Headers' => 'framework/classes/http.php',
 	  'zing\\http\\Request' => 'framework/classes/http.php',
+	  'zing\\http\\AbstractResponse' => 'framework/classes/http.php',
 	  'zing\\http\\Response' => 'framework/classes/http.php',
+	  'zing\\http\\FileResponse' => 'framework/classes/http.php',
 	  'zing\\routing\\DuplicateRouteException' => 'framework/classes/routing.php',
 	  'zing\\routing\\Router' => 'framework/classes/routing.php',
 	  'zing\\view\\View' => 'framework/classes/view.php',
@@ -169,7 +170,7 @@ function __autoload($class) {
 	  'zing\\db\\Migrator' => 'framework/classes/db/migration.php',
 	  'zing\\db\\MigrationLocator' => 'framework/classes/db/migration.php',
 	  'zing\\db\\Migration' => 'framework/classes/db/migration.php',
-	  'TestController' => 'app/TestController.php',
+	  'TestController' => 'app/controllers/test_controller.php',
 	);
 	// SUPERLOAD-END
     
