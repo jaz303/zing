@@ -125,7 +125,7 @@ class MigrationLocator
         
         $plugin_manager = new \zing\plugin\Manager;
         foreach ($plugin_manager->plugins() as $plugin) {
-            $plugin_migration_path = $plugin->migration_path();
+            $plugin_migration_path = $plugin->get_migration_path();
             if (is_dir($plugin_migration_path)) {
                 $sources["plugin.{$plugin->id()}"] = $plugin_migration_path;
             }
