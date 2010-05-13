@@ -1,8 +1,22 @@
 <?php
+// This file boots the Zing! task system by finding:
+// 1. framework tasks
+// 2. application tasks
+// 3. plugin tasks
+//
+// It's all a bit ad-hoc but we don't want require boot.php unnecessarily
+
 $stack = array(
     dirname(__FILE__),
     dirname(__FILE__) . '/../../tasks'
 );
+
+$plugins_dir = dirname(__FILE__) . '/../../vendor/plugins';
+foreach (glob($plugins_dir . '/*', GLOB_ONLYDIR) as $plugin) {
+    if (is_dir($plugin . '/tasks')) {
+        $stack[] = $plugin;
+    }
+}
 
 // TODO: extract this recursive globbing crap
 while (count($stack)) {
