@@ -18,7 +18,9 @@ date_default_timezone_set('Europe/London');
 //
 // End customisable bits
 
+//
 // Config array.
+
 $GLOBALS['_ZING'] = array();
 
 define('ZING_VERSION',      '0.0.1');
@@ -151,6 +153,7 @@ function __autoload($class) {
 	  'zing\\routing\\DuplicateRouteException' => 'framework/classes/routing.php',
 	  'zing\\routing\\Router' => 'framework/classes/routing.php',
 	  'zing\\view\\View' => 'framework/classes/view.php',
+	  'zing\\sys\\Config' => 'framework/classes/sys/config.php',
 	  'zing\\plugin\\BlankPlugin' => 'framework/classes/plugin/blank_plugin.php',
 	  'zing\\plugin\\Dependency' => 'framework/classes/plugin/dependency.php',
 	  'zing\\plugin\\Initialiser' => 'framework/classes/plugin/initialiser.php',
