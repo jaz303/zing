@@ -1,0 +1,13 @@
+<?php
+group("plugin", function() {
+    
+    desc("Display list of installed plugin classes");
+	task("list_plugins", "environment", function() {
+	    $manager = new \zing\plugin\Manager;
+	    foreach ($manager->plugins() as $plugin) {
+	        echo $plugin->id() . " (" . $plugin->version() . ")\n";
+	    }
+	});
+	
+});
+?>
