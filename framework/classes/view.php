@@ -6,6 +6,18 @@ class View
     private $helpers            = array();
     private $assigns            = array();
     
+    public function set_controller($controller) {
+        
+        foreach ($controller->get_helpers() as $h) {
+            $this->add_helper($h);
+        }
+        
+        foreach ($controller->get_assigns() as $k => $v) {
+            $this->set($k, $v);
+        }
+    
+    }
+    
     public function add_helper($class) {
         array_unshift($this->helpers, $class);
     }
