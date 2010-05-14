@@ -26,22 +26,23 @@ $GLOBALS['_ZING'] = array();
 define('ZING_VERSION',      '0.0.1');
 define('ZING_SIGNATURE',    'Zing! Framework v' . ZING_VERSION);
 
-define('ZING_CONFIG_DIR',   dirname(__FILE__));
-define('ZING_ENV_DIR',      ZING_CONFIG_DIR . '/environments');
-define('ZING_ROOT',         dirname(ZING_CONFIG_DIR));
-define('ZING_PUBLIC_DIR',   ZING_ROOT . '/public');
-define('ZING_TMP_DIR',      ZING_ROOT . '/tmp');
-define('ZING_APP_DIR',      ZING_ROOT . '/app');
-define('ZING_VIEW_DIR',     ZING_APP_DIR . '/views');
-define('ZING_CACHE_DIR',    ZING_TMP_DIR . '/cache');
-define('ZING_COMPILED_DIR', ZING_TMP_DIR . '/compiled');
-define('ZING_VENDOR_DIR',   ZING_ROOT . '/vendor');
-define('ZING_PLUGIN_DIR',   ZING_VENDOR_DIR . '/plugins');
+define('ZING_CONFIG_DIR',       dirname(__FILE__));
+define('ZING_ROOT',             dirname(ZING_CONFIG_DIR));
+define('ZING_PUBLIC_DIR',       ZING_ROOT . '/public');
+define('ZING_TMP_DIR',          ZING_ROOT . '/tmp');
+define('ZING_APP_DIR',          ZING_ROOT . '/app');
+define('ZING_VIEW_DIR',         ZING_APP_DIR . '/views');
+define('ZING_CACHE_DIR',        ZING_TMP_DIR . '/cache');
+define('ZING_COMPILED_DIR',     ZING_TMP_DIR . '/compiled');
+define('ZING_VENDOR_DIR',       ZING_ROOT . '/vendor');
+define('ZING_PLUGIN_DIR',       ZING_VENDOR_DIR . '/plugins');
+define('ZING_CONSOLE',          php_sapi_name() == 'cli');
 
 set_include_path('.:' . ZING_ROOT);
 
 zing_lib('common');
 zing_load_environment('main');
+zing_load_configuration('main');
 
 //
 // Export GDB config if present
@@ -58,44 +59,103 @@ function zing_lib($library) {
 }
 
 function zing_environments() {
-    return array_map('basename', glob(ZING_ENV_DIR . '/*', GLOB_ONLYDIR));
+    return array_map('basename', glob(ZING_CONFIG_DIR . '/environments/*', GLOB_ONLYDIR));
 }
 
 function zing_load_environment($name, $env = null) {
     $ENV = array();
-    require ZING_ENV_DIR . '/' . ($env === null ? ZING_ENV : $env) . '/' . $name . '.php';
+    require ZING_CONFIG_DIR . '/environments/' . ($env === null ? ZING_ENV : $env) . '/' . $name . '.php';
     global $_ZING;
     foreach ($ENV as $k => $v) $_ZING[$k] = $v;
 }
 
 function zing_export_environment($name, $env = null) {
     $ENV = array();
-    require ZING_ENV_DIR . '/' . ($env === null ? ZING_ENV : $env) . '/' . $name . '.php';
+    require ZING_CONFIG_DIR . '/environments/' . ($env === null ? ZING_ENV : $env) . '/' . $name . '.php';
     return $ENV;
 }
 
-// set_exception_handler("pym_exception_handler");
-// function pym_exception_handler($e) {
-//  if (DEBUG) {
-//      display_template(":exception_handler", array('exception' => $e));
-//  } else {
-//      echo "Application Error";
-//      log_exception($e);
-//  }
-// }
+function zing_load_configuration($name) {
+    global $_ZING;
+    require ZING_CONFIG_DIR . '/app/' . $name . '.php';
+}
 
 //
 // Bail out if we're running from the console
+// Everything hereafter is web-only...
 
-if (php_sapi_name() == 'cli') {
+if (ZING_CONSOLE) {
     echo "Zing! Console initialised, environment: " . ZING_ENV . "\n";
     return;
 }
 
 //
-// Everything under here is web-only...
+// Input transformation
 
-// set_exception_handler('my_exception_handler');
+//
+// Request keys beginning with @ and $ and converted to date and money values
+
+zing_rewire($_POST);
+zing_rewire($_GET);
+zing_rewire($_REQUEST);
+
+//
+// Rejig $_FILES layout to be sane and create objects in $_POST for each
+// uploaded file. This implementation works with deeply nested files, e.g.:
+// <input type='file' name='files[a][b][c][]' />
+
+zing_fix_file_uploads();
+
+function zing_rewire(&$array) {
+    foreach (array_keys($array) as $k) {
+        if ($k[0] == '@') {
+            $array[substr($k, 1)] = Date::from_request($array[$k]);
+            unset($array[$k]);
+        } elseif ($k[0] == '$') {
+            $array[substr($k, 1)] = Money::from_request($array[$k]);
+            unset($array[$k]);
+        } elseif (is_array($array[$k])) {
+            zing_rewire($array[$k]);
+        }
+    }
+}
+
+function zing_fix_file_uploads() {
+    foreach ($_FILES as $k => $f) {
+        if (is_string($f['name'])) {
+            if ($f['error'] == UPLOAD_ERR_OK) {
+                $_POST[$k] = new UploadedFile($f);
+            } else {
+                $_POST[$k] = new UploadedFileError($f['error']);
+            }
+        } elseif (is_array($f['name'])) {
+            if (!is_array($_POST[$k])) {
+                $_POST[$k] = array();
+            }
+            zing_fix_file_uploads_recurse($f['name'], $f['type'], $f['tmp_name'], $f['error'], $f['size'], $_POST[$k]);
+        }
+    }
+}
+
+function zing_fix_file_uploads_recurse($n, $ty, $tm, $e, $s, &$target) {
+    foreach ($n as $k => $v) {
+        if (is_string($v)) {
+            if ($e[$k] == UPLOAD_ERR_OK) {
+                $target[$k] = new UploadedFile(array('name'      => $v,
+                                                     'type'      => $ty[$k],
+                                                     'tmp_name'  => $tm[$k],
+                                                     'size'      => $s[$k]));
+            } else {
+                $target[$k] = new UploadedFileError($e[$k]);
+            }
+        } else {
+            if (!is_array($target[$k])) {
+                $target[$k] = array();                
+            }
+            zing_fix_file_uploads_recurse($n[$k], $ty[$k], $tm[$k], $e[$k], $s[$k], $target[$k]);
+        }
+    }
+}
 
 //
 // The autoloader is auto-generated by the 'core:regenerate_autoload_map' task
