@@ -54,6 +54,51 @@ The request path is very short:
   
 A simple request hits ~10 files. Not that that means much in the world of in-memory bytecode caching, but it's good to be efficient.
 
+Transparent Date/Money/File Handling
+------------------------------------
+
+Given that people say money and time are two of the most important things in the world it's amazing
+so many programming environments are crap at dealing with them.
+
+Zing! attempts to treat date and money values as first-class citizens, supporting a prefix notation
+for form inputs.
+
+Submitting the following fields will create a single `Date` object and store it in `person[date_of_birth]`:
+
+    <input type='hidden' name='person[@date_of_birth][year]' value='1980' />
+    <input type='hidden' name='person[@date_of_birth][month]' value='12' />
+    <input type='hidden' name='person[@date_of_birth][day]' value='12' />
+    
+Add in `hours`, `minutes` and `second` keys and you'll get a `Date_Time` instance instead.
+
+The `$` prefix is used for currency values. This code stores an instance of `Money` in `person[salary]`:
+
+    <input type='hidden' name='person[$salary][units]' value='10000000' />
+    <input type='hidden' name='person[$salary][currency]' value='GBP' />
+    
+Also, strings can be used instead of arrays:
+
+    <input type='hidden' name='person[@date_of_birth]' value='1980-12-12' />
+    <input type='hidden' name='person[$salary]' value='10000000GBP' />
+    
+Finally, uploaded files are converted to instances of either `UploadedFile` or `UploadedFileError`,
+based on the success status of the upload, then moved from `$_FILES` to their corresponding
+location in `$_POST`.
+
+    // UploadedFile and UploadedFileError each implement the ok() method for
+    // detecting success
+    if ($_POST['my_file']->ok()) { // file upload was successful
+        $_POST['my_file]->move('/foo/bar');
+    } else { // file upload failed
+        // display error
+    }
+
+(This not a security risk because there is no way for a user to submit an object instance
+into `$_POST`)
+
+The overall result: user submitted data can be dealt with in a unified manner with no need to deal with
+various, possibly oddly-structured, superglobal arrays.
+
 Cascaded Static Helpers
 -----------------------
 
