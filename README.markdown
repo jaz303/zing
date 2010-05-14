@@ -20,9 +20,9 @@ Features (complete and planned)
   * Fast & efficient, although I have no data to back up this claim
   * Rapid Rails-style router (matcher code is compiled to PHP) _(almost complete)_
   * Database access with **no ORM** _(complete)_
-  * Database migrations (yes, even for plugins) _(incomplete)_
-  * Transparent request parameter handling for date, money and file types _(incomplete)_
-  * Plugin API (inc. centralised online repository) _(incomplete)_
+  * Database migrations (yes, even for plugins) _(complete)_
+  * Transparent request parameter handling for date, money and file types _(complete)_
+  * Plugin API (inc. centralised online repository) _(partial)_
   * Raw PHP templating with cascaded static helpers _(complete)_
   * Full console integration (tasks, generators, console) _(generators incomplete)_
   * Task management via phake _(complete)_
