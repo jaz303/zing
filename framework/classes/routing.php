@@ -37,9 +37,7 @@ class Router
         
     }
     
-    private $default_defaults = array(
-        'action'    => 'index'
-    );
+    private $default_defaults = array();
     
     private $default_requirements = array(
         'action'    => '/^\w+$/',
@@ -81,23 +79,22 @@ class Router
                 if (preg_match('/^:(\w+)$/', $route_chunk, $matches)) {
                     
                     $capture = $matches[1];
+                    $new_node = new DynamicNode($capture);
                     
-                    $requirement = null;
                     if (array_key_exists($capture, $requirements)) {
-                        $requirement = $requirements[$capture];
-                    } elseif (isset($this->default_requirements[$capture])) {
-                        $requirement = $this->default_requirements[$capture];
+                        $new_node->set_requirement($requirements[$capture]);
+                    } elseif (array_key_exists($capture, $this->default_requirements)) {
+                        $new_node->set_requirement($this->default_requirements[$capture]);
                     }
                     
-                    $default = null;
                     if (array_key_exists($capture, $defaults)) {
-                        $default = $defaults[$capture];
+                        $new_node->set_default($defaults[$capture]);
                         unset($defaults[$capture]);
-                    } elseif (isset($this->default_defaults[$capture])) {
-                        $default = $this->default_defaults[$capture];
+                    } elseif (array_key_exists($capture, $this->default_defaults)) {
+                        $new_node->set_default($this->default_defaults[$capture]);
                     }
                     
-                    $node = $node->add_child(new DynamicNode($capture, $requirement, $default));
+                    $node = $node->add_child($new_node);
                     
                 } else {
                     $node = $node->add_child(new StaticNode($route_chunk));
@@ -233,19 +230,30 @@ class StaticNode extends Node
 class DynamicNode extends Node
 {
     private $capture;
-    private $requirement;
+    
+    private $requirement = null;
+    
+    private $has_default = false;
     private $default;
     
-    public function __construct($capture, $requirement, $default) {
+    public function __construct($capture) {
         $this->capture = $capture;
-        $this->requirement = $requirement;
-        $this->default = $default;
+    }
+    
+    public function set_requirement($r) {
+        $this->requirement = $r;
+    }
+    
+    public function set_default($d) {
+        $this->has_default = true;
+        $this->default = $d;
     }
     
     public function equals(Node $node) {
         return ($node instanceof DynamicNode)
                 && $node->capture == $this->capture
                 && $node->requirement == $this->requirement
+                && $node->has_default == $this->has_default
                 && $node->default == $this->default;
     }
     
@@ -254,7 +262,7 @@ class DynamicNode extends Node
     }
     
     public function compile(Compilation $c) {
-        $c->push_dynamic_segment($this->capture, $this->match, $this->method, $this->endpoint);
+        $c->push_dynamic_segment($this->capture, $this->requirement, $this->method, $this->endpoint);
         foreach ($this->children as $child) {
             $child->compile($c, $state);
         }
@@ -262,7 +270,7 @@ class DynamicNode extends Node
     }
     
     protected function find_default_dynamic_path(array $options) {
-        if ($this->default === null) return null;
+        if (!$this->has_default) return null;
         $options[$this->capture] = $this->default;
         if ($this->is_terminal()) {
             return array_merge($options, $this->endpoint);
