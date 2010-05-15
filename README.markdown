@@ -18,7 +18,7 @@ Features (complete and planned)
 -------------------------------
 
   * Fast & efficient, although I have no data to back up this claim
-  * Rapid Rails-style router (matcher code is compiled to PHP) _(almost complete)_
+  * Rapid Rails-style router (matcher code is compiled to PHP) _(complete, but no globbing support yet)_
   * Database access with **no ORM** _(complete)_
   * Database migrations (yes, even for plugins) _(complete)_
   * Transparent request parameter handling for date, money and file types _(complete)_
