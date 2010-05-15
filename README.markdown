@@ -33,10 +33,35 @@ Features (complete and planned)
 Quickstart
 ----------
 
-  * `$ git clone ...`
+Clone the repo and grab the submodules:
+
+  * `$ git clone git://github.com/jaz303/zing.git`
   * `$ cd zing`
   * `$ git submodule init && git submodule update`
   
+Next step is to get a webserver on the go. If you've got the
+[lighty gem](http://github.com/jaz303/lighty) installed & configured, just invoke
+`lighty` from Zing!'s root directory and you're up and running. Otherwise you'll need
+to setup an Apache vhost. Something like this should do the trick, 
+substituting the correct `$ZING_ROOT`:
+
+    <VirtualHost *:4000>
+        DocumentRoot $ZING_ROOT/public
+        <Directory $ZING_ROOT/public>
+            Order allow,deny
+            Allow from all
+        </Directory>
+        RewriteEngine On
+        RewriteCond $ZING_ROOT/public/%{REQUEST_FILENAME} !-f
+        RewriteCond $ZING_ROOT/public/%{REQUEST_FILENAME} !-d
+        RewriteRule ^.*$ /__dispatch.php [QSA,L]
+    </VirtualHost>
+    
+Ensure `$ZING_ROOT/tmp` is writable by your webserver.
+
+Hit `http://localhost:4000/test` to view a seriously underwhelming test page and maybe wonder
+why the hell you just wasted 15 minutes on this crap.
+
 Fast & Efficient
 ----------------
 
