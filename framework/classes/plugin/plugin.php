@@ -1,9 +1,12 @@
 <?php
 namespace zing\plugin;
 
+class PluginException extends \Exception {}
+
 abstract class Plugin
 {
     private $directory;
+    private $metadata = null;
     
     public function __construct($directory) {
         $this->directory = $directory;
@@ -17,38 +20,39 @@ abstract class Plugin
      */
     public function id() { return basename($this->directory); }
     
+    public function metadata($key = null, $default = null) {
+        if ($this->metadata === null) {
+            $json = file_get_contents($this->directory . '/plugin.json');
+            if (!$json || !($meta = json_decode($json, true))) {
+                throw new PluginException("can't get metadata for plugin {$this->id()}");
+            }
+            if (!isset($meta['version'])) {
+                throw new PluginException("plugin metadata missing required version attribute");
+            }
+            $this->metadata = $meta;
+        }
+        if ($key === null) {
+            return $this->metadata;
+        } else {
+            return array_key_exists($key, $this->metadata) ? $this->metadata[$key] : $default;
+        }
+    }
+    
     /**
      * Returns the version of this plugin
      */
-    public abstract function version();
+    public function version() { return $this->metadata('version'); }
     
     /**
      * Returns the friendly title of this plugin
      * Defaults to the plugin's ID but you can override to return anything
      */
-    public function title() { return $this->id(); }
-    
-    /**
-     * Returns an array of attribution information for this plugin.
-     * All fields are optional.
-     *
-     * array(
-     *   'email' => 'foo@bar.com', // canonical email address for this plugin
-     *   'url' => 'http://bar.com/myplugin' // canonical URL for this plugin
-     *   'copyright' => '2009 Magic Lamp',
-     *   'authors' => array(
-     *     array('name' => 'Jason Frame',
-     *           'email' => 'jason@onehackoranother.com',
-     *           'url' => 'http://onehackoranother.com')
-     *   )
-     * )
-     */
-    public function attribution() { return array(); }
+    public function title() { return $this->metadata('title', $this->id()); }
 
     /**
      * Returns an array of strings/dependency objects.
      */
-    public function dependencies() { return array(); }
+    public function dependencies() { return $this->metadata('dependencies', array()); }
     
     /**
      * Returns true if this plugin has any exports of type $thing.

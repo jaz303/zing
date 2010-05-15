@@ -2,10 +2,10 @@
 group("plugin", function() {
     
     desc("Display list of installed plugin classes");
-	task("list_plugins", "environment", function() {
+	task("list", "environment", function() {
 	    $manager = new \zing\plugin\Manager;
 	    foreach ($manager->plugins() as $plugin) {
-	        echo $plugin->id() . " (" . $plugin->version() . ")\n";
+	        echo  $plugin->title() . " [id=" . $plugin->id() . ',version=' . $plugin->version() . "]\n";
 	    }
 	});
 	
