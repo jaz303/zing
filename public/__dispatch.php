@@ -33,6 +33,10 @@ try {
     
     $controller_class = preg_replace('/(^|_)([a-z])/e', 'strtoupper(\'$2\')', $route['controller']) . 'Controller';
     
+    if (isset($route['namespace'])) {
+        $controller_class = $route['namespace'] . '\\' . $controller_class;
+    }
+    
     if (!class_exists($controller_class, true)) {
         zing\http\Exception::not_found();
     }

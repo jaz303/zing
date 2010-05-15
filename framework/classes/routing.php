@@ -1,7 +1,8 @@
 <?php
 namespace zing\routing;
 
-class DuplicateRouteException extends \Exception {}
+class RoutingException extends \Exception {}
+class DuplicateRouteException extends RoutingException {}
 
 class Router
 {
@@ -37,6 +38,7 @@ class Router
         
     }
     
+    
     private $default_defaults = array();
     
     private $default_requirements = array(
@@ -45,12 +47,34 @@ class Router
     );
     
     private $root;
+    private $options_stack = array();
     
     public function __construct() {
         $this->root = new StaticNode('');
     }
     
+    public function with_options(array $options, $lambda) {
+        try {
+            $this->options_stack[] = $options;
+            $lambda($this);
+            array_pop($this->options_stack);
+        } catch (\Exception $e) {
+            array_pop($this->options_stack);
+            throw $e;
+        }
+    }
+    
+    public function active_options() {
+        $opts = array();
+        foreach ($this->options_stack as $os) {
+            $opts = array_merge($opts, $os);
+        }
+        return $opts;
+    }
+    
     public function connect($path, $options = array()) {
+        
+        $options = array_merge($this->active_options(), $options);
         
         $path = trim($path, '/');
         $node = $this->root;
@@ -79,6 +103,11 @@ class Router
                 if (preg_match('/^:(\w+)$/', $route_chunk, $matches)) {
                     
                     $capture = $matches[1];
+                    
+                    if ($capture == 'namespace') {
+                        throw new RoutingException("'namespace' is reserved and cannot be used as a capture");
+                    }
+                    
                     $new_node = new DynamicNode($capture);
                     
                     if (array_key_exists($capture, $requirements)) {
