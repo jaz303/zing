@@ -46,6 +46,27 @@ class HTMLHelper
         return htmlspecialchars($string);
     }
     
+    public static function i($image, $attributes = array()) {
+        $attributes['src'] = AssetHelper::image_path($image);
+        $attributes += array('alt' => '');
+        return self::empty_tag('img', $attributes);
+    }
+    
+    /**
+     * content helper, accepts a function argument for $content
+     */
+    public static function c($name, $content, $attributes = array()) {
+        $chunks = parse_simple_selector($name);
+        if (isset($chunks['name'])) {
+            $name = $chunks['name'];
+            unset($chunks['name']);
+        } else {
+            $name = 'div';
+        }
+        $attributes += $chunks;
+        return self::tag($name, is_callable($content) ? $content() : $content, $attributes);
+    }
+    
     public static function tag($name, $content, $attributes = array()) {
         $html = "<$name";
         foreach ($attributes as $k => $v) {
@@ -87,16 +108,38 @@ class FormHelper
 
 class AssetHelper
 {
+    public static function asset_path($name, $type, $extension = null) {
+        if ($name[0] == '.' || $name[0] == '/' || preg_match('|^https?://|', $name)) {
+            return $name;
+        }
+        $asset = '/' . $type . '/' . $name;
+        if ($extension && (strpos($name, '.') === false)) {
+            $name .= '.' . $extension;
+        }
+        return $asset;
+    }
+    
+    public static function stylesheet_path($stylesheet) {
+        return self::asset_path($stylesheet, 'stylesheets', 'css');
+    }
+    
+    public static function javascript_path($javascript) {
+        return self::asset_path($javascript, 'javascript', 'js');
+    }
+    
+    public static function image_path($image) {
+        return self::asset_path($image, 'images', null);
+    }
+    
     public static function stylesheet_link_tag($css, $options = array()) {
-        $options['href'] = self::url_for_stylesheet($css);
-        $options['rel'] = 'stylesheet';
-        $options['type'] = 'text/css';
+        $options['href'] = self::stylesheet_path($css);
+        $options += array('rel' => 'stylesheet', 'type' => 'text/css');
         return HTMLHelper::empty_tag('link', $options);
     }
 
     public static function javascript_include_tag($js, $options = array()) {
-        $options['src'] = self::url_for_javascript($js);
-        $options['type'] = 'text/javascript';
+        $options['src'] = self::javascript_path($js);
+        $options += array('type' => 'text/javascript');
         return HTMLHelper::tag('script', '', $options);
     }
 }
