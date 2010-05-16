@@ -2,7 +2,11 @@
 
 <h2>Bleem</h2>
 
-Taa
+<?= c("#bleem.foo.bar", ^{
+    return c('b', 'not all my tricks rookie!');
+}); ?>
+
+<?= i('zing.png') ?>
 
 <?= text_input('foo', 'hello') ?>
 
