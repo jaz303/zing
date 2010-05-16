@@ -48,20 +48,6 @@ function trim_to_null($str, $len = null) {
 // Support
 
 /**
- * Parse a selector of the form #foo.bar.baz into constituent ID and classes.
- * An array argument will be returned unchanged.
- */
-function parse_simple_selector($s) {
-    if (!is_array($s)) {
-        preg_match('/^(#([\w-]+))?((\.[\w-]+)*)$/', $s, $matches);
-        $s = array();
-        if (!empty($matches[2])) $s['id'] = $matches[2];
-        if (!empty($matches[3])) $s['class'] = trim(str_replace('.', ' ', $matches[3]));
-    }
-    return $s;
-}
-
-/**
  * Turn some representation of a URL into a string.
  * Scalar parameters are coerced to strings and returned.
  * Any other argument will be passed to url_for(), which should be implemented by
@@ -298,7 +284,22 @@ function mkdir_p($directory, $mode = 0777) {
 }
 
 //
-// Options
+// Some parsing stuff
+
+/**
+ * Parse a selector of the form #foo.bar.baz into constituent ID and classes.
+ * An array argument will be returned unchanged.
+ */
+function parse_simple_selector($s) {
+    if (!is_array($s)) {
+        preg_match('/^([\w-]+)?(#([\w-]+))?((\.[\w-]+)*)$/', $s, $matches);
+        $s = array();
+        if (!empty($matches[1])) $s['name'] = $matches[1];
+        if (!empty($matches[3])) $s['id'] = $matches[3];
+        if (!empty($matches[4])) $s['class'] = trim(str_replace('.', ' ', $matches[4]));
+    }
+    return $s;
+}
 
 function parse_options($options) {
     if (is_array($options)) {
