@@ -108,7 +108,19 @@ class View
                 if (!$this->is_space($tok)) $skip = false;
             } elseif (is_string($tok)) {
                 if ($this->is_wipeout($tok)) $skip = true;
-                $out .= $tok;
+                // ad-hoc syntax extension;
+                // ^{ is accepted as a shorthand for function() {
+                // in the future this may be expanded to accept arguments etc.
+                if ($tok == '^') {
+                    $tok = $this->next();
+                    if ($tok == '{') {
+                        $out .= "function() {";
+                    } else {
+                        $out .= "^" . (is_array($tok) ? $tok[1] : $tok);
+                    }
+                } else{
+                    $out .= $tok;
+                }
             } elseif ($tok[0] == T_STRING) {
                 $func = $tok[1];
                 $buff = '';
