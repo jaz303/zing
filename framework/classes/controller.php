@@ -177,7 +177,7 @@ class Controller
     //
     // Rendering/redirecting
     
-    protected function redirect($url) {
+    protected function redirect_to($url) {
         
         if ($this->has_performed()) {
             throw new DoublePerformException;
