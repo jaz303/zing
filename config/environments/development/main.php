@@ -26,5 +26,5 @@ $ENV['config.zing.routing.recompile'] = true;
  * 'mtime'  - perform mtime check
  * false    - never
  */
-$ENV['config.zing.view.recompile'] = 'mtime';
+$ENV['config.zing.view.recompile'] = true;
 ?>
