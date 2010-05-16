@@ -1,6 +1,45 @@
 <?php
 namespace zing\helpers;
 
+class DebugHelper
+{
+    public static function debug_dump($object, $caption = null) {
+        
+        ob_start();
+        var_dump($object);
+        $dumped = ob_get_clean();
+        
+        return self::debug_print($dumped, $caption);
+        
+    }
+    
+    public static function debug_print($text, $caption = null, $start_line = 1) {
+        
+        $html = '';
+        
+        if ($caption) {
+            $html .= "<div style='padding:5px; font: bold 11px/1 Helvetica, Arial; color: black; background: #cdcdcd'>$caption</div>";
+        }
+        
+        $html .= "<div style='height: 300px; overflow: auto; border: 1px solid #cdcdcd;'><pre style='padding:0;margin:0'>";
+        $html .= "<ul style='margin:0;padding:0'>";
+        
+        $lines = explode("\n", $text);
+        $places = ceil(log10(count($lines)));
+        
+        foreach ($lines as $ix => $line) {
+            $bg = $ix & 1 ? '#f0f0f0' : '#f8f8f8';
+            $html .= "<li style='margin:0;padding:3px;background-color:$bg'><b>" . sprintf("%0{$places}d", $ix + $start_line) . ":</b> " . htmlentities($line) . "</li>";
+        }
+        
+        $html .= "</ul>";
+        $html .= "</pre></div>";
+        
+        return $html;
+        
+    }
+}
+
 class HTMLHelper
 {
     public static function h($string) {
