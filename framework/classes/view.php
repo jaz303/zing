@@ -80,7 +80,7 @@ class View
         
         if (!$_ZING['config.zing.view.recompile']) {
             return false;
-        } elseif ($_ZING['config.zing.view.recompile'] == 'mtime') {
+        } elseif ($_ZING['config.zing.view.recompile'] === 'mtime') {
             return filemtime($source_file) > filemtime($target_file);
         } else {
             return true;
