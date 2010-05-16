@@ -113,8 +113,10 @@ class View
                 // in the future this may be expanded to accept arguments etc.
                 if ($tok == '^') {
                     $tok = $this->next();
-                    if ($tok == '{') {
-                        $out .= "function() {";
+                    if ($tok == '(') {
+                        $out .= "function(";
+                    } elseif ($tok == '{') {
+                        $out .= 'function($_ = null) {';
                     } else {
                         $out .= "^" . (is_array($tok) ? $tok[1] : $tok);
                     }

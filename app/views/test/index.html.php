@@ -3,7 +3,11 @@
 <h2>Bleem</h2>
 
 <?= c("#bleem.foo.bar", ^{
-    return c('b', 'not all my tricks rookie!');
+    return c('ul', ^{
+        return join('', map(array('item 1', 'item 2', 'item 3'), ^{
+            return c('li', $_);
+        }));
+    });
 }); ?>
 
 <?= i('zing.png') ?>
