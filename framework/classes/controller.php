@@ -120,6 +120,7 @@ class Controller
         $this->__performed  = false;
         $this->__helpers    = array();
         
+        $this->helper('\\zing\\helpers\\DebugHelper');
         $this->helper('\\zing\\helpers\\HTMLHelper');
         $this->helper('\\zing\\helpers\\FormHelper');
         
