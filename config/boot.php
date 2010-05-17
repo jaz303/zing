@@ -78,6 +78,23 @@ function zing_load_configuration($name) {
     require ZING_CONFIG_DIR . '/app/' . $name . '.php';
 }
 
+/**
+ * This is a bit of an oddball and nowhere seemed like the best place to put it.
+ * It turns a qualified class name into a path and is primarily used by the default
+ * view layer.
+ *
+ * One assumption - namespaces never contain uppercase
+ *
+ * Foo => foo
+ * FooBar => foo_bar
+ * namespace\Foo => namespace/foo
+ * ns1\ns2\FooBar => ns1/ns2/foo_bar
+ */
+function zing_class_path($class) {
+    if (is_object($class)) $class = get_class($class);
+    return strtolower(preg_replace('|([^^/])([A-Z])|', '$1_$2', str_replace('\\', '/', $class)));
+}
+
 //
 // Bail out if we're running from the console
 // Everything hereafter is web-only...
