@@ -31,6 +31,7 @@ define('ZING_ROOT',             dirname(ZING_CONFIG_DIR));
 define('ZING_PUBLIC_DIR',       ZING_ROOT . '/public');
 define('ZING_TMP_DIR',          ZING_ROOT . '/tmp');
 define('ZING_APP_DIR',          ZING_ROOT . '/app');
+define('ZING_DATA_DIR',         ZING_ROOT . '/data');
 define('ZING_VIEW_DIR',         ZING_APP_DIR . '/views');
 define('ZING_CACHE_DIR',        ZING_TMP_DIR . '/cache');
 define('ZING_COMPILED_DIR',     ZING_TMP_DIR . '/compiled');
