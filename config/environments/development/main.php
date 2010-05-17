@@ -27,4 +27,10 @@ $ENV['config.zing.routing.recompile'] = true;
  * false    - never
  */
 $ENV['config.zing.view.recompile'] = true;
+
+/**
+ * Show error reports in the event of an exception propagating to the
+ * top level?
+ */
+$ENV['config.zing.exception_reports'] = true;
 ?>

@@ -1,37 +1,206 @@
 <?php
 namespace zing\view;
 
-class View
+class MissingViewException extends \Exception {}
+
+abstract class Base
 {
-    private $helpers            = array();
-    private $assigns            = array();
+    protected static $active = array();
+    protected static $templates = array();
     
-    public function set_controller($controller) {
-        
-        foreach ($controller->get_helpers() as $h) {
+    /**
+     * Returns the current active view handler
+     */
+    public static function active() { return self::$active[0]; }
+    
+    /**
+     * Returns the currently rendering template path
+     */
+    public static function template() { return self::$templates[0]; }
+    
+    //
+    // Some configuration
+    
+    /**
+     * View paths to search
+     * Earlier entries in this array take precedence
+     * No trailing slashes, please
+     */
+    public static $view_paths = array(
+        ZING_VIEW_DIR
+    );
+    
+    public static $stylesheet_collections = array(
+        'defaults'          => array('main.css', ':jquery-plugins'),
+        'jquery-plugins'    => array()
+    );
+    
+    public static $javascript_collections = array(
+        'defaults'          => array(':jquery', ':jquery-plugins', 'application.js'),
+        'jquery'            => array('jquery.min.js'),
+        'jquery-plugins'    => array()
+    );
+    
+    /**
+     * Returns array of absolute filenames for candidate views matching the given
+     * view name, optional template type and optional handler extension.
+     *
+     * Returned filenames are always absolute.
+     * Basename component will always be of the format view_name.template_type.handler_extension
+     *
+     */
+    public static function candidate_views_for($view, $template_type = null, $handler_ext = null) {
+        // TODO: this is an optimisation point
+        // In production mode, memo the candidate views for any given input
+        if ($template_type && $handler_ext) {
+            $view_file = "$view.$template_type.$handler_ext";
+            foreach (self::$view_paths as $vp) {
+                if (file_exists("$vp/$view_file")) {
+                    return array(array($vp, $view_file));
+                }
+            }
+            return array();
+        } else {
+            $view_glob = $view .
+                            '.' . ($template_type ? $template_type : '*') .
+                            '.' . ($handler_ext ? $handler_ext : '*');
+            $candidates = array();
+            foreach (self::$view_paths as $vp) {
+                $len = strlen($vp);
+                foreach (glob("$vp/$view_glob") as $c) {
+                    $candidates[] = array($vp, substr($c, $len + 1));
+                }
+            }
+            return $candidates;
+        }
+    }
+    
+    protected static function find_first_view_for($view, $template_type = null, $handler_ext = null) {
+        $candidates = self::candidate_views_for($view, $template_type, $handler_ext);
+        if (count($candidates)) {
+            return $candidates[0][0] . '/' . $candidates[0][1];
+        } else {
+            throw new MissingViewException("no suitable view found for view '$view' [template_type=$template_type,handler_ext=$handler_ext]");
+        }
+    }
+    
+    /**
+     * $view_path           $relative_to            $result
+     * -------------------------------------------------------------------------
+     * index                admin/users             admin/users/index
+     * :index               admin/users             global/index
+     * index/repeater       admin/users             admin/users/index/repeater
+     * /products/list       admin/users             products/list
+     * ../products/list     admin/users             admin/users/../products/list
+     */
+    public static function resolve_relative_view_path($view_path, $relative_to) {
+        if ($view_path[0] == ':') {
+            return "global/" . substr($view_path, 1);
+        } elseif ($view_path[0] == '/') {
+            return substr($view_path, 1);
+        } else {
+            return $relative_to . '/' . $view_path;
+        }
+    }
+    
+    //
+    //
+    
+    protected $template_type = null;
+    
+    public function set_template_type($tt) {
+        $this->template_type = $tt;
+    }
+    
+    //
+    //
+    
+    // public abstract function render_view();
+    // public abstract function render_file();
+    
+}
+
+/**
+ * To be compatible with PHPHandler, a controller must implement the following
+ * methods:
+ *
+ * 1. get_assigns()     - return assoc. array of names => values for assignment to template
+ * 2. get_helpers()     - return array of fully-qualified helper classnames
+ * 3. get_layout()      - return name of layout to wrap rendered views
+ *
+ */
+class PHPHandler extends Base
+{
+    public static $default_helpers = array(
+        '\\zing\\helpers\\DebugHelper',
+        '\\zing\\helpers\\HTMLHelper',
+        '\\zing\\helpers\\FormHelper',
+        '\\zing\\helpers\\AssetHelper'
+    );
+    
+    private $helpers    = array();
+    private $assigns    = array();
+    private $layout     = null;
+    private $view       = null;
+    
+    public function add_helper($class) { array_unshift($this->helpers, $class); }
+    
+    public function set($k, $v) { $this->assigns[$k] = $v; }
+    public function merge(array $assigns) { $this->assigns = array_merge($this->assigns, $assigns); }
+    
+    public function set_layout($layout) { $this->layout = $layout; }
+    
+    public function __construct() {
+        foreach (self::$default_helpers as $h) {
             $this->add_helper($h);
         }
+    }
+    
+    public function import_from_controller($controller) {
+        $this->helpers  = array_merge($this->helpers, $controller->get_helpers());
+        $this->assigns  = array_merge($this->assigns, $controller->get_assigns());
+        $this->layout   = $controller->get_layout();
+    }
+    
+    public function render_view($view, $view_root = null) {
         
-        foreach ($controller->get_assigns() as $k => $v) {
-            $this->set($k, $v);
+        if ($view_root === null) {
+            $paths = self::candidate_views_for($view, $this->template_type, 'php');
+            if (count($paths)) {
+                $view = $paths[0][0];
+                $view_root = $paths[0][1];
+            } else {
+                // TODO: error
+            }
+        }
+        
+        $file = $view_root . '/' . $view . '.' . $this->template_type . '.php';
+        
+        $this->view = $view;
+        
+        array_unshift(self::$active, $this);
+        
+        try {
+            if ($this->layout) {
+                $this->capture('layout', $this->render_file($file));
+                $layout = self::find_first_view_for("layouts/{$this->layout}", $this->template_type, 'php');
+                return $this->render_file($layout);
+            } else {
+                return $this->render_file($file);
+            }
+            array_shift(self::$active);
+        } catch (\Exception $e) {
+            array_shift(self::$active);
+            throw $e;
         }
     
     }
     
-    public function add_helper($class) {
-        array_unshift($this->helpers, $class);
-    }
-    
-    public function clear_helpers() {
-        $this->helpers = array();
-    }
-    
-    public function set($k, $v) {
-        $this->assigns[$k] = $v;
-    }
-    
-    public function merge(array $assigns) {
-        $this->assigns = array_merge($this->assigns, $assigns);
+    public function render_partial($partial) {
+        $partial = preg_replace('/(^|\/|:)(\w+)$/', '$1_$2', $partial);
+        $partial = self::resolve_relative_view_path($partial, dirname($this->view));
+        $file    = self::find_first_view_for($partial, $this->template_type, 'php');
+        return $this->render_file($file);
     }
     
     /**
@@ -44,13 +213,83 @@ class View
      * @param $__template__ absolute path of template to render
      * @return rendered template
      */
-    public function render_file($__template__) {
-        $__compiled_template__ = $this->compile($__template__);
-        extract($this->assigns);
-        ob_start();
-        require $__compiled_template__;
-        return ob_get_clean();
+    public function render_file($__template__, $locals = array()) {
+        array_unshift(self::$templates, $__template__);
+        try {
+            $__compiled_template__ = $this->compile($__template__);
+            extract($this->assigns);
+            ob_start();
+            require $__compiled_template__;
+            return ob_get_clean();
+            array_unshift(self::$templates);
+        } catch (\Exception $e) {
+            array_unshift(self::$templates);
+            throw $e;
+        }
     }
+    
+    //
+    // Captures
+    
+    private $captures           = array();
+    private $active_captures    = array();
+    
+    public function content_for($block_name) {
+        return isset($this->captures[$block_name]) ? $this->captures[$block_name] : '';
+    }
+    
+    public function capture($block_name, $content) {
+        if (is_callable($content)) {
+            $this->start_capture($block_name);
+            $content();
+            $this->end_capture();
+        } else {
+            $this->captures[$block_name] = $content;
+        }
+    }
+    
+    public function start_capture($block_name) {
+        ob_start();
+        array_unshift($this->active_captures, $block_name);
+    }
+    
+    public function end_capture() {
+        $this->capture(array_shift($this->active_captures), ob_get_clean());
+    }
+    
+    //
+    // Helpers
+    // Although it's possible to call helpers directly from templates, without qualification,
+    // sometimes you may wish to invoke a helper dynamically from elsewhere (e.g. another
+    // helper), where there has been no opportunity to pre-compile the code and resolve
+    // helper references.
+    // To do this: zing\view\Base::$active->my_helper()
+    
+    private $dynamic_helpers = null;
+    
+    private function index_dynamic_helpers() {
+        $this->dynamic_helpers = array();
+        foreach ($this->helpers as $h) {
+            $r = new \ReflectionClass($h);
+            foreach ($r->getMethods(\ReflectionMethod::IS_STATIC | \ReflectionMethod::IS_PUBLIC) as $m) {
+                $this->dynamic_helpers[$m->getName()] = $h;
+            }
+        }
+    }
+    
+    public function __call($method, $args) {
+        if ($this->dynamic_helpers === null) {
+            $this->index_dynamic_helpers();
+        }
+        if (isset($this->dynamic_helpers[$method])) {
+            return call_user_func_array(array($this->dynamic_helpers[$method], $method), $args);
+        } else {
+            throw new NoSuchMethodException("helper not found: $method");
+        }
+    }
+    
+    //
+    // Compilation
     
     private function compile($source_file) {
         
@@ -110,7 +349,10 @@ class View
                 if ($this->is_wipeout($tok)) $skip = true;
                 // ad-hoc syntax extension;
                 // ^{ is accepted as a shorthand for function() {
-                // in the future this may be expanded to accept arguments etc.
+                // this form exposes a single (optional) argument named $_
+                // if you need more args, this syntax is also valid:
+                // ^($foo, $bar, $baz) { ... }
+                // no spaces are permitted between ^ and { or (
                 if ($tok == '^') {
                     $tok = $this->next();
                     if ($tok == '(') {

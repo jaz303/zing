@@ -142,5 +142,29 @@ class AssetHelper
         $options += array('type' => 'text/javascript');
         return HTMLHelper::tag('script', '', $options);
     }
+    
+    public static function stylesheet_collection($collection_name) {
+        $html = '';
+        foreach (\zing\view\Base::$stylesheet_collections[$collection_name] as $stylesheet) {
+            if ($stylesheet[0] == ':') {
+                $html .= self::stylesheet_collection(substr($stylesheet, 1));
+            } else {
+                $html .= self::stylesheet_link_tag($stylesheet) . "\n";
+            }
+        }
+        return $html;
+    }
+    
+    public static function javascript_collection($collection_name) {
+            $html = '';
+            foreach (\zing\view\Base::$javascript_collections[$collection_name] as $js) {
+                if ($js[0] == ':') {
+                    $html .= self::javascript_collection(substr($js, 1));
+                } else {
+                    $html .= self::javascript_include_tag($js) . "\n";
+                }
+            }
+            return $html;
+        }
 }
 ?>

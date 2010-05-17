@@ -7,7 +7,9 @@ class DoublePerformException extends \Exception {}
  * This is Zing!'s default controller implementation. There's no reason you
  * have to extend this, the only requirement placed on a controller is that
  * it implements an invoke(zing\http\Request $request, $action_name) method
- * that returns a zing\http\Response object or similar.
+ * that returns a zing\http\Response object or similar (there are a few
+ * extra required methods if you wish to integrate with the standard view
+ * classes)
  */
 class Controller
 {
@@ -16,18 +18,13 @@ class Controller
      * Implementing handlers is easy, check out zing\view\View
      */
     public static $view_handlers = array(
-        'php'       => 'zing\\view\\View'
-    );
-    
-    public static $view_paths = array(
-        ZING_VIEW_DIR
+        'php'       => 'zing\\view\\PHPHandler'
     );
     
     protected $request;
     protected $response;
     
-    protected $controller_namespace;
-    protected $controller_class;
+    protected $controller_path;
     protected $controller_name;
     protected $action_name;
     
@@ -35,8 +32,9 @@ class Controller
     // Fields with double leading underscores will not be copied to the view
     // ($response isn't copied either, for that matter)
     
-    protected $__performed;
-    protected $__helpers;
+    protected $__performed              = false;
+    protected $__layout                 = false;
+    protected $__helpers                = array();
     
     //
     //
@@ -49,6 +47,20 @@ class Controller
         $this->__performed = $performed;
     }
     
+    //
+    //
+    
+    public function get_layout() {
+        return $this->__layout;
+    }
+    
+    protected function layout($layout_name) {
+        $this->__layout = $layout_name;
+    }
+    
+    //
+    //
+    
     public function get_helpers() {
         return $this->__helpers;
     }
@@ -57,9 +69,8 @@ class Controller
         $this->__helpers[] = $helper_class;
     }
     
-    protected function clear_helpers() {
-        $this->__helpers = array();
-    }
+    //
+    //
     
     public function get_assigns() {
         $assigns = array();
@@ -69,6 +80,7 @@ class Controller
             }
         }
         unset($assigns['response']);
+        $assigns['controller'] = $this;
         return $assigns;
     }
     
@@ -112,66 +124,42 @@ class Controller
      */
     protected function after_render() { }
     
-    //
-    //
-    
-    public function __construct() {
-        
-        $this->__performed  = false;
-        $this->__helpers    = array();
-        
-        $this->helper('\\zing\\helpers\\DebugHelper');
-        $this->helper('\\zing\\helpers\\HTMLHelper');
-        $this->helper('\\zing\\helpers\\FormHelper');
-        
-        $this->init();
-        
-    }
-    
     /**
-     * Override to perform custom initialisation.
+     * This really just exists so subclasses can call parent::__construct()
      */
-    protected function init() {}
+    public function __construct() {}
     
     public function invoke(\zing\http\Request $request, $action) {
         
         $this->request              = $request;
         $this->response             = new \zing\http\Response;
         
-        $class = get_class($this);
-        if ($p = strrpos($class, '\\')) {
-            $this->contoller_namespace  = substr($class, 0, $p);
-            $this->controller_class     = substr($class, $p + 1);
-        } else {
-            $this->controller_namespace = '';
-            $this->controller_class     = $class;
-        }
-        
-        $this->controller_name      = strtolower(preg_replace('/([^^])([A-Z])/e', '$1_$2', $this->controller_class));
-        $this->controller_name      = preg_replace('/_controller$/', '', $this->controller_name);
+        $this->controller_path      = preg_replace('/_controller$/', '', \zing_class_path($this));
+        $this->controller_name      = basename($this->controller_path);
         $this->action_name          = $action;
         
         $this->before();
         
-        if (!$this->has_performed()) {
-            $action_method = "_$action";
-            if (method_exists($this, $action_method)) {
-                $this->$action_method();
-            } else {
-                die('foo');
-            }
-        }
-        
-        // do some mumbo-jumbo
-        
-        if (!$this->has_performed()) {
-            $this->render('view');
-        }
+        if (!$this->has_performed()) $this->perform_invoke();
+        if (!$this->has_performed()) $this->render('view');
         
         $this->after();
         
         return $this->response;
     
+    }
+    
+    /**
+     * Override this in subclasses if you wish to keep the rest of the controller
+     * infrastructure but change the default action -> _method mapping
+     */
+    protected function perform_invoke() {
+        $action_method = "_{$this->action_name}";
+        if (method_exists($this, $action_method)) {
+            $this->$action_method();
+        } else {
+            throw new NotFoundException("No such action - {$this->action_name}");
+        }
     }
     
     //
@@ -274,18 +262,42 @@ class Controller
             $view_name = $this->action_name;
         }
         
-        $view_name = $this->controller_name . '/' . $view_name;
+        $view_name = $this->controller_path . '/' . $view_name;
         
-        if ($this->controller_namespace) {
-            $view_name = str_replace('\\', '/', $this->controller_namespace) . '/' . $view_name;
+        $view_paths = \zing\view\Base::candidate_views_for($view_name);
+        
+        $template_types = array();
+        foreach ($view_paths as $vp) {
+            $base = basename($vp[1]);
+            $p1 = strpos($base, '.');
+            $p2 = strrpos($base, '.');
+            $tt = substr($base, $p1 + 1, $p2 - $p1 - 1);
+            if (!in_array($tt, $template_types)) {
+                $template_types[] = $tt;
+            }
         }
         
-        $view_file = ZING_VIEW_DIR . '/' . $view_name . '.html.php';
+        $template_type = $this->negotiate_template_type($template_types);
         
-        $view = new \zing\view\View;
-        $view->set_controller($this);
+        foreach ($view_paths as $view_path) {
+            if (strpos($view_path[1], ".$template_type.") !== false) {
+                break;
+            }
+        }
         
-        $this->response->set_body($view->render_file($view_file));
+        $handler_ext = substr($view_path[1], strrpos($view_path[1], '.') + 1);
+        
+        if (!isset(self::$view_handlers[$handler_ext])) {
+            throw new \Exception("no registered view handler for .$handler_ext");
+        }
+        
+        $handler_class = self::$view_handlers[$handler_ext];
+        
+        $handler = new $handler_class;
+        $handler->set_template_type($template_type);
+        $handler->import_from_controller($this);
+        
+        $this->response->set_body($handler->render_view($view_name, $view_path[0]));
         
     }
     

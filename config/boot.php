@@ -23,8 +23,8 @@ date_default_timezone_set('Europe/London');
 
 $GLOBALS['_ZING'] = array();
 
-define('ZING_VERSION',      '0.0.1');
-define('ZING_SIGNATURE',    'Zing! Framework v' . ZING_VERSION);
+define('ZING_VERSION',          '0.0.1');
+define('ZING_SIGNATURE',        'Zing! Framework v' . ZING_VERSION);
 
 define('ZING_CONFIG_DIR',       dirname(__FILE__));
 define('ZING_ROOT',             dirname(ZING_CONFIG_DIR));
@@ -185,6 +185,7 @@ function __autoload($class) {
 	  'UnsupportedOperationException' => 'vendor/base-php/inc/base.php',
 	  'IOException' => 'vendor/base-php/inc/base.php',
 	  'NotFoundException' => 'vendor/base-php/inc/base.php',
+	  'NoSuchMethodException' => 'vendor/base-php/inc/base.php',
 	  'SecurityException' => 'vendor/base-php/inc/base.php',
 	  'SyntaxException' => 'vendor/base-php/inc/base.php',
 	  'Base' => 'vendor/base-php/inc/base.php',
@@ -199,6 +200,8 @@ function __autoload($class) {
 	  'File' => 'vendor/base-php/inc/file.php',
 	  'UploadedFile' => 'vendor/base-php/inc/file.php',
 	  'UploadedFileError' => 'vendor/base-php/inc/file.php',
+	  'UnsupportedImageTypeException' => 'vendor/base-php/inc/image.php',
+	  'Image' => 'vendor/base-php/inc/image.php',
 	  'MIME' => 'vendor/base-php/inc/mime.php',
 	  'MoneyConversionException' => 'vendor/base-php/inc/money.php',
 	  'Money' => 'vendor/base-php/inc/money.php',
@@ -230,7 +233,9 @@ function __autoload($class) {
 	  'zing\\routing\\RoutingException' => 'framework/classes/routing.php',
 	  'zing\\routing\\DuplicateRouteException' => 'framework/classes/routing.php',
 	  'zing\\routing\\Router' => 'framework/classes/routing.php',
-	  'zing\\view\\View' => 'framework/classes/view.php',
+	  'zing\\view\\MissingViewException' => 'framework/classes/view.php',
+	  'zing\\view\\Base' => 'framework/classes/view.php',
+	  'zing\\view\\PHPHandler' => 'framework/classes/view.php',
 	  'zing\\sys\\Config' => 'framework/classes/sys/config.php',
 	  'zing\\sys\\JS' => 'framework/classes/sys/js.php',
 	  'zing\\plugin\\Dependency' => 'framework/classes/plugin/dependency.php',

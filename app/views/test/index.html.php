@@ -10,6 +10,8 @@
     });
 }); ?>
 
+<?= trim(' fffff   ') ?>
+
 <?= i('zing.png') ?>
 
 <?= text_input('foo', 'hello') ?>
