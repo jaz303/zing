@@ -10,3 +10,15 @@
 [submodule "vendor/ztest"]
 	path = vendor/ztest
 	url = git://github.com/jaz303/ztest.git
+[submodule "zing/vendor/superload"]
+	path = zing/vendor/superload
+	url = git://github.com/jaz303/superload.git
+[submodule "zing/vendor/base-php"]
+	path = zing/vendor/base-php
+	url = git://github.com/jaz303/base-php.git
+[submodule "zing/vendor/phake"]
+	path = zing/vendor/phake
+	url = git://github.com/jaz303/phake.git
+[submodule "zing/vendor/ztest"]
+	path = zing/vendor/ztest
+	url = git://github.com/jaz303/ztest
