@@ -94,12 +94,12 @@ class HTMLHelper
         return $html;
     }
     
-    function link_to($html, $url, $options = array()) {
+    public static function link_to($html, $url, $options = array()) {
         $options['href'] = $url;
         return self::tag('a', $html, $options);
     }
 
-    function mail_to($html, $address = null, $options = array()) {
+    public static function mail_to($html, $address = null, $options = array()) {
         if (is_array($address)) {
             $options = $address;
             $address = null;
@@ -108,6 +108,28 @@ class HTMLHelper
             $address = $html;
         }
         return self::link_to($html, "mailto:$address", $options);
+    }
+    
+    public static function error_messages($errors, $subject = 'object') {
+        if ($errors instanceof \Errors) {
+            if ($errors->ok()) return '';
+            $errors = $errors->full_messages();
+        } elseif (is_array($errors)) {
+            if (count($errors) == 0) return '';
+        } else {
+            throw new \Exception("error_messages() expects either an Errors instance or an array");
+        }
+        
+        $html  = "<div class='errors'>\n";
+        $html .= "  <h2>The following errors occurred, please correct them:</h2>\n";
+        $html .= "  <ul>\n";
+        foreach ($errors as $e) {
+            $html .= "    <li>" . htmlspecialchars($e) . "</li>\n";
+        }
+        $html .= "  </ul>\n";
+        $html .= "</div>\n";
+        
+        return $html;
     }
 }
 
