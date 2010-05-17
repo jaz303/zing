@@ -76,6 +76,15 @@ class HTMLHelper
         return $html;
     }
     
+    public static function opening_tag($name, $attributes = array()) {
+        $html = "<$name";
+        foreach ($attributes as $k => $v) {
+            $html .= ' ' . $k . '="' . htmlspecialchars($v) . '"';
+        }
+        $html .= '>';
+        return $html;
+    }
+    
     public static function empty_tag($name, $attributes = array()) {
         $html = "<$name";
         foreach ($attributes as $k => $v) {
@@ -84,25 +93,100 @@ class HTMLHelper
         $html .= ' />';
         return $html;
     }
+    
+    function link_to($html, $url, $options = array()) {
+        $options['href'] = $url;
+        return self::tag('a', $html, $options);
+    }
+
+    function mail_to($html, $address = null, $options = array()) {
+        if (is_array($address)) {
+            $options = $address;
+            $address = null;
+        }
+        if ($address === null) {
+            $address = $html;
+        }
+        return self::link_to($html, "mailto:$address", $options);
+    }
 }
 
 class FormHelper
 {
-    public static function hidden_input($name, $value = '', $options = array()) {
+    public static function start_form($action, $options) {
+        $options += array('method' => 'post');
+        $options['action'] = $action;
+        if (isset($options['multipart'])) {
+            $options['enctype'] = 'multipart/form-data';
+            unset($options['multipart']);
+        }
+        return HTMLHelper::opening_tag('form', $options);
+    }
+    
+    public static function end_form() {
+        return "</form>";
+    }
+    
+    public static function hidden_field_tag($name, $value = '', $options = array()) {
         $options['type'] = 'hidden';
+        $options['name'] = $name;
         $options['value'] = $value;
         return HTMLHelper::empty_tag('input', $options);
     }
     
-    public static function text_input($name, $value = '', $options = array()) {
+    public static function hidden_field_tags($array, $prefix = '') {
+        $html = '';
+        foreach ($array as $k => $v) {
+            $name = strlen($prefix) ? "{$prefix}[$k]" : $k;
+            if (is_enumerable($v)) {
+                $html .= self::hidden_field_tags($v, $name);
+            } else {
+                $html .= self::hidden_field_tag($name, $v);
+            }
+        }
+        return $html;
+    }
+    
+    public static function text_field_tag($name, $value = '', $options = array()) {
         $options['type'] = 'text';
+        $options['name'] = $name;
         $options['value'] = $value;
         return HTMLHelper::empty_tag('input', $options);
     }
     
-    public static function textarea($name, $value = '', $options = array()) {
+    public static function password_field_tag($name, $value = '', $options = array()) {
+        $options['type'] = 'password';
+        $options['name'] = $name;
+        $options['value'] = $value;
+        return HTMLHelper::empty_tag('input', $options);
+    }
+    
+    public static function textarea_tag($name, $value = '', $options = array()) {
         $options['name'] = $name;
         return HTMLHelper::tag('textarea', $value, $options);
+    }
+    
+    public static function file_field_tag($name, $options = array()) {
+        return HTMLHelper::empty_tag('input', array(
+            'type'  => 'file',
+            'name'  => $name
+        ) + $options);
+    }
+    
+    public static function check_box_tag($name, $checked = false, $options = array()) {
+        $options['type'] = 'checkbox';
+        $options['name'] = $name;
+        $options += array('value' => 1);
+        if ($checked) $options['checked'] = 'checked';
+        return self::hidden_field_tag($name, 0) . HTMLHelper::empty_tag('input', $options);
+    }
+
+    public static function radio_button_tag($name, $value, $current_value = null, $options = array()) {
+        $options['type'] = 'radio';
+        $options['name'] = $name;
+        $options['value'] = $value;
+        if ($value == $current_value || $current_value === true) $options['checked'] = 'checked';
+        return HTMLHelper::empty_tag('input', $options);
     }
 }
 
@@ -156,15 +240,15 @@ class AssetHelper
     }
     
     public static function javascript_collection($collection_name) {
-            $html = '';
-            foreach (\zing\view\Base::$javascript_collections[$collection_name] as $js) {
-                if ($js[0] == ':') {
-                    $html .= self::javascript_collection(substr($js, 1));
-                } else {
-                    $html .= self::javascript_include_tag($js) . "\n";
-                }
+        $html = '';
+        foreach (\zing\view\Base::$javascript_collections[$collection_name] as $js) {
+            if ($js[0] == ':') {
+                $html .= self::javascript_collection(substr($js, 1));
+            } else {
+                $html .= self::javascript_include_tag($js) . "\n";
             }
-            return $html;
         }
+        return $html;
+    }
 }
 ?>

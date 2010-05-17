@@ -12,6 +12,8 @@ Core values: efficiency, flexibility, playing nice with others, getting the f**k
 Things we like: duck-typing  
 Things we don't like: interfaces
 
+__"Legibility over Engineering"__
+
 Any resemblance to Ruby on Rails is entirely deliberate.
 
 Features (complete and planned)

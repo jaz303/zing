@@ -10,10 +10,19 @@
     });
 }); ?>
 
-<?= trim(' fffff   ') ?>
+<?= start_form('', array('id' => 'moose')) ?>
 
-<?= i('zing.png') ?>
+  <?= trim(' fffff   ') ?>
 
-<?= text_input('foo', 'hello') ?>
+  <?= i('zing.png') ?>
 
-<?= textarea('raaa', 'Here is some content to edit') ?>
+  <?= text_field_tag('foo', 'hello') ?>
+
+  <?= hidden_field_tags(array('foo' => 'bar', 'baz' => array('a' => 1, 'b' => 2, 'c' => 3))); ?>
+
+  <?= check_box_tag('moose', true) ?>
+  <?= file_field_tag('barz') ?>
+
+  <?= textarea_tag('raaa', 'Here is some content to edit') ?>
+
+<?= end_form() ?>
