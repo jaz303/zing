@@ -38,8 +38,6 @@ define('ZING_VENDOR_DIR',       ZING_ROOT . '/vendor');
 define('ZING_PLUGIN_DIR',       ZING_VENDOR_DIR . '/plugins');
 define('ZING_CONSOLE',          php_sapi_name() == 'cli');
 
-set_include_path('.:' . ZING_ROOT);
-
 zing_lib('common');
 zing_load_environment('main');
 zing_load_configuration('main');
@@ -238,7 +236,7 @@ function __autoload($class) {
 	// SUPERLOAD-END
     
     if (isset($map[$class])) {
-        require $map[$class];
+        require ZING_ROOT . '/' . $map[$class];
     }
     
 }
