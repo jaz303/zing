@@ -127,17 +127,21 @@ class Controller
      */
     protected static $filters = array();
     
+    private $hierarchy = null;
+    
     protected function get_filters($chain) {
         
-        $hierarchy = array();
-        $class = get_class($this);
-        while ($class && $class != '\\zing\\Controller') {
-            array_unshift($hierarchy, $class);
-            $class = get_parent_class($class);
+        if ($this->hierarchy === null) {
+            $this->hierarchy = array();
+            $class = get_class($this);
+            while ($class && $class != 'zing\\Controller') {
+                array_unshift($this->hierarchy, $class);
+                $class = get_parent_class($class);
+            }
         }
         
         $filters = array();
-        foreach ($hierarchy as $h) {
+        foreach ($this->hierarchy as $h) {
             if (isset($h::$filters[$chain])) {
                 foreach ($h::$filters[$chain] as $method => $restrictions) {
                     if ($restrictions === true) {
