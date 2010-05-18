@@ -102,32 +102,73 @@ class Controller
     // Callbacks
     
     /**
-     * Called before controller action is invoked
-     * If you render or redirect in this method, the main action will not be
-     * invoked.
-     */
-    protected function before() { }
-    
-    /**
-     * Called after controller action has been invoked.
-     * This is the last chance to render/redirect if it hasn't happened yet.
-     */
-    protected function after() { }
-    
-    /**
-     * Called before rendering occurs
-     */
-    protected function before_render() { }
-    
-    /**
-     * Called after rendering is completed
-     */
-    protected function after_render() { }
-    
-    /**
      * This really just exists so subclasses can call parent::__construct()
      */
     public function __construct() {}
+    
+    //
+    // Filters
+    
+    /**
+     * Default filter set is empty.
+     *
+     * Define filters in subclasses by assigned to this array.
+     * The filter invocation mechanism will descend the class hierarchy to work out
+     * the correct filters to apply for each action.
+     *
+     * protected static $filters = array(
+     *   'before' => array(
+     *     'method_1' => true,                          // always run this filter
+     *     'method_2' => false,                         // cancel this filter (if it was specified in a parent class)
+     *     'method_3' => array('only' => array('foo')), // only execute this filter for action 'foo'
+     *     'method_4' => array('except' => 'bar')       // execute this filter for all actions except 'bar'
+     *   )
+     * )
+     */
+    protected static $filters = array();
+    
+    protected function get_filters($chain) {
+        
+        $hierarchy = array();
+        $class = get_class($this);
+        while ($class && $class != '\\zing\\Controller') {
+            array_unshift($hierarchy, $class);
+            $class = get_parent_class($class);
+        }
+        
+        $filters = array();
+        foreach ($hierarchy as $h) {
+            if (isset($h::$filters[$chain])) {
+                foreach ($h::$filters[$chain] as $method => $restrictions) {
+                    if ($restrictions === true) {
+                        $filters[$method] = true;
+                    } elseif ($restrictions === false) {
+                        unset($filters[$method]);
+                    } elseif (is_array($restrictions)) {
+                        if ((isset($restrictions['only']) && in_array($this->action_name, (array) $restrictions['only']))
+                            || (isset($restrictions['except']) && !in_array($this->action_name, (array) $restrictions['except']))) {
+                            $filters[$method] = true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return array_keys($filters);
+    
+    }
+    
+    protected function invoke_filter_chain($chain, $abort_on_perform = false) {
+        foreach ($this->get_filters($chain) as $filter) {
+            $this->$filter();
+            if ($abort_on_perform && $this->has_performed()) {
+                return;
+            }
+        }
+    }
+    
+    //
+    // Entry Point
     
     public function invoke(\zing\http\Request $request, $action) {
         
@@ -138,12 +179,12 @@ class Controller
         $this->controller_name      = basename($this->controller_path);
         $this->action_name          = $action;
         
-        $this->before();
+        $this->invoke_filter_chain('before', true);
         
         if (!$this->has_performed()) $this->perform_invoke();
         if (!$this->has_performed()) $this->render('view');
         
-        $this->after();
+        $this->invoke_filter_chain('after');
         
         return $this->response;
     
@@ -184,11 +225,13 @@ class Controller
         
         $this->set_performed(true);
         
-        $this->before_render();
+        $this->invoke_filter_chain('before_render');
+
         $render_args = func_get_args();
         array_shift($render_args);
         call_user_func_array(array($this, "render_$what"), $render_args);
-        $this->after_render();
+        
+        $this->invoke_filter_chain('after_render');
     
     }
     
