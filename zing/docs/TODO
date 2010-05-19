@@ -1,44 +1,56 @@
+Alpha Release
+-------------
+
+[ ] Views
+  [x] Templates, partials, layouts
+  [ ] Helpers
+    [ ] Select helper
+    [ ] Flashes
+    [x] Field helpers
+    [x] Form tag
+    [x] JS collections
+    [x] CSS collections
+[ ] Plugin installation
+  [x] method of adding code to application.js
+  [x] method of adding code to application.php
+[ ] Generators
+[ ] Lighty gem
+[ ] Flash
+[ ] Session
+[x] Resurrect image class from BasePHP
+[x] Packaging scripts
+  [x] Move all project files to zing subdir
+
 Router
 ------
-[X] Get it "working"
-[X] Optimisation/compilation
+
+[x] Get it "working"
+[x] Optimisation/compilation
 [ ] Prune static routes from dynamic table
-[ ] Blocks for inheriting options
-[ ] Namespace support
-[ ] Support for null defaults
+[x] Blocks for inheriting options
+[x] Namespace support
+[x] Support for null defaults
 [ ] Support * globbing
 
-Dispatcher
+Screencast
 ----------
-[ ] Exception handling
 
-Request
+[ ] Migration
+[ ] Tumblelog, image uploading/resizng
+[ ] Lightbox installed automatically and configured via plugin
+[ ] CRUD
+[ ] Error messages
+
+Website
 -------
-[X] Request class
-[ ] Content negotiation
 
-Views
------
-[ ] Template types
-[ ] PHP templates - partials, layouts
+[ ] Overview
+[ ] Screencast
+[ ] Help Wanted
+[ ] Download
+[ ] Quickstart
 
-Ancillaries
+Plugin Repo
 -----------
-[ ] Finish Date_Time class (BasePHP)
 
-Database
---------
-[X] Migrations (app)
-[ ] Migrations (plugin)
-
-Plugins
--------
-[ ] Port plugin framework from Freefall
-[ ] Distribution format
-
-[ ] Write work-queue plugin as example
-
-Release
--------
-[ ] Website
-[ ] Getting started
+[ ] User registration
