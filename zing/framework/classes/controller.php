@@ -21,6 +21,9 @@ class Controller
         'php'       => 'zing\\view\\PHPHandler'
     );
     
+    //
+    // Important stuff
+    
     protected $request;
     protected $response;
     
@@ -32,12 +35,13 @@ class Controller
     // Fields with double leading underscores will not be copied to the view
     // ($response isn't copied either, for that matter)
     
+    protected $__auto_session           = true;
     protected $__performed              = false;
     protected $__layout                 = false;
     protected $__helpers                = array();
     
     //
-    //
+    // Performance - controller has performed if rendered or redirected
     
     protected function has_performed() {
         return $this->__performed;
@@ -48,7 +52,7 @@ class Controller
     }
     
     //
-    //
+    // Layout
     
     public function get_layout() {
         return $this->__layout;
@@ -59,7 +63,7 @@ class Controller
     }
     
     //
-    //
+    // Helpers
     
     public function get_helpers() {
         return $this->__helpers;
@@ -70,7 +74,7 @@ class Controller
     }
     
     //
-    //
+    // Assignments for view
     
     public function get_assigns() {
         $assigns = array();
@@ -82,6 +86,37 @@ class Controller
         unset($assigns['response']);
         $assigns['controller'] = $this;
         return $assigns;
+    }
+    
+    //
+    // Lazy loading for sessions and default DB connection
+    
+    public function __get($k) {
+        switch ($k) {
+            case 'session':
+                $this->init_session();
+                return $this->session;
+            case 'db':
+                $this->db = \GDB::instance();
+                return $this->db;
+            default:
+                return null;
+        }
+    }
+    
+    //
+    // Session/flash
+    
+    protected function auto_session($auto = true) {
+        $this->__auto_session = $auto;
+    }
+    
+    protected function init_session() {
+        $this->session = new \zing\http\Session;
+    }
+    
+    protected function flash($type, $message = null) {
+        $this->session->flash($type, $message);
     }
     
     /**
@@ -101,10 +136,9 @@ class Controller
     //
     // Callbacks
     
-    /**
-     * This really just exists so subclasses can call parent::__construct()
-     */
     public function __construct() {}
+    
+    protected function init() {}
     
     //
     // Filters
@@ -176,12 +210,20 @@ class Controller
     
     public function invoke(\zing\http\Request $request, $action) {
         
-        $this->request              = $request;
-        $this->response             = new \zing\http\Response;
-        
         $this->controller_path      = preg_replace('/_controller$/', '', \zing_class_path($this));
         $this->controller_name      = basename($this->controller_path);
         $this->action_name          = $action;
+        $this->request              = $request;
+        
+        $this->init();
+        
+        if ($this->response === null) {
+            $this->response = new \zing\http\Response;
+        }
+        
+        if ($this->__auto_session) {
+            $this->init_session();
+        }
         
         $this->invoke_filter_chain('before', true);
         
@@ -189,6 +231,10 @@ class Controller
         if (!$this->has_performed()) $this->render('view');
         
         $this->invoke_filter_chain('after');
+        
+        if (isset($this->session)) {
+            $this->session->finalize();
+        }
         
         return $this->response;
     
@@ -203,7 +249,7 @@ class Controller
         if (method_exists($this, $action_method)) {
             $this->$action_method();
         } else {
-            throw new NotFoundException("No such action - {$this->action_name}");
+            throw new \NotFoundException("No such action - {$this->action_name}");
         }
     }
     

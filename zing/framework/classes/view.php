@@ -29,7 +29,7 @@ abstract class Base
     public static $view_paths = array(
         ZING_VIEW_DIR
     );
-    
+
     public static $stylesheet_collections = array(
         'defaults'          => array('main.css', ':jquery-plugins'),
         'jquery-plugins'    => array()

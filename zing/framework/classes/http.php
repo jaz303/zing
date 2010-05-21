@@ -417,4 +417,55 @@ class FileResponse extends AbstractResponse
         fclose($fd);
     }
 }
+
+/**
+ * Session handling
+ * This will have to do for now, ultimately things will have to change as this
+ * thing outputs headers itself.
+ *
+ * In order to future proof against changes, it's recommended that you don't
+ * ever instantiate a Session instance yourself as the constructor parameters
+ * may change without warning.
+ */
+class Session implements \ArrayAccess
+{
+    private $flash_now;
+    
+    public function __construct() {
+        session_start();
+        $this->flash_now = array();
+        if (isset($_SESSION['__flash_next'])) {
+            $this->flash_now = $_SESSION['__flash_next'];
+            $_SESSION['__flash_next'] = array();
+        }
+    }
+    
+    public function flash($type, $message) {
+        $_SESSION['__flash_next'][] = array('type' => $type, 'message' => $message);
+    }
+    
+    public function current_flash() {
+        return $this->flash_now;
+    }
+    
+    public function finalize() {
+        session_commit();
+    }
+    
+    public function offsetExists($k) {
+        return array_key_exists($k, $_SESSION);
+    }
+    
+    public function offsetGet($k) {
+        return $_SESSION[$k];
+    }
+    
+    public function offsetSet($k, $v) {
+        $_SESSION[$k] = $v;
+    }
+    
+    public function offsetUnset($k) {
+        unset($_SESSION[$k]);
+    }
+}
 ?>

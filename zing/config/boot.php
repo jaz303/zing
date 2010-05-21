@@ -41,7 +41,7 @@ define('ZING_CONSOLE',          php_sapi_name() == 'cli');
 
 zing_lib('common');
 zing_load_environment('main');
-zing_load_configuration('main');
+zing_load_config('main');
 
 //
 // Export GDB config if present
@@ -74,7 +74,7 @@ function zing_export_environment($name, $env = null) {
     return $ENV;
 }
 
-function zing_load_configuration($name) {
+function zing_load_config($name) {
     global $_ZING;
     require ZING_CONFIG_DIR . '/app/' . $name . '.php';
 }
@@ -231,6 +231,7 @@ function __autoload($class) {
 	  'zing\\http\\AbstractResponse' => 'framework/classes/http.php',
 	  'zing\\http\\Response' => 'framework/classes/http.php',
 	  'zing\\http\\FileResponse' => 'framework/classes/http.php',
+	  'zing\\http\\Session' => 'framework/classes/http.php',
 	  'zing\\routing\\RoutingException' => 'framework/classes/routing.php',
 	  'zing\\routing\\DuplicateRouteException' => 'framework/classes/routing.php',
 	  'zing\\routing\\Router' => 'framework/classes/routing.php',
@@ -254,7 +255,17 @@ function __autoload($class) {
 	  'zing\\db\\Migrator' => 'framework/classes/db/migration.php',
 	  'zing\\db\\MigrationLocator' => 'framework/classes/db/migration.php',
 	  'zing\\db\\Migration' => 'framework/classes/db/migration.php',
-	  'TestController' => 'app/controllers/test_controller.php',
+	  'admin\\TestController' => 'app/controllers/test_controller.php',
+	  'zing\\cms\\admin\\Structure' => 'vendor/plugins/zing.cms/classes/admin.php',
+	  'zing\\cms\\Attribution' => 'vendor/plugins/zing.cms/classes/cms.php',
+	  'zing\\cms\\routing\\Router' => 'vendor/plugins/zing.cms/classes/routing.php',
+	  'zing\\cms\\FilterAbortException' => 'vendor/plugins/zing.cms/classes/utils.php',
+	  'zing\\cms\\Utils' => 'vendor/plugins/zing.cms/classes/utils.php',
+	  'zing\\cms\\helpers\\AdminHelper' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
+	  'zing\\cms\\content\\AdminListHandler' => 'vendor/plugins/zing.cms/classes/content/admin_list_view.php',
+	  'zing\\cms\\content\\AdminRowHandler' => 'vendor/plugins/zing.cms/classes/content/admin_row_handler.php',
+	  'zing\\cms\\content\\ModelSpecification' => 'vendor/plugins/zing.cms/classes/content/model_specification.php',
+	  'zing\\cms\\content\\Node' => 'vendor/plugins/zing.cms/classes/content/node.php',
 	);
 	// SUPERLOAD-END
     
