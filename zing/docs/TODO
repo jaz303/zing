@@ -15,8 +15,8 @@ Alpha Release
   [x] method of adding code to application.php
 [ ] Generators
 [ ] Lighty gem
-[ ] Flash
-[ ] Session
+[x] Flash
+[x] Session
 [x] Resurrect image class from BasePHP
 [x] Packaging scripts
   [x] Move all project files to zing subdir
