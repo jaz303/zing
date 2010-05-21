@@ -1,3 +1,3 @@
-document_root: "zing/public"
+document_root: "public"
 dispatcher: "/__dispatch.php"
 directory_listing: false
