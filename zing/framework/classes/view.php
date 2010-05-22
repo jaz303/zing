@@ -360,11 +360,18 @@ class PHPHandler extends Base
                     } elseif ($tok == '{') {
                         $out .= 'function($_ = null) {';
                     } else {
-                        $out .= "^" . (is_array($tok) ? $tok[1] : $tok);
+                        $out .= "^" . $this->token_string($tok);
                     }
                 } else{
                     $out .= $tok;
                 }
+            } elseif ($tok[0] == T_OBJECT_OPERATOR) {
+                // this is a bit of a hack...
+                // if see an object deref ( $foo-> ), just output the arrow and
+                // the next token. this prevents any following method invocation
+                // from being rewritten as a call to a helper
+                $out .= $this->token_string($tok);
+                $out .= $this->token_string($this->next());
             } elseif ($tok[0] == T_STRING) {
                 $func = $tok[1];
                 $buff = '';
