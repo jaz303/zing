@@ -17,15 +17,16 @@ class Locator
         $plugins = array();
         
         foreach ($this->plugin_roots() as $plugin_path) {
-            $dh = opendir($plugin_path);
-            while (($file = readdir($dh)) !== false) {
-                if ($file == '.' || $file == '..') continue;
-                $abs_plugin_path = $plugin_path . '/' . $file;
-                if (PluginStub::is_plugin($abs_plugin_path)) {
-                    $plugins[] = new PluginStub($abs_plugin_path);
+            if (($dh = @opendir($plugin_path))) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file == '.' || $file == '..') continue;
+                    $abs_plugin_path = $plugin_path . '/' . $file;
+                    if (PluginStub::is_plugin($abs_plugin_path)) {
+                        $plugins[] = new PluginStub($abs_plugin_path);
+                    }
                 }
+                closedir($dh);
             }
-            closedir($dh);
         }
         
         return $plugins;
