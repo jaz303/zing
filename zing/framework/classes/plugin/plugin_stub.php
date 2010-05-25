@@ -19,25 +19,16 @@ class PluginStub
     private $class_name;
     
     public function __construct($plugin_directory) {
-        $this->directory    = $plugin_directory;
-        $this->class_name   = '';
+        
+        $this->directory = $plugin_directory;
         
         $initialiser = self::initialiser_for_path($this->directory);
-        foreach (file($initialiser) as $line) {
-            if (preg_match('/namespace\s+([^;{\s]+)/', $line, $matches)) {
-                $this->class_name .= $matches[1] . '\\';
-            } elseif (preg_match('/class\s+([^{\s]+)/', $line, $matches)) {
-                $this->class_name .= $matches[1];
-            }
-        }
+        $this->class_name = \zing\lang\Introspector::first_class_in_file($initialiser);
         
         if (!$this->class_name) {
             throw new Exception("expected $initialiser to define a plugin class");
         }
-        
-        if ($this->class_name[0] != '\\') {
-            $this->class_name = '\\' . $this->class_name;
-        }
+    
     }
     
     public function directory() { return $this->directory; }
