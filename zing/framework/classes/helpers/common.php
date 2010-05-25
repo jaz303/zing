@@ -149,14 +149,14 @@ class FormHelper
         return "</form>";
     }
     
-    public static function hidden_field_tag($name, $value = '', $options = array()) {
+    public static function hidden_field($name, $value = '', $options = array()) {
         $options['type'] = 'hidden';
         $options['name'] = $name;
         $options['value'] = $value;
         return HTMLHelper::empty_tag('input', $options);
     }
     
-    public static function hidden_field_tags($array, $prefix = '') {
+    public static function hidden_fields($array, $prefix = '') {
         $html = '';
         foreach ($array as $k => $v) {
             $name = strlen($prefix) ? "{$prefix}[$k]" : $k;
@@ -169,33 +169,33 @@ class FormHelper
         return $html;
     }
     
-    public static function text_field_tag($name, $value = '', $options = array()) {
+    public static function text_field($name, $value = '', $options = array()) {
         $options['type'] = 'text';
         $options['name'] = $name;
         $options['value'] = $value;
         return HTMLHelper::empty_tag('input', $options);
     }
     
-    public static function password_field_tag($name, $value = '', $options = array()) {
+    public static function password_field($name, $value = '', $options = array()) {
         $options['type'] = 'password';
         $options['name'] = $name;
         $options['value'] = $value;
         return HTMLHelper::empty_tag('input', $options);
     }
     
-    public static function textarea_tag($name, $value = '', $options = array()) {
+    public static function textarea($name, $value = '', $options = array()) {
         $options['name'] = $name;
         return HTMLHelper::tag('textarea', $value, $options);
     }
     
-    public static function file_field_tag($name, $options = array()) {
+    public static function file_field($name, $options = array()) {
         return HTMLHelper::empty_tag('input', array(
             'type'  => 'file',
             'name'  => $name
         ) + $options);
     }
     
-    public static function check_box_tag($name, $checked = false, $options = array()) {
+    public static function check_box($name, $checked = false, $options = array()) {
         $options['type'] = 'checkbox';
         $options['name'] = $name;
         $options += array('value' => 1);
@@ -203,12 +203,33 @@ class FormHelper
         return self::hidden_field_tag($name, 0) . HTMLHelper::empty_tag('input', $options);
     }
 
-    public static function radio_button_tag($name, $value, $current_value = null, $options = array()) {
+    public static function radio_button($name, $value, $current_value = null, $options = array()) {
         $options['type'] = 'radio';
         $options['name'] = $name;
         $options['value'] = $value;
         if ($value == $current_value || $current_value === true) $options['checked'] = 'checked';
         return HTMLHelper::empty_tag('input', $options);
+    }
+    
+    public static function select($name, $value, $choices, $options = array()) {
+        $options['name'] = $name;
+        $html = HTMLHelper::opening_tag('select', $options) . "\n";
+        foreach ($choices as $k => $v) {
+            $s = $k == $value ? ' selected=\"selected\"' : '';
+            $k = htmlentities($k, ENT_QUOTES);
+            $v = htmlspecialchars($v);
+            $html .= "<option value=\"$k\"{$s}>$v</option>\n";
+        }
+        $html .= "</select>\n";
+        return $html;
+    }
+    
+    public static function country_select($name, $value, $options = array()) {
+        $preferred = isset($options['preferred']) ? $options['preferred'] : array();
+        $separator = isset($options['separator']) ? $options['separator'] : '-----';
+        unset($options['preferred']);
+        unset($options['separator']);
+        return self::select($name, $value, \ISO_Country::names($preferred, $separator), $options);
     }
 }
 
@@ -230,7 +251,7 @@ class AssetHelper
     }
     
     public static function javascript_path($javascript) {
-        return self::asset_path($javascript, 'javascript', 'js');
+        return self::asset_path($javascript, 'javascripts', 'js');
     }
     
     public static function image_path($image) {
