@@ -109,6 +109,16 @@ if (ZING_CONSOLE) {
 // Input transformation
 
 //
+// Compatibility
+
+if (strpos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) {
+    if (($p = strpos($_SERVER['REQUEST_URI'], '?')) !== false) {
+        $_SERVER['QUERY_STRING'] = substr($_SERVER['REQUEST_URI'], $p + 1);
+        parse_str($_SERVER['QUERY_STRING'], $_GET);
+    }
+}
+
+//
 // Request keys beginning with @ and $ and converted to date and money values
 
 zing_rewire($_POST);
@@ -255,13 +265,25 @@ function __autoload($class) {
 	  'zing\\db\\Migrator' => 'framework/classes/db/migration.php',
 	  'zing\\db\\MigrationLocator' => 'framework/classes/db/migration.php',
 	  'zing\\db\\Migration' => 'framework/classes/db/migration.php',
+	  'ProductAdminInterface' => 'app/tables/product/admin_interface.php',
+	  'ProductTableHandler' => 'app/tables/product/table_handler.php',
 	  'admin\\TestController' => 'app/controllers/test_controller.php',
+	  'admin\\tables\\ProductController' => 'app/controllers/admin/tables/product_controller.php',
 	  'zing\\cms\\admin\\Structure' => 'vendor/plugins/zing.cms/classes/admin.php',
 	  'zing\\cms\\Attribution' => 'vendor/plugins/zing.cms/classes/cms.php',
 	  'zing\\cms\\routing\\Router' => 'vendor/plugins/zing.cms/classes/routing.php',
 	  'zing\\cms\\FilterAbortException' => 'vendor/plugins/zing.cms/classes/utils.php',
 	  'zing\\cms\\Utils' => 'vendor/plugins/zing.cms/classes/utils.php',
+	  'zing\\cms\\table\\QueryBuilder' => 'vendor/plugins/zing.cms/classes/table/table_editing.php',
+	  'zing\\cms\\table\\Scope' => 'vendor/plugins/zing.cms/classes/table/table_editing.php',
+	  'zing\\cms\\table\\AdminInterface' => 'vendor/plugins/zing.cms/classes/table/table_editing.php',
+	  'zing\\cms\\table\\TableHandler' => 'vendor/plugins/zing.cms/classes/table/table_editing.php',
+	  'zing\\cms\\table\\AdminTableController' => 'vendor/plugins/zing.cms/classes/table/table_editing.php',
 	  'zing\\cms\\helpers\\AdminHelper' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
+	  'zing\\cms\\helpers\\AdminFormHeading' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
+	  'zing\\cms\\helpers\\AdminFormInput' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
+	  'zing\\cms\\helpers\\AdminForm' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
+	  'zing\\cms\\helpers\\AdminTabularForm' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
 	  'zing\\cms\\content\\AdminListHandler' => 'vendor/plugins/zing.cms/classes/content/admin_list_view.php',
 	  'zing\\cms\\content\\AdminRowHandler' => 'vendor/plugins/zing.cms/classes/content/admin_row_handler.php',
 	  'zing\\cms\\content\\ModelSpecification' => 'vendor/plugins/zing.cms/classes/content/model_specification.php',

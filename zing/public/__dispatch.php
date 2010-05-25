@@ -29,7 +29,9 @@ try {
         throw new zing\http\Exception(zing\http\Constants::NOT_FOUND,
                                       "no matching route found for '{$request->request_uri()}'");
     }
-
+    
+    $request->merge_params($route);
+    
     if (!isset($route['controller']) || !isset($route['action'])) {
         throw new \Exception("invalid route - missing controller or action");
     }

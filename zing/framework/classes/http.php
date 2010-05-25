@@ -188,7 +188,7 @@ class Headers implements \ArrayAccess, \IteratorAggregate
     }
 }
 
-class Request
+class Request implements \ArrayAccess, \IteratorAggregate
 {
     public static function build_request_from_input() {
         $r = new self;
@@ -206,13 +206,7 @@ class Request
         $r->host        = $host;
         $r->port        = (int) $_SERVER['SERVER_PORT'];
         $r->path        = $path;
-        
-        if (!empty($_SERVER['QUERY_STRING'])) {
-            $r->query = $_SERVER['QUERY_STRING'];
-        } elseif ($p) {
-            $r->query = substr($_SERVER['REQUEST_URI'], $p + 1);
-        }
-        
+        $r->query       = $_SERVER['QUERY_STRING'];
         $r->request_uri = $_SERVER['REQUEST_URI'];
         
         $r->method      = strtolower($_SERVER['REQUEST_METHOD']);
@@ -227,8 +221,12 @@ class Request
         $r->client_ip   = $_SERVER['REMOTE_ADDR'];
         $r->client_port = $_SERVER['REMOTE_PORT'];
         
+        $r->params      = $_POST + $_GET; // POST takes precedence
+        
         return $r;
     }
+    
+    private $params             = array();
     
     private $auth_type          = null;
     private $username           = '';
@@ -303,6 +301,30 @@ class Request
     
     public function client_ip() { return $this->client_ip; }
     public function client_port() { return $this->client_port; }
+    
+    //
+    // Return a val from params or default
+    
+    public function param($k, $default = null) {
+        return isset($this->params[$k]) ? $this->params[$k] : $default;
+    }
+    
+    //
+    // A bit hacky - exists so we can merge route parameters
+    
+    public function merge_params(array $stuff) {
+        foreach ($stuff as $k => $v) $this->params[$k] = $v;
+    }
+    
+    //
+    // ArrayAccess/IteratorAggregate
+    
+    public function offsetExists($offset) { return isset($this->params[$offset]); }
+    public function offsetGet($offset) { return $this->params[$offset]; }
+    public function offsetSet($offset, $value) { $this->params[$offset] = $value; }
+    public function offsetUnset($offset) { unset($this->params[$offset]); }
+    
+    public function getIterator() { return new \ArrayIterator($this->params); }
 }
 
 class AbstractResponse
