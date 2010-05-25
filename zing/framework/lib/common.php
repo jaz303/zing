@@ -57,6 +57,10 @@ function generate_url($u) {
     return is_scalar($u) ? (string) $u : url_for($u);
 }
 
+function is_lambda($thing) {
+    return is_object($thing) && method_exists($thing, '__invoke');
+}
+
 function is_enumerable($thing) {
     return is_array($thing) || is_object($thing);
 }
