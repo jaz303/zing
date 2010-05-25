@@ -84,6 +84,7 @@ class Controller
             }
         }
         unset($assigns['response']);
+        unset($assigns['db']);
         $assigns['controller'] = $this;
         return $assigns;
     }
@@ -355,8 +356,7 @@ class Controller
             $view_name = $this->action_name;
         }
         
-        $view_name = $this->controller_path . '/' . $view_name;
-        
+        $view_name = \zing\view\Base::resolve_relative_view_path($view_name, $this->controller_path);
         $view_paths = \zing\view\Base::candidate_views_for($view_name);
         
         $template_types = array();
