@@ -32,5 +32,9 @@ class ControllerGenerator extends \zing\generator\Generator
             $this->file => $this->__directory . '/templates/controller_template.php'
         );
     }
+    
+    protected function tasks() {
+        return array('core:regenerate_autoload_map');
+    }
 }
 ?>

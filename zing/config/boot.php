@@ -252,6 +252,7 @@ function __autoload($class) {
 	  'zing\\view\\PHPHandler' => 'framework/classes/view.php',
 	  'zing\\sys\\Config' => 'framework/classes/sys/config.php',
 	  'zing\\sys\\JS' => 'framework/classes/sys/js.php',
+	  'zing\\sys\\Utils' => 'framework/classes/sys/utils.php',
 	  'zing\\plugin\\Dependency' => 'framework/classes/plugin/dependency.php',
 	  'zing\\plugin\\Locator' => 'framework/classes/plugin/locator.php',
 	  'zing\\plugin\\Manager' => 'framework/classes/plugin/manager.php',

@@ -15,6 +15,10 @@ abstract class Generator
     public function generate(array $args) {
         $this->parse_args($args);
         $this->copy_manifest();
+        $this->after_copy();
+        foreach ($this->tasks() as $task) {
+            \zing\sys\Utils::invoke_task($task);
+        }
     }
     
     public function description() {
@@ -31,6 +35,13 @@ abstract class Generator
      * Override to do extra work after files have been copied
      */
     protected function after_copy() {}
+    
+    /**
+     * Phake tasks to run after generation
+     */
+    protected function tasks() {
+        return array();
+    }
     
     protected function copy_manifest() {
         foreach ($this->manifest() as $target => $source) {
