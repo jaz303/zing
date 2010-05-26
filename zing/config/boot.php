@@ -101,6 +101,7 @@ function zing_class_path($class) {
 // Everything hereafter is web-only...
 
 if (ZING_CONSOLE) {
+    zing_load_config('system');
     echo "Zing! Console initialised, environment: " . ZING_ENV . "\n";
     return;
 }
