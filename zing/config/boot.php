@@ -259,7 +259,7 @@ function __autoload($class) {
 	  'zing\\plugin\\Plugin' => 'framework/classes/plugin/plugin.php',
 	  'zing\\plugin\\PluginStub' => 'framework/classes/plugin/plugin_stub.php',
 	  'zing\\lang\\Introspector' => 'framework/classes/lang/introspector.php',
-	  'gdb\\lang\\OptionParser' => 'framework/classes/lang/options.php',
+	  'zing\\lang\\OptionParser' => 'framework/classes/lang/options.php',
 	  'zing\\lang\\Reflection' => 'framework/classes/lang/reflection.php',
 	  'zing\\helpers\\DebugHelper' => 'framework/classes/helpers/common.php',
 	  'zing\\helpers\\HTMLHelper' => 'framework/classes/helpers/common.php',

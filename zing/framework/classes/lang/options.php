@@ -1,5 +1,5 @@
 <?php
-namespace gdb\lang;
+namespace zing\lang;
 
 /**
  * OptionParser parses JSON-like strings into PHP arrays. It exists to provide
