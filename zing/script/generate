@@ -2,5 +2,42 @@
 <?php
 require_once dirname(__FILE__) . '/boot_console.php';
 
+$manager = zing\generator\Manager::create_with_default_locator();
 
+if ($_SERVER['argc'] == 1) {
+    
+    echo "\n";
+    echo "Installed Generators\n";
+    echo "--------------------\n";
+    
+    $directory = $manager->directory();
+    
+    $max = 0;
+    foreach (array_keys($directory) as $name) {
+        if (strlen($name) > $max) $max = strlen($name);
+    }
+    
+    foreach ($manager->directory() as $name => $description) {
+        echo str_pad($name, $max + 4) . $description . "\n";
+    }
+    
+} elseif ($_SERVER['argc'] > 1) {
+    
+    try {
+        
+        $generator_name = $_SERVER['argv'][1];
+        $generator_args = array_slice($_SERVER['argv'], 2);
+        $generator      = $manager->create($generator_name);
+        
+        $generator->generate($generator_args);
+    
+    } catch (zing\generator\GeneratorNotFoundException $gnfe) {
+        echo "Error: generator '$generator_name' is not installed\n";
+        die(1);
+    } catch (Exception $e) {
+        echo "Error: " . get_class($e) . "\n";
+        echo $e->getTraceAsString() . "\n";
+    }
+
+}
 ?>
