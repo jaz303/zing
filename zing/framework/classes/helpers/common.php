@@ -135,7 +135,7 @@ class HTMLHelper
 
 class FormHelper
 {
-    public static function start_form($action, $options) {
+    public static function start_form($action = '', $options = array()) {
         $options += array('method' => 'post');
         $options['action'] = $action;
         if (isset($options['multipart'])) {
@@ -147,6 +147,10 @@ class FormHelper
     
     public static function end_form() {
         return "</form>";
+    }
+    
+    public static function label($caption, $options = array()) {
+        return HTMLHelper::tag('label', $caption, $options);
     }
     
     public static function hidden_field($name, $value = '', $options = array()) {
@@ -224,12 +228,16 @@ class FormHelper
         return $html;
     }
     
-    public static function country_select($name, $value, $options = array()) {
-        $preferred = isset($options['preferred']) ? $options['preferred'] : array();
+    public static function country_select($name, $value = null, $options = array()) {
+        $preferred = isset($options['preferred']) ? $options['preferred'] : null;
         $separator = isset($options['separator']) ? $options['separator'] : '-----';
         unset($options['preferred']);
         unset($options['separator']);
         return self::select($name, $value, \ISO_Country::names($preferred, $separator), $options);
+    }
+    
+    public static function submit_button($text) {
+        return "<input type='submit' value='$text' />";
     }
 }
 
