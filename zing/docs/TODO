@@ -3,9 +3,9 @@ Alpha Release
 
 [ ] Views
   [x] Templates, partials, layouts
-  [ ] Helpers
-    [ ] Select helper
-    [ ] Flashes
+  [x] Helpers
+    [x] Select helper
+    [x] Flashes
     [x] Field helpers
     [x] Form tag
     [x] JS collections
@@ -13,7 +13,7 @@ Alpha Release
 [ ] Plugin installation
   [x] method of adding code to application.js
   [x] method of adding code to application.php
-[ ] Generators
+[x] Generators
 [ ] Lighty gem
 [x] Flash
 [x] Session
@@ -38,6 +38,7 @@ Screencast
 [ ] Migration
 [ ] Tumblelog, image uploading/resizng
 [ ] Lightbox installed automatically and configured via plugin
+[ ] Web font installed automatically
 [ ] CRUD
 [ ] Error messages
 
