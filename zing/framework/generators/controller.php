@@ -17,19 +17,24 @@ class ControllerGenerator extends \zing\generator\Generator
         $controller_name    = array_pop($controller_parts);
         $namespace          = implode('\\', $controller_parts);
         
-        $this->file = 'app/controllers/' . trim(str_replace('\\', '/', $controller_path), '/') . '_controller.php';
-        $this->controller_class_prefix = \Inflector::camelize($controller_name);
+        $file_stem = trim(str_replace('\\', '/', $controller_path), '/');
+        
+        $this->controller_file  = 'app/controllers/' . $file_stem . '_controller.php';
+        $this->helper_file      = 'app/helpers/' . $file_stem . '_helper.php';
+        
+        $this->class_prefix = \Inflector::camelize($controller_name);
         
         if ($namespace) {
-            $this->controller_namespace_declaration = "namespace $namespace;";
+            $this->namespace_declaration = "namespace $namespace;";
         } else {
-            $this->controller_namespace_declaration = "";
+            $this->namespace_declaration = "";
         }
     }
     
     protected function manifest() {
         return array(
-            $this->file => $this->__directory . '/templates/controller_template.php'
+            $this->controller_file  => $this->__directory . '/templates/controller_template.php',
+            $this->helper_file      => $this->__directory . '/templates/helper_template.php'
         );
     }
     
