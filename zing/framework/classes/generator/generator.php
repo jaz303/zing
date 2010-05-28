@@ -45,9 +45,16 @@ abstract class Generator
     
     protected function copy_manifest() {
         foreach ($this->manifest() as $target => $source) {
-            $target = ZING_ROOT . '/' . ltrim($target, '/');
-            mkdir_p(dirname($target));
-            file_put_contents($target, $this->render_template($source));
+            if ($source === true) {
+                mkdir_p($target);
+                if ($target[strlen($target) - 1] != '/') {
+                    touch($target);
+                }
+            } else {
+                $target = ZING_ROOT . '/' . ltrim($target, '/');
+                mkdir_p(dirname($target));
+                file_put_contents($target, $this->render_template($source));
+            }
         }
     }
     

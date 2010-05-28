@@ -21,6 +21,7 @@ class ControllerGenerator extends \zing\generator\Generator
         
         $this->controller_file  = 'app/controllers/' . $file_stem . '_controller.php';
         $this->helper_file      = 'app/helpers/' . $file_stem . '_helper.php';
+        $this->view_dir         = 'app/views/' . $file_stem . '/';
         
         $this->class_prefix = \Inflector::camelize($controller_name);
         
@@ -34,7 +35,8 @@ class ControllerGenerator extends \zing\generator\Generator
     protected function manifest() {
         return array(
             $this->controller_file  => $this->__directory . '/templates/controller_template.php',
-            $this->helper_file      => $this->__directory . '/templates/helper_template.php'
+            $this->helper_file      => $this->__directory . '/templates/helper_template.php',
+            $this->view_dir         => true
         );
     }
     
