@@ -32,5 +32,12 @@ class Config
     public static function write_application_config_assignment($variable, $value, $config_file = 'main') {
         self::write_application_config_code("$variable = " . var_export($value, true) . ";\n", $config_file);
     }
+    
+    public static function add_stylesheet_to_collection($collection, $stylesheet) {
+        self::write_application_config_assignment(
+            '\\zing\\view\\Base::$stylesheet_collections[]',
+            $stylesheet
+        );
+    }
 }
 ?>
