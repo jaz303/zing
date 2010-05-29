@@ -1,0 +1,135 @@
+#!/usr/bin/env php
+<?php
+require_once dirname(__FILE__) . '/boot_console.php';
+
+array_shift($_SERVER['argv']);
+
+if ($_SERVER['argc'] == 0) {
+    echo "Usage: script/font action\n";
+    exit(1);
+}
+
+$action = array_shift($_SERVER['argv']);
+
+switch ($action) {
+    
+    case 'install':
+        if (empty($_SERVER['argv'])) {
+            echo "Usage: script/font install source font-name\n";
+            exit(1);
+        }
+        
+        switch (array_shift($_SERVER['argv'])) {
+            case 'google':
+            
+                if (empty($_SERVER['argv'])) {
+                    echo "Usage: script/font install google font-name [font-name...]\n";
+                    exit(1);
+                }
+            
+                $fonts = array();
+                while ($font = array_shift($_SERVER['argv'])) {
+                    $fonts[] = urlencode($font);
+                }
+            
+                $url  = "http://fonts.googleapis.com/css?family=";
+                $url .= implode('|', $fonts);
+                
+                \zing\sys\Config::add_stylesheet_to_collection('default', $url);
+            
+                break;
+            
+            case 'font-squirrel':
+            
+                if (empty($_SERVER['argv'])) {
+                    echo "Usage: script/font install font-squirrel font-name [font-name...]\n";
+                    exit(1);
+                }
+                
+                while ($font = array_shift($_SERVER['argv'])){
+                    
+                    echo "Downloading @font-face kit for font '$font'\n";
+                    
+                    //
+                    // Download font archive
+                    
+                    $font_url = 'http://www.fontsquirrel.com/fontfacekit/' . $font;
+                    
+                    $curl = curl_init($font_url);
+                    if (!is_resource($curl)) {
+                        echo "cURL error; skipping this font\n";
+                        continue;
+                    }
+                        
+                    $tmp_file = tempnam(sys_get_temp_dir(), 'zing-font-');
+                    
+                    curl_setopt($curl,  CURLOPT_FOLLOWLOCATION,     true);
+                    curl_setopt($curl,  CURLOPT_HEADER,             0); 
+                    curl_setopt($curl,  CURLOPT_RETURNTRANSFER,     1);
+                    curl_setopt($curl,  CURLOPT_BINARYTRANSFER,     1);
+                        
+                    if (!$data = curl_exec($curl)) {
+                        echo "Error downloading font from $font_url; skipping this font\n";
+                        continue;
+                    }
+                    
+                    curl_close($curl);
+                    
+                    file_put_contents($tmp_file, $data);
+                    
+                    echo "'$font' downloaded to $tmp_file\n";
+                    
+                    //
+                    // Extract font archive
+                    
+                    $tmp_dir = dirname($tmp_file);
+                    if (!is_writable($tmp_dir)) {
+                        echo "Error: tmp dir is not writable; skipping this font\n";
+                        continue;
+                    }
+                    
+                    $extract_dir = $tmp_dir . DIRECTORY_SEPARATOR . basename($tmp_file) . '-extracted';
+                    
+                    $unarchiver = \zing\archive\Support::driver_for_algorithm('zip');
+                    $unarchiver->extract($tmp_file, $extract_dir);
+                    
+                    //
+                    // Append contents of all CSS files to fonts.css
+                    // Move fonts to font dir
+                    
+                    foreach (glob($extract_dir . DIRECTORY_SEPARATOR . '*') as $file) {
+                        if (preg_match('/\.css$/', $file)) {
+                            \zing\sys\CSS::write_font_styles(file_get_contents($file));
+                        } elseif (preg_match('/\.(woff|ttf|svg|eot)$/', $file)) {
+                            \zing\sys\CSS::install_font_file($file);
+                        }
+                    }
+                    
+                    echo "Font '$font' installed successfully\n";
+                    
+                    //
+                    // Clean-up
+                    
+                    // sanity check
+                    if (strlen($extract_dir) > 1) {
+                        rm_rf($extract_dir);
+                    }
+                    
+                    unlink($tmp_file);
+                
+                }
+            
+                break;
+            
+            default:
+                echo "Unknown font source: $source\n";
+                die(1);
+        }
+                
+        break;
+    
+    default:
+        echo "unknown action - $action\n";
+        exit(1);
+}
+?>
