@@ -287,6 +287,26 @@ function mkdir_p($directory, $mode = 0777) {
     }
 }
 
+// Recursively delete a file/directory
+function rm_rf($file) {
+    if (is_dir($file)) {
+        if (!($dh = opendir($file))) {
+            return false;
+        }
+        while (($entry = readdir($dh)) !== false) {
+            if ($entry == '.' || $entry == '..') continue;
+            if (!rm_rf($file . DIRECTORY_SEPARATOR . $entry)) {
+                closedir($dh);
+                return false;
+            }
+        }
+        closedir($dh);
+        return rmdir($file);
+    } else {
+        return unlink($file);
+    }
+}
+
 //
 // Some parsing stuff
 
