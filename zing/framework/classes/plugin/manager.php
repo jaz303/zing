@@ -3,27 +3,56 @@ namespace zing\plugin;
 
 class Manager
 {
-    protected $stubs = null;
+    public static function create_with_default_locator() {
+        global $_ZING;
+        $locator_class = $_ZING['zing.plugin.locator'];
+        return new self(new $locator_class);
+    }
+    
+    private $locator;
+    private $plugin_stubs = null;
+    
+    public function __construct($locator) {
+        $this->locator = $locator;
+    }
+    
+    public function is_plugin_installed($plugin_id) {
+        $this->locate();
+        return isset($this->plugin_stubs[$plugin_id]);
+    }
+    
+    public function rescan() {
+        $this->plugin_stubs = null;
+        $this->locate();
+    }
+    
+    public function stubs() {
+        $this->locate();
+        return $this->plugin_stubs;
+    }
+    
+    public function load_all() {
+        $this->locate();
+        foreach ($this->plugin_stubs as $stub) {
+            $stub->plugin();
+        }
+    }
+    
+    public function plugin($plugin_id) {
+        $this->locate();
+        return $this->plugin_stubs[$plugin_id]->plugin();
+    }
     
     public function plugins() {
         $this->locate();
         $plugins = array();
-        foreach ($this->stubs as $stub) {
-            $plugins[] = $stub->plugin();
+        foreach ($this->plugin_stubs as $stub) {
+            $plugins[$stub->id()] = $stub->plugin();
         }
         return $plugins;
     }
     
-    public function plugin_classes() {
-        $this->locate();
-        $plugin_classes = array();
-        foreach ($this->stubs as $stub) {
-            $plugin_classes[] = $stub->class_name();
-        }
-        return $plugin_classes;
-    }
-    
-    public function install(PluginStub $plugin_stub) {
+    public function install(Stub $stub) {
         
         $plugin = $plugin_stub->plugin();
         
@@ -44,10 +73,13 @@ class Manager
         
     }
     
-    private function locate() {
-        if ($this->stubs === null) {
-            $locator = new Locator;
-            $this->stubs = $locator->locate_plugins();
+    //
+    //
+    
+    protected function locate() {
+        if ($this->plugin_stubs === null) {
+            $this->plugin_stubs = $this->locator->locate_plugins();
+            ksort($this->plugin_stubs);
         }
     }
 }
