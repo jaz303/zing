@@ -24,10 +24,12 @@ Features (complete and planned)
   * Database access with **no ORM** _(complete)_
   * Database migrations (yes, even for plugins) _(complete)_
   * Transparent request parameter handling for date, money and file types _(complete)_
-  * Plugin API (inc. centralised online repository) _(partial)_
+  * Plugin API (inc. centralised online repository) _(online repository coming soon)_
   * Raw PHP templating with cascaded static helpers _(complete)_
-  * Full console integration (tasks, generators, console) _(generators incomplete)_
+  * Full console integration (tasks, generators, console) _(complete)_
+  * Pluggable generators for generating skeleton code _(complete)_
   * Task management via phake _(complete)_
+  * `@font-face` support - install new fonts from online sources using the command-line _(complete)_
   * Class autoloading management via superload _(complete)_
   * Multi-environment aware _(complete)_
   * Engineered from the ground-up for PHP 5.3
