@@ -30,3 +30,5 @@
   <?= textarea('raaa', 'Here is some content to edit') ?>
 
 <?= end_form() ?>
+
+<?= pager(array('page_count' => 5, 'page' => 3)) ?>
