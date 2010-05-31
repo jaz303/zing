@@ -11,6 +11,10 @@ class TestController extends zing\Controller
         $this->layout('application');
     }
         
-    public function _index() {}
+    public function _index() {
+        $this->errors = new \Errors;
+        $this->errors->add('foo', 'is not a bar');
+        $this->errors->add_to_base('blah blah blah');
+    }
 }
 ?>

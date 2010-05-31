@@ -1,5 +1,9 @@
 <h1>This is the test view <?= h('foo') ?></h1>
 
+<?= flash_messages() ?>
+
+<?= error_messages($errors) ?>
+
 <h2>Bleem</h2>
 
 <?= c("#bleem.foo.bar", ^{
@@ -16,13 +20,13 @@
 
   <?= i('zing.png') ?>
 
-  <?= text_field_tag('foo', 'hello') ?>
+  <?= text_field('foo', 'hello') ?>
 
-  <?= hidden_field_tags(array('foo' => 'bar', 'baz' => array('a' => 1, 'b' => 2, 'c' => 3))); ?>
+  <?= hidden_fields(array('foo' => 'bar', 'baz' => array('a' => 1, 'b' => 2, 'c' => 3))); ?>
 
-  <?= check_box_tag('moose', true) ?>
-  <?= file_field_tag('barz') ?>
+  <?= check_box('moose', true) ?>
+  <?= file_field('barz') ?>
 
-  <?= textarea_tag('raaa', 'Here is some content to edit') ?>
+  <?= textarea('raaa', 'Here is some content to edit') ?>
 
 <?= end_form() ?>
