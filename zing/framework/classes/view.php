@@ -196,11 +196,11 @@ class PHPHandler extends Base
     
     }
     
-    public function render_partial($partial) {
+    public function render_partial($partial, $locals = array()) {
         $partial = preg_replace('/(^|\/|:)(\w+)$/', '$1_$2', $partial);
         $partial = self::resolve_relative_view_path($partial, dirname($this->view));
         $file    = self::find_first_view_for($partial, $this->template_type, 'php');
-        return $this->render_file($file);
+        return $this->render_file($file, $locals);
     }
     
     /**
