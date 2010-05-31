@@ -1,0 +1,57 @@
+#!/usr/bin/env php
+<?php
+require_once dirname(__FILE__) . '/boot_console.php';
+
+array_shift($_SERVER['argv']);
+
+if ($_SERVER['argc'] == 0) {
+    echo "Usage: script/plugin action\n";
+    exit(1);
+}
+
+$action = array_shift($_SERVER['argv']);
+
+switch ($action) {
+    
+    case 'list':
+    
+        $manager = \zing\plugin\Manager::create_with_default_locator();
+        
+        $max_id = 0;
+        $mav_ver = 0;
+        foreach ($manager->stubs() as $stub) {
+            $max_id = max($max_id, strlen($stub->id()));
+            $max_ver = max($max_ver, strlen($stub->version()));
+        }
+        
+        foreach ($manager->stubs() as $stub) {
+            echo str_pad($stub->id(), $max_id + 2);
+            echo str_pad($stub->version(), $max_ver + 2);
+            echo $stub->title() . "\n";
+        }
+        
+        break;
+    
+    case 'install':
+        
+        if (empty($_SERVER['argv'])) {
+            echo "Usage: script/plugin install plugin\n";
+            exit(1);
+        }
+        
+        $plugin     = array_shift($_SERVER['argv']);
+        $manager    = \zing\plugin\Manager::create_with_default_locator();
+        $reporter   = new \zing\reporter\ConsoleReporter;
+        $installer  = new \zing\plugin\Installer($manager, $reporter);
+        
+        $installer->install($plugin);
+        
+        exit($installer->success() ? 0 : 1);
+ 
+        break;
+    
+    default:
+        echo "unknown action - $action\n";
+        exit(1);
+}
+?>
