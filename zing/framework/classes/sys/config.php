@@ -11,7 +11,7 @@ class Config
             $contents .= "\n";
         }
         
-        $contents .= $class_path;
+        $contents .= \zing\FileUtils::relativize_path($class_path, ZING_ROOT);
         $contents .= "\n";
         
         file_put_contents($file, $contents);
