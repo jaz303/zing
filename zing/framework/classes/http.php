@@ -302,12 +302,12 @@ class Request implements \ArrayAccess, \IteratorAggregate
     public function client_ip() { return $this->client_ip; }
     public function client_port() { return $this->client_port; }
     
-    //
-    // Return a val from params or default
-    
-    public function param($k, $default = null) {
-        return isset($this->params[$k]) ? $this->params[$k] : $default;
-    }
+    /**
+     * Returns a reference to the request parameters array.
+     *
+     * @return a reference to the request parameters array.
+     */
+    public function &params() { return $this->params; }
     
     //
     // A bit hacky - exists so we can merge route parameters

@@ -26,6 +26,7 @@ class Controller
     
     protected $request;
     protected $response;
+    protected $params;
     
     protected $controller_path;
     protected $controller_name;
@@ -39,6 +40,13 @@ class Controller
     protected $__performed              = false;
     protected $__layout                 = false;
     protected $__helpers                = array();
+    
+    //
+    // Params
+    
+    protected function param($k, $default = null) {
+        return isset($this->params[$k]) ? $this->params[$k] : $default;
+    }
     
     //
     // Performance - controller has performed if rendered or redirected
@@ -215,6 +223,7 @@ class Controller
         $this->controller_name      = basename($this->controller_path);
         $this->action_name          = $action;
         $this->request              = $request;
+        $this->params               = &$request->params();
         
         $this->init();
         
