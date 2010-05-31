@@ -123,7 +123,7 @@ class MigrationLocator
         
         $sources = array('app' => Migrator::application_migration_dir());
         
-        $plugin_manager = new \zing\plugin\Manager;
+        $plugin_manager = \zing\plugin\Manager::create_with_default_locator();
         foreach ($plugin_manager->plugins() as $plugin) {
             if ($plugin->has_migrations()) {
                 $sources["plugin.{$plugin->id()}"] = $plugin->get_migration_path();
@@ -176,7 +176,7 @@ class MigrationStub
     
     public function create() {
         require_once $this->path;
-        $migration_class = \Inflector::camelize($this->migration_name);
+        $migration_class = \Inflector::camelize($this->migration_name) . 'Migration';
         return new $migration_class;
     }
 }
