@@ -110,26 +110,8 @@ class HTMLHelper
         return self::link_to($html, "mailto:$address", $options);
     }
     
-    public static function error_messages($errors, $subject = 'object') {
-        if ($errors instanceof \Errors) {
-            if ($errors->ok()) return '';
-            $errors = $errors->full_messages();
-        } elseif (is_array($errors)) {
-            if (count($errors) == 0) return '';
-        } else {
-            throw new \InvalidArgumentException("error_messages() expects either an Errors instance or an array");
-        }
-        
-        $html  = "<div class='errors'>\n";
-        $html .= "  <h2>The following errors occurred, please correct them:</h2>\n";
-        $html .= "  <ul>\n";
-        foreach ($errors as $e) {
-            $html .= "    <li>" . htmlspecialchars($e) . "</li>\n";
-        }
-        $html .= "  </ul>\n";
-        $html .= "</div>\n";
-        
-        return $html;
+    public static function error_messages($errors) {
+        return \zing\view\Base::active()->render_partial(':errors', array('errors' => $errors));
     }
 }
 
