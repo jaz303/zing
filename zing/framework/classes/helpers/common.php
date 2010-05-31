@@ -117,7 +117,7 @@ class HTMLHelper
         } elseif (is_array($errors)) {
             if (count($errors) == 0) return '';
         } else {
-            throw new \Exception("error_messages() expects either an Errors instance or an array");
+            throw new \InvalidArgumentException("error_messages() expects either an Errors instance or an array");
         }
         
         $html  = "<div class='errors'>\n";
