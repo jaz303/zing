@@ -147,9 +147,9 @@ class FormHelper
         foreach ($array as $k => $v) {
             $name = strlen($prefix) ? "{$prefix}[$k]" : $k;
             if (is_enumerable($v)) {
-                $html .= self::hidden_field_tags($v, $name);
+                $html .= self::hidden_fields($v, $name);
             } else {
-                $html .= self::hidden_field_tag($name, $v);
+                $html .= self::hidden_field($name, $v);
             }
         }
         return $html;
@@ -186,7 +186,7 @@ class FormHelper
         $options['name'] = $name;
         $options += array('value' => 1);
         if ($checked) $options['checked'] = 'checked';
-        return self::hidden_field_tag($name, 0) . HTMLHelper::empty_tag('input', $options);
+        return self::hidden_field($name, 0) . HTMLHelper::empty_tag('input', $options);
     }
 
     public static function radio_button($name, $value, $current_value = null, $options = array()) {
