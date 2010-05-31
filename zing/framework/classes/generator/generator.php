@@ -4,12 +4,14 @@ namespace zing\generator;
 abstract class Generator
 {
     protected $__directory;
+    protected $dir;
     
     /**
      * @param $directory root directory for this generator
      */
     public function __construct($directory) {
         $this->__directory = $directory;
+        $this->dir = $directory;
     }
     
     public function generate(array $args) {
