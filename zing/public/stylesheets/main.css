@@ -1,3 +1,13 @@
 @import url('reset.css');
 @import url('fonts.css');
 @import url('content.css');
+
+html, body, table { font: 12px/1.4 Helvetical, Arial, sans-serif; }
+
+.flash-messages { }
+  .flash-messages .flash { border-width: 1px; border-style: solid; background-color: #f0f0f0; padding: 10px; margin-bottom: 10px; }
+  .flash-messages .flash-success { color: #009900; background-color: #ddffdd; }
+  .flash-messages .flash-error { color: #990000; background-color: #ffdddd; }
+  .flash-messages .flash-warning { color: #994000; background-color: #ffcc80; }
+  .flash-messages .flash-notice { color: #994000; background-color: #ffffdd; }
+  .flash-messages .flash-info { color: #000099; background-color: #ddddff; }

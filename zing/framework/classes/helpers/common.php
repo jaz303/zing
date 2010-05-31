@@ -110,8 +110,18 @@ class HTMLHelper
         return self::link_to($html, "mailto:$address", $options);
     }
     
-    public static function error_messages($errors) {
+    public static function error_messages($errors = null) {
         return \zing\view\Base::active()->render_partial(':errors', array('errors' => $errors));
+    }
+    
+    public static function flash_messages($messages = null) {
+        $template =  \zing\view\Base::active();
+        if ($messages === null) {
+            if ($session = $template->get('session')) {
+                $messages = $session->current_flash();
+            }
+        }
+        return $template->render_partial(':flash', array('flashes' => $messages));
     }
 }
 
