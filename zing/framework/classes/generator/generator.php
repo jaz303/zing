@@ -48,8 +48,10 @@ abstract class Generator
     protected function copy_manifest() {
         foreach ($this->manifest() as $target => $source) {
             if ($source === true) {
-                mkdir_p($target);
-                if ($target[strlen($target) - 1] != '/') {
+                if ($target[strlen($target) - 1] == '/') {
+                    mkdir_p($target);
+                } else {
+                    mkdir_p(dirname($target));
                     touch($target);
                 }
             } else {

@@ -9,9 +9,11 @@ class <%= $class_prefix %>Controller extends \zing\Controller
         parent::init();
         $this->helper('<%= $class_prefix %>Helper');
     }
+<% foreach ($this->actions as $action) { %>
     
-    public function _index() {
-        $this->render('html', '<h1>Hello World!</h1>');
+    public function _<%= $action['name'] %>() {
+        // implementation of '<%= $action['name'] %>' action goes here
     }
+<% } %>
 }
 ?>

@@ -8,11 +8,12 @@ class ControllerGenerator extends \zing\generator\Generator
     }
     
     protected function parse_args(array $args) {
-        if (count($args) != 1) {
-            throw new \InvalidArgumentException("Usage: script/generate controller controller_name");
+        
+        if (count($args) < 1) {
+            throw new \InvalidArgumentException("Usage: script/generate controller controller_name [action_list]");
         }
         
-        $controller_path    = str_replace('.', '\\', $args[0]);
+        $controller_path    = str_replace('.', '\\', array_shift($args));
         $controller_parts   = explode('\\', $controller_path);
         $controller_name    = array_pop($controller_parts);
         $namespace          = implode('\\', $controller_parts);
@@ -30,14 +31,35 @@ class ControllerGenerator extends \zing\generator\Generator
         } else {
             $this->namespace_declaration = "";
         }
+        
+        $this->actions = array();
+        foreach ($args as $action) {
+            if ($p = strpos($action, '.')) {
+                $this->actions[] = array(
+                    'name' => substr($action, 0, $p),
+                    'extension' => substr($action, $p)
+                );
+            } else {
+                $this->actions[] = array(
+                    'name' => $action,
+                    'extension' => '.html.php'
+                );
+            }
+        }
+    
     }
     
     protected function manifest() {
-        return array(
+        $manifest = array(
             $this->controller_file  => $this->__directory . '/templates/controller_template.php',
             $this->helper_file      => $this->__directory . '/templates/helper_template.php',
             $this->view_dir         => true
         );
+        foreach ($this->actions as $action) {
+            $action_path = $this->view_dir . $action['name'] . $action['extension'];
+            $manifest[$action_path] = true;
+        }
+        return $manifest;
     }
     
     protected function tasks() {
