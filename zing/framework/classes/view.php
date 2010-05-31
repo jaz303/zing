@@ -104,7 +104,7 @@ abstract class Base
     }
     
     //
-    //
+    // Template type
     
     protected $template_type = null;
     
@@ -113,10 +113,13 @@ abstract class Base
     }
     
     //
-    //
+    // Assigns
     
-    // public abstract function render_view();
-    // public abstract function render_file();
+    protected $assigns = array();
+    
+    public function get($k, $d = null) { return array_key_exists($k, $this->assigns) ? $this->assigns[$k] : $d; }
+    public function set($k, $v) { $this->assigns[$k] = $v; }
+    public function merge(array $assigns) { $this->assigns = array_merge($this->assigns, $assigns); }
     
 }
 
@@ -139,14 +142,10 @@ class PHPHandler extends Base
     );
     
     private $helpers    = array();
-    private $assigns    = array();
     private $layout     = null;
     private $view       = null;
     
     public function add_helper($class) { array_unshift($this->helpers, $class); }
-    
-    public function set($k, $v) { $this->assigns[$k] = $v; }
-    public function merge(array $assigns) { $this->assigns = array_merge($this->assigns, $assigns); }
     
     public function set_layout($layout) { $this->layout = $layout; }
     
