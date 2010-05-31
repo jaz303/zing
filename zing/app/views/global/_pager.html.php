@@ -18,14 +18,21 @@ if (isset($collection)) {
 if (!isset($page_count) || $page_count < 2) return;
 if (!isset($page)) $page = 1;
 
-$base  = preg_replace('/(\?|&)page=\w+(&|$)/', '$1', $request->request_uri());
+$base  = rtrim(preg_replace('/(\?|&)page=\w+(&|$)/', '$1', $request->request_uri()), '?&');
 $base .= ((strpos($base, '?') === false) ? '?' : '&') . 'page=';
+$base  = htmlspecialchars($base);
 ?>
 
 <div class='pager'>
-  <ul>
+  <ol>
+    <? if ($page > 1) { ?>
+      <li><a class='prev' href='<?= $base ?><?= $page - 1 ?>'>&laquo; Prev</a></li>
+    <? } ?>
     <? for ($i = 1; $i <= $page_count; $i++) { ?>
       <li><a class='page<?= $i == $page ? ' active' : '' ?>' href='<?= $base ?><?= $i ?>'><?= $i ?></a></li>
     <? } ?>
-  </ul>
+    <? if ($page < $page_count) { ?>
+      <li><a class='next' href='<?= $base ?><?= $page + 1 ?>'>Next &raquo;</a></li>
+    <? } ?>
+  </ol>
 </div>

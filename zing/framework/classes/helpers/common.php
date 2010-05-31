@@ -123,6 +123,10 @@ class HTMLHelper
         }
         return $template->render_partial(':flash', array('flashes' => $messages));
     }
+    
+    public static function pager($collection = null) {
+        return \zing\view\Base::active()->render_partial(':pager', array('collection' => $collection));
+    }
 }
 
 class FormHelper
