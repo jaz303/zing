@@ -19,7 +19,7 @@ Any resemblance to Ruby on Rails is entirely deliberate.
 Features (complete and planned)
 -------------------------------
 
-  * Fast & efficient, although I have no data to back up this claim
+  * Fast & efficient. Zing benchmarks at 1250 requests/sec in a test with APC enabled, sessions disabled and trivial controller/view logic. Enabling sessions with PHP's default handler slows things down considerably but I'm guessing this can easily be worked around with custom save handlers.
   * Rapid Rails-style router (matcher code is compiled to PHP) _(complete, but no globbing support yet)_
   * Database access with **no ORM** _(complete)_
   * Database migrations (yes, even for plugins) _(complete)_
