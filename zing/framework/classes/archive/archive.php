@@ -7,6 +7,7 @@ class OperationFailedException extends \Exception {}
 class Support
 {
     private static $drivers = array(
+        'zip-native'        => 'zing\\archive\\ZipNative',
         'zip-cli-nix'       => 'zing\\archive\\ZipCliNix'
     );
     
@@ -44,6 +45,29 @@ class Support
                 return new $class;
             }
         }
+    }
+}
+
+class ZipNative
+{
+    public static function is_available() {
+        return class_exists('ZipArchive', false);
+    }
+    
+    public static function algorithm() {
+        return 'zip';
+    }
+    
+    public function extract($archive, $directory, $options = array()) {
+        $zip = new \ZipArchive;
+        if (!$zip->open($archive)) {
+            throw new OperationFailedException("could not open zip archive $archive");
+        }
+        if (!$zip->extractTo($directory)) {
+            $zip->close();
+            throw new OperationFailedException("could not extract zip archive to $directory");
+        }
+        $zip->close();
     }
 }
 
