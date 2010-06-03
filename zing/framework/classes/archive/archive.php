@@ -40,7 +40,8 @@ class Support
         if (!self::is_supported_algorithm($algorithm)) {
             throw new UnsupportedAlgorithmException;
         }
-        foreach (self::$drivers as $driver => $class) {
+        foreach (self::supported_drivers() as $driver) {
+            $class = self::$drivers[$driver];
             if (call_user_func(array($class, 'algorithm')) == $algorithm) {
                 return new $class;
             }
