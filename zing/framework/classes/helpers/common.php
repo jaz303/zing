@@ -40,6 +40,12 @@ class DebugHelper
     }
 }
 
+/**
+ * Standard HTML helper methods
+ *
+ * @helper
+ * @package zing
+ */
 class HTMLHelper
 {
     public static function h($string) {
