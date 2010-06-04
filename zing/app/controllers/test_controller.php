@@ -1,5 +1,5 @@
 <?php
-class TestController extends zing\Controller
+class TestController extends ApplicationController
 {
     protected static $filters = array(
         'before' => array(

@@ -288,6 +288,8 @@ function __autoload($class) {
 	  'zing\\archive\\Support' => 'framework/classes/archive/archive.php',
 	  'zing\\archive\\ZipNative' => 'framework/classes/archive/archive.php',
 	  'zing\\archive\\ZipCliNix' => 'framework/classes/archive/archive.php',
+	  'U' => 'app/helpers/url.php',
+	  'ApplicationController' => 'app/controllers/application_controller.php',
 	  'TestController' => 'app/controllers/test_controller.php',
 	);
 	// SUPERLOAD-END
