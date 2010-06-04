@@ -138,7 +138,8 @@ class PHPHandler extends Base
         '\\zing\\helpers\\DebugHelper',
         '\\zing\\helpers\\HTMLHelper',
         '\\zing\\helpers\\FormHelper',
-        '\\zing\\helpers\\AssetHelper'
+        '\\zing\\helpers\\AssetHelper',
+        '\\U'
     );
     
     private $helpers    = array();
