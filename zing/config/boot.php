@@ -219,6 +219,7 @@ function __autoload($class) {
 	  'MoneyConversionException' => 'vendor/base-php/inc/money.php',
 	  'Money' => 'vendor/base-php/inc/money.php',
 	  'MoneyBank' => 'vendor/base-php/inc/money.php',
+	  'V' => 'vendor/base-php/inc/validation.php',
 	  'ISO_Country' => 'vendor/base-php/inc/iso/country.php',
 	  'ISO_Language' => 'vendor/base-php/inc/iso/language.php',
 	  'GDBException' => 'vendor/base-php/inc/gdb/gdb.php',
