@@ -43,7 +43,7 @@ class DebugHelper
 class HTMLHelper
 {
     public static function h($string) {
-        return htmlspecialchars($string);
+        return htmlspecialchars($string, ENT_QUOTES);
     }
     
     public static function i($image, $attributes = array()) {
