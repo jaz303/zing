@@ -35,6 +35,10 @@ try {
     if (!isset($route['controller']) || !isset($route['action'])) {
         throw new \Exception("invalid route - missing controller or action");
     }
+    
+    if ($route['controller'] == 'application') {
+        throw new \Exception("ApplicationController may not be invoked directly");
+    }
 
     $controller_class = preg_replace('/(^|_)([a-z])/e', 'strtoupper(\'$2\')', $route['controller']) . 'Controller';
 
