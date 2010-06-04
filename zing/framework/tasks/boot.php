@@ -8,7 +8,7 @@
 
 $stack = array(
     dirname(__FILE__),
-    dirname(__FILE__) . '/../../tasks'
+    dirname(__FILE__) . '/../../app/tasks'
 );
 
 $plugins_dir = dirname(__FILE__) . '/../../vendor/plugins';
