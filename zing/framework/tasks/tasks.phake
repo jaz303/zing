@@ -9,10 +9,18 @@ group('core', function() {
 
         $app_root = realpath(dirname(__FILE__) . '/../..');
         $config_dir = $app_root . '/config';
+        
+        $default_paths = array(
+            'vendor/base-php/inc',
+            'framework/classes',
+            'app'
+        );
 
-        $paths = array_filter(array_map('trim', file($config_dir . '/CLASS_PATHS')), function($path) {
+        $custom_paths = array_filter(array_map('trim', file($config_dir . '/CLASS_PATHS')), function($path) {
             return ($path[0] != '#' && strlen(trim($path)) > 0);
         });
+        
+        $paths = array_merge($default_paths, $custom_paths);
         
         require $app_root . '/vendor/superload/superload.php';
         $superload = new superload\Superload($app_root);
