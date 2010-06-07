@@ -120,32 +120,11 @@ if (strpos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) {
 }
 
 //
-// Request keys beginning with @ and $ and converted to date and money values
-
-zing_rewire($_POST);
-zing_rewire($_GET);
-zing_rewire($_REQUEST);
-
-//
 // Rejig $_FILES layout to be sane and create objects in $_POST for each
 // uploaded file. This implementation works with deeply nested files, e.g.:
 // <input type='file' name='files[a][b][c][]' />
 
 zing_fix_file_uploads();
-
-function zing_rewire(&$array) {
-    foreach (array_keys($array) as $k) {
-        if ($k[0] == '@') {
-            $array[substr($k, 1)] = Date::from_request($array[$k]);
-            unset($array[$k]);
-        } elseif ($k[0] == '$') {
-            $array[substr($k, 1)] = Money::from_request($array[$k]);
-            unset($array[$k]);
-        } elseif (is_array($array[$k])) {
-            zing_rewire($array[$k]);
-        }
-    }
-}
 
 function zing_fix_file_uploads() {
     foreach ($_FILES as $k => $f) {

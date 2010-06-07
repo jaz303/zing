@@ -18,8 +18,8 @@ if (isset($collection)) {
 if (!isset($page_count) || $page_count < 2) return;
 if (!isset($page)) $page = 1;
 
-$base  = rtrim(preg_replace('/(\?|&)page=\w+(&|$)/', '$1', $request->request_uri()), '?&');
-$base .= ((strpos($base, '?') === false) ? '?' : '&') . 'page=';
+$base  = $request->path() .
+         $request->query()->to_string_with_trailing_assignment('page', true);
 $base  = htmlspecialchars($base);
 ?>
 

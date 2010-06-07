@@ -190,6 +190,20 @@ class Headers implements \ArrayAccess, \IteratorAggregate
 
 class Request implements \ArrayAccess, \IteratorAggregate
 {
+    public static function rewire(&$array) {
+        foreach (array_keys($array) as $k) {
+            if ($k[0] == '@') {
+                $array[substr($k, 1)] = Date::from_request($array[$k]);
+                unset($array[$k]);
+            } elseif ($k[0] == '$') {
+                $array[substr($k, 1)] = Money::from_request($array[$k]);
+                unset($array[$k]);
+            } elseif (is_array($array[$k])) {
+                self::rewire($array[$k]);
+            }
+        }
+    }
+    
     public static function build_request_from_input() {
         $r = new self;
         
@@ -203,25 +217,28 @@ class Request implements \ArrayAccess, \IteratorAggregate
         $path = $_SERVER['REQUEST_URI'];
         if ($p = strpos($path, '?')) $path = substr($path, 0, $p);
         
-        $r->host        = $host;
-        $r->port        = (int) $_SERVER['SERVER_PORT'];
-        $r->path        = $path;
-        $r->query       = $_SERVER['QUERY_STRING'];
-        $r->request_uri = $_SERVER['REQUEST_URI'];
+        $r->host            = $host;
+        $r->port            = (int) $_SERVER['SERVER_PORT'];
+        $r->path            = $path;
+        $r->query           = new Query($_GET);
+        $r->query_string    = $_SERVER['QUERY_STRING'];
+        $r->request_uri     = $_SERVER['REQUEST_URI'];
         
-        $r->method      = strtolower($_SERVER['REQUEST_METHOD']);
-        $r->is_secure   = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off';
+        $r->method          = strtolower($_SERVER['REQUEST_METHOD']);
+        $r->is_secure       = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off';
         
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
             $r->requested_with = $_SERVER['HTTP_X_REQUESTED_WITH'];
         }
         
-        $r->timestamp   = isset($_SERVER['REQUEST_TIME']) ? $_SERVER['REQUEST_TIME'] : time();
+        $r->timestamp       = isset($_SERVER['REQUEST_TIME']) ? $_SERVER['REQUEST_TIME'] : time();
         
-        $r->client_ip   = $_SERVER['REMOTE_ADDR'];
-        $r->client_port = $_SERVER['REMOTE_PORT'];
+        $r->client_ip       = $_SERVER['REMOTE_ADDR'];
+        $r->client_port     = $_SERVER['REMOTE_PORT'];
         
-        $r->params      = $_POST + $_GET; // POST takes precedence
+        $r->params          = $_POST + $_GET; // POST takes precedence
+        
+        self::rewire($r->params);
         
         return $r;
     }
@@ -238,6 +255,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
     private $port;
     private $path;
     private $query              = null;
+    private $query_string       = null;
     private $request_uri;
     
     private $method;
@@ -264,8 +282,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
             $url .= $this->host;
             if ($this->port != 80) $url .= ':' . $this->port;
             $url .= $this->path;
-            if ($this->query !== null) {
-                $url .= '?' . $this->query;
+            if (strlen($this->query_string)) {
+                $url .= '?' . $this->query_string;
             }
             $this->url = $url;
         }
@@ -280,6 +298,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
     public function port() { return $this->port; }
     public function path() { return $this->path; }
     public function query() { return $this->query; }
+    public function query_string() { return $this->query_string; }
     public function request_uri() { return $this->request_uri; }
     
     public function host_and_port($force80 = false) {
@@ -314,6 +333,46 @@ class Request implements \ArrayAccess, \IteratorAggregate
     
     public function merge_params(array $stuff) {
         foreach ($stuff as $k => $v) $this->params[$k] = $v;
+    }
+    
+    //
+    // ArrayAccess/IteratorAggregate
+    
+    public function offsetExists($offset) { return isset($this->params[$offset]); }
+    public function offsetGet($offset) { return $this->params[$offset]; }
+    public function offsetSet($offset, $value) { $this->params[$offset] = $value; }
+    public function offsetUnset($offset) { unset($this->params[$offset]); }
+    
+    public function getIterator() { return new \ArrayIterator($this->params); }
+}
+
+class Query implements \ArrayAccess, \IteratorAggregate
+{
+    private $params;
+    
+    public function __construct($query = array()) {
+        if (is_array($query)) {
+            $this->params = $query;
+        } else {
+            $this->params = array();
+            parse_str($query, $this->params);
+        }
+    }
+    
+    public function to_string($with_question_mark = false) {
+        $query = http_build_query($this->params);
+        if ($with_question_mark && strlen($query)) {
+            return '?' . $query;
+        } else {
+            return $query;
+        }
+    }
+    
+    public function to_string_with_trailing_assignment($key, $with_question_mark = false) {
+        $query = clone $this;
+        unset($query[$key]);
+        $query[$key] = '';
+        return $query->to_string($with_question_mark);
     }
     
     //
