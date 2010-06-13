@@ -80,47 +80,6 @@ class Constants
 
 class Exception extends \Exception
 {
-    //
-    // Client errors
-    
-    public static function bad_request($message = '') { throw new Exception(400, $message); }
-    public static function unauthorized($message = '') { throw new Exception(401, $message); }
-    public static function forbidden($message = '') { throw new Exception(403, $message); }
-    public static function not_found($message = '') { throw new Exception(404, $message); }
-    public static function method_not_allowed($message = '') { throw new Exception(405, $message); }
-    public static function not_acceptable($message = '') { throw new Exception(406, $message); }
-    public static function proxy_authentication_required($message = '') { throw new Exception(407, $message); }
-    public static function request_time_out($message = '') { throw new Exception(408, $message); }
-    public static function conflict($message = '') { throw new Exception(409, $message); }
-    public static function gone($message = '') { throw new Exception(410, $message); }
-    public static function length_required($message = '') { throw new Exception(411, $message); }
-    public static function precondition_failed($message = '') { throw new Exception(412, $message); }
-    public static function request_entity_too_large($message = '') { throw new Exception(413, $message); }
-    public static function request_uri_too_large($message = '') { throw new Exception(414, $message); }
-    public static function unsupported_media_type($message = '') { throw new Exception(415, $message); }
-    public static function range_not_satisfiable($message = '') { throw new Exception(416, $message); }
-    public static function expectation_failed($message = '') { throw new Exception(417, $message); }
-    public static function unprocessable_entity($message = '') { throw new Exception(422, $message); }
-    public static function locked($message = '') { throw new Exception(423, $message); }
-    public static function failed_dependency($message = '') { throw new Exception(424, $message); }
-    public static function upgrade_required($message = '') { throw new Exception(426, $message); }
-    
-    //
-    // Server errors
-    
-    public static function internal_server_error($message = '') { throw new Exception(500, $message); }
-    public static function not_implemented($message = '') { throw new Exception(501, $message); }
-    public static function bad_gateway($message = '') { throw new Exception(502, $message); }
-    public static function service_unavailable($message = '') { throw new Exception(503, $message); }
-    public static function gateway_time_out($message = '') { throw new Exception(504, $message); }
-    public static function version_not_supported($message = '') { throw new Exception(505, $message); }
-    public static function variant_also_varies($message = '') { throw new Exception(506, $message); }
-    public static function insufficient_storage($message = '') { throw new Exception(507, $message); }
-    public static function not_extended($message = '') { throw new Exception(510, $message); }
-    
-    //
-    //
-    
     private $status;
     
     public function __construct($status, $message = '') {
