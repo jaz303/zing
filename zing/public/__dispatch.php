@@ -5,6 +5,8 @@
 // You can also bypass the router and just require boot.php directly from your
 // own scripts.
 
+require __DIR__ . '/../config/boot.php';
+
 $dispatcher = new \zing\Dispatcher;
 $dispatcher->dispatch(zing\http\Request::build_request_from_input());
 ?>

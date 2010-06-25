@@ -26,7 +26,7 @@ $GLOBALS['_ZING'] = array();
 define('ZING_VERSION',          '0.0.1');
 define('ZING_SIGNATURE',        'Zing! Framework v' . ZING_VERSION);
 
-define('ZING_CONFIG_DIR',       dirname(__FILE__));
+define('ZING_CONFIG_DIR',       __DIR__);
 define('ZING_ROOT',             dirname(ZING_CONFIG_DIR));
 define('ZING_PUBLIC_DIR',       ZING_ROOT . '/public');
 define('ZING_TMP_DIR',          ZING_ROOT . '/tmp');
@@ -124,22 +124,18 @@ if (strpos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) {
 // uploaded file. This implementation works with deeply nested files, e.g.:
 // <input type='file' name='files[a][b][c][]' />
 
-zing_fix_file_uploads();
-
-function zing_fix_file_uploads() {
-    foreach ($_FILES as $k => $f) {
-        if (is_string($f['name'])) {
-            if ($f['error'] == UPLOAD_ERR_OK) {
-                $_POST[$k] = new UploadedFile($f);
-            } else {
-                $_POST[$k] = new UploadedFileError($f['error']);
-            }
-        } elseif (is_array($f['name'])) {
-            if (!is_array($_POST[$k])) {
-                $_POST[$k] = array();
-            }
-            zing_fix_file_uploads_recurse($f['name'], $f['type'], $f['tmp_name'], $f['error'], $f['size'], $_POST[$k]);
+foreach ($_FILES as $k => $f) {
+    if (is_string($f['name'])) {
+        if ($f['error'] == UPLOAD_ERR_OK) {
+            $_POST[$k] = new UploadedFile($f);
+        } else {
+            $_POST[$k] = new UploadedFileError($f['error']);
         }
+    } elseif (is_array($f['name'])) {
+        if (!is_array($_POST[$k])) {
+            $_POST[$k] = array();
+        }
+        zing_fix_file_uploads_recurse($f['name'], $f['type'], $f['tmp_name'], $f['error'], $f['size'], $_POST[$k]);
     }
 }
 
