@@ -29,7 +29,7 @@ class Dispatcher
             }
 
             if (!class_exists($controller_class, true)) {
-                throw new zing\http\Exception(zing\http\Constants::NOT_FOUND,
+                throw new \zing\http\Exception(\zing\http\Constants::NOT_FOUND,
                                               "no such controller - '$controller_class'");
             }
 

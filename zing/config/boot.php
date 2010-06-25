@@ -1,24 +1,5 @@
 <?php
 //
-// Customisable bits
-
-/*
- * Customise this code block to automatically detect the operating environment.
- * I usually use a $_SERVER key (set via Apache's SetEnv) or the server port
- * (e.g. anything other than port 80 is development).
- */
-if (isset($_SERVER['ZING_ENV'])) {
-    define('ZING_ENV', $_SERVER['ZING_ENV']);
-} else {
-    define('ZING_ENV', 'development');
-}
-
-date_default_timezone_set('Europe/London');
-
-//
-// End customisable bits
-
-//
 // Config array.
 
 $GLOBALS['_ZING'] = array();
@@ -40,8 +21,8 @@ define('ZING_PLUGIN_DIR',       ZING_VENDOR_DIR . '/plugins');
 define('ZING_CONSOLE',          php_sapi_name() == 'cli');
 
 zing_lib('common');
-zing_load_environment('main');
 zing_load_config('main');
+zing_load_environment('main');
 
 //
 // Export GDB config if present
