@@ -1,6 +1,6 @@
 <?php
 desc('Load the application environment');
 task('environment', function() {
-    require dirname(__FILE__) . '/../../config/boot.php';
+    require __DIR__ . '/../../framework/boot.php';
 });
 ?>

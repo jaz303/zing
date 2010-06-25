@@ -7,8 +7,9 @@ $GLOBALS['_ZING'] = array();
 define('ZING_VERSION',          '0.0.1');
 define('ZING_SIGNATURE',        'Zing! Framework v' . ZING_VERSION);
 
-define('ZING_CONFIG_DIR',       __DIR__);
-define('ZING_ROOT',             dirname(ZING_CONFIG_DIR));
+define('ZING_FRAMEWORK_DIR',    __DIR__);
+define('ZING_ROOT',             dirname(ZING_FRAMEWORK_DIR));
+define('ZING_CONFIG_DIR',       ZING_ROOT . '/config');
 define('ZING_PUBLIC_DIR',       ZING_ROOT . '/public');
 define('ZING_TMP_DIR',          ZING_ROOT . '/tmp');
 define('ZING_APP_DIR',          ZING_ROOT . '/app');
@@ -20,7 +21,7 @@ define('ZING_VENDOR_DIR',       ZING_ROOT . '/vendor');
 define('ZING_PLUGIN_DIR',       ZING_VENDOR_DIR . '/plugins');
 define('ZING_CONSOLE',          php_sapi_name() == 'cli');
 
-zing_lib('common');
+zing_core_lib('common');
 zing_load_config('main');
 zing_load_environment('main');
 
@@ -35,7 +36,15 @@ if (isset($GLOBALS['_ZING']['config.gdb'])) {
 // Essentials!
 
 function zing_lib($library) {
-    require ZING_ROOT . "/framework/lib/{$library}.php";
+    require ZING_APP_DIR . "/lib/$library.php";
+}
+
+function zing_core_lib($library) {
+    require ZING_ROOT . "/framework/lib/$library.php";
+}
+
+function zing_plugin_lib($plugin, $library) {
+    require ZING_PLUGIN_DIR . "/$plugin/lib/$library.php";
 }
 
 function zing_environments() {

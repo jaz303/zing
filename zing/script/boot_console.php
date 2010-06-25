@@ -1,3 +1,3 @@
 <?php
-require_once dirname(__FILE__) . '/../config/boot.php';
+require_once __DIR__ . '/../framework/boot.php';
 ?>
