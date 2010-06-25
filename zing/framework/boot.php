@@ -40,7 +40,7 @@ function zing_lib($library) {
 }
 
 function zing_core_lib($library) {
-    require ZING_ROOT . "/framework/lib/$library.php";
+    require ZING_FRAMEWORK_DIR . "/lib/$library.php";
 }
 
 function zing_plugin_lib($plugin, $library) {
