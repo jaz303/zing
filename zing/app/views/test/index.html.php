@@ -32,3 +32,7 @@
 <?= end_form() ?>
 
 <?= pager(array('page_count' => 5, 'page' => 3)) ?>
+
+<?= start_context_menu() ?>
+  <?= context_menu_item('pencil', 'Foo', '#') ?>
+<?= end_context_menu() ?>

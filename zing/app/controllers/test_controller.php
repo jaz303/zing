@@ -8,7 +8,12 @@ class TestController extends ApplicationController
     );
     
     protected function before() {
-        $this->layout('application');
+        \zing_load_config('zing.cms.admin');
+        $this->layout('admin/main');
+        $this->helper('\\zing\\cms\\helpers\\AdminHelper');
+        $this->title = "Test Title";
+        $this->subtitle = "Test Subtitle";
+        $this->admin_structure = \zing\cms\admin\Structure::instance();
     }
         
     public function _index() {

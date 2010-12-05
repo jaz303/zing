@@ -1,0 +1,31 @@
+http://stackoverflow.com/questions/157318/resumable-downloads-when-using-php-to-send-the-file
+
+
+
+Input helper spec:
+
+method($name, $value, additional args)
+
+
+Module Structure
+
+Modules are top level
+	- ID
+	- title
+	- default controller
+
+array(
+	'core' => array(
+		'title' => 'Zing CMS',
+		'controller' => '...',
+		
+		
+	)
+)
+
+top level nav items
+ - possibly mega-nav style
+
+
+left column dealt with by controller
+subnav is dealt with by at the controller levelhttp://i.imgur.com/sZG7T.jpg

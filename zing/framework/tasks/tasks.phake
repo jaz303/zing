@@ -24,11 +24,12 @@ group('core', function() {
         
         require $app_root . '/vendor/superload/superload.php';
         $superload = new superload\Superload($app_root);
+        $superload->set_variable('$GLOBALS["ZING_AUTOLOAD_MAP"]');
         foreach ($paths as $p) {
             $superload->add_rule($p);
         }
     	
-    	$superload->write($config_dir . '/boot.php');
+    	$superload->write($config_dir . '/app/main.php', '');
 
     });
 

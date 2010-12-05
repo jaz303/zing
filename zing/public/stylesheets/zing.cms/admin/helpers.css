@@ -1,0 +1,11 @@
+.clear { clear: both }
+
+.align-left { float: left; }
+.align-right { float: right; }
+
+.top { margin-top: 0 }
+.bottom { margin-bottom: 0 }
+.first { margin-left: 0 }
+.last { margin-right: 0 }
+
+.icon { vertical-align: middle; }

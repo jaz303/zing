@@ -1,0 +1,215 @@
+@import url('reset.css');
+
+/* 100% Height */
+
+html, body { height: 100%; height: 100%; }
+#non-footer { position: relative; min-height: 100%; }
+
+/* Defaults */
+
+body { min-width: 800px; background: white url(../../../images/zing.cms/admin/bg-sidebar.gif) repeat-y right; }
+
+body, table { font: 12px "Lucida Sans Unicode", "Lucida Grande", sans-serif; }
+
+img { border: 0; }
+  img.icon { vertical-align: middle; width: 16px; height: 16px; }
+
+a { color: #808080; text-decoration: none; }
+  a:hover { color: #404040; }
+  
+/* Classes used all over the place */
+
+.c { clear: both; }
+.numeric { text-align: right; }
+.note { font-size: 90%; color: #909090; }
+
+/*
+ *
+ * Page Structure
+ *
+ */
+
+/* Horizontal Rules */
+
+div.hr hr { display: none; }
+div.hr { height: 2px; background: url(../../../images/zing.cms/admin/hr.gif); margin: 8px 0; }
+
+/* Header & Tabs */
+
+#header { background: black url(../../../images/zing.cms/admin/bg-header.gif) repeat-x top; height: 80px; color: white; position: relative; }
+  #header h1 { margin: 0; position: absolute; left: 36px; font-weight: bold; border: 0; line-height: 1; top: 10px; font-size: 14px; letter-spacing: 1px;}
+	  #header h1 em { margin-left: 7px; font-size: 80%; font-style: normal; color: #a0a0a0; letter-spacing: 0.05em; }
+	#header #info-bar {}
+    #header #info-bar { position: absolute; right: 13px; top: 12px; font-size: 11px; }
+    #header #info-bar .search { width: 120px; }
+    #header #info-bar .submit { vertical-align: bottom}
+    #header #info-bar a { color: white; text-decoration: none; }
+    #header #info-bar a:hover { text-decoration: underline; }
+		#header #info-bar select { font-size: 10px; }
+	
+.nav-tabs { margin: 0; padding: 56px 0 0 0; }
+  .nav-tabs li { padding: 0; list-style-type: none; display: block; float: left; margin: 0 7px 0 0; background: url(../../../images/zing.cms/admin/tab-main-inactive.gif) no-repeat top left; height: 24px; }
+  .nav-tabs a { font-size: 11px; color: white; padding: 3px 8px 4px 7px; line-height: 16px; display: block; text-decoration: none; background: url(../../../images/zing.cms/admin/tab-main-inactive-right.gif) no-repeat top right;}
+  .nav-tabs img.icon { margin-right: 2px; }
+		
+#prefs { width: 268px; float: right; padding-left: 22px; }
+  #prefs.nav-tabs li.selected { background-image: url(../../../images/zing.cms/admin/tab-prefs-active.gif); }
+  #prefs.nav-tabs li.selected a { font-weight: bold; color: #E32220; background-image: url(../../../images/zing.cms/admin/tab-prefs-active-right.gif); }
+
+#sections { padding-left: 30px; }
+  #sections.nav-tabs li.selected { background-image: url(../../../images/zing.cms/admin/tab-main-active.gif); }
+  #sections.nav-tabs li.selected a { font-weight: bold; color: black; background-image: url(../../../images/zing.cms/admin/tab-main-active-right.gif); }
+  
+/* Content / Sidebar */
+
+#main { margin-right: 280px; }
+
+#subnav { background: url(../../../images/zing.cms/admin/bg-subnav.gif) repeat-x top; padding: 5px 5px 5px 17px; margin: 0 0 0 0; font-size: 11px; line-height: 16px; }
+  #subnav a { color: black; text-decoration: none; margin: 0 0 0 16px; padding: 0px 0px 0px 20px; display:block; background-repeat: no-repeat; float:left;}
+	#subnav a span.caption:hover { text-decoration: underline; } 
+	#subnav a.selected { font-weight: bold; }
+
+#content { padding: 10px 10px 41px 10px; }
+
+#sidebar { width: 280px; color: white; padding: 6px 0 41px 0; float: right; }
+
+  #sidebar h2 { color: white; font-size: 14px; font-weight: normal; border-bottom: 1px solid #787878; padding-bottom: 2px; }
+	#sidebar h3 { color: white; font-size: 12px; font-weight: bold; }
+	#sidebar h4 { color: white; font-size: 10px; font-weight: bold; border-bottom: 1px solid #787878; padding-bottom: 4px; }
+	#sidebar p,
+	#sidebar dl { line-height: 1.3; font-size: 90%; }
+	#sidebar a { color: #c0c0c0; }
+	#sidebar a:hover { text-decoration: underline; }
+	
+	#sidebar .context { margin: 7px 20px 21px 0; }
+	#sidebar .context h2 { margin-left: 30px; }
+	#sidebar .context ul { margin: 0; padding: 0; }
+ 	#sidebar .context li { list-style: none; margin: 3px 0; padding: 0; }
+  #sidebar .context a { display: block; color: white; background-position: 7px center; background-repeat: no-repeat; height: 18px; padding: 6px 0 0 30px; text-decoration: none; line-height: 1; font-size: 12px; }
+  #sidebar .context li.selected { background: white url(../../../images/zing.cms/admin/bg-context-selected.gif) no-repeat right; }
+  #sidebar .context li.selected a { color: black; }
+  
+  #sidebar div.section { margin: 7px 20px 7px 30px; }
+  
+  #sidebar .recent-activity { width: 100%; }
+  #sidebar .recent-activity td { padding: 4px; vertical-align: middle; }
+  #sidebar .recent-activity tr.row1 { background-color: #202020; }
+  #sidebar .recent-activity tr.row2 { background-color: #101010; }
+  #sidebar .recent-activity td.date { font-size: 90%; }
+  
+  #sidebar .quick-search .search { width: 80%; }
+  #sidebar .quick-search .submit { border: none; vertical-align: bottom; }
+
+/* Footer */
+
+#footer { position: relative; margin-top: -31px; border-top: 1px solid #262626; background: black url(../../../images/zing.cms/admin/bg-footer.gif) repeat-x top; height: 24px; text-align: right; padding: 7px 10px 0 0; color: white; line-height: 1; font-size: 11px; text-transform: lowercase; }
+  #footer a { color: white; }
+  #footer strong { font-weight: bold; color: #9598BF; }
+  #footer #indicator { position: absolute; left: 7px; bottom: 6px; }
+  
+#notifications { position: absolute; top: 0; right: 7px; width: 250px; }
+  #notifications .flash { opacity: 0.9; }
+  
+#activity-indicator { display: none; position: absolute; top: 10px; right: 10px; padding: 10px; background-color: black; opacity: 0.75; border: 1px solid #404040; }
+
+/*
+ *
+ * Page Elements
+ *
+ */
+ 
+/* Flash Boxes */
+
+.flash { padding: 8px 8px 8px 30px; margin: 7px 0; border: 1px solid transparent; background-repeat: no-repeat; background-position: 8px 8px; line-height: 1.4; cursor: pointer; }
+  .flash ul { margin: 6px 0 0 20px; padding: 0; }
+  .flash li { margin: 0 0 3px 0; padding: 0; }
+  .flash a { font-weight: bold; }
+    .flash a:hover { text-decoration: underline; }
+  .flash.error { border-color: #770000; color: #770000; background-color: #ffdddd; background-image: url('../../../zing.cms/images/icons/silk/exclamation.png'); }
+    .flash.error a { color: #770000; }
+  .flash.notice { border-color: #000077; color: #000077; background-color: #ddddff; background-image: url('../../../zing.cms/images/icons/silk/information.png'); }
+    .flash.notice a { color: #000077; }
+  .flash.warning { border-color: #D46100; color: #D46100; background-color: #FDF9DD; background-image: url('../../../zing.cms/images/icons/silk/error.png'); }
+    .flash.warning a { color: #D46100; }
+  .flash.success { border-color: #007700; color: #007700; background-color: #ddffdd; background-image: url('../../../zing.cms/images/icons/silk/accept.png'); }
+    .flash.success a { color: #007700; }
+  .flash.flagged { border-color: #B1908F; color: #770000; background-color: #ffdddd; background-image: url('../../../zing.cms/images/icons/silk/flag_red.png'); }
+    .flash.flagged a { color: #770000; }
+
+/*
+ *
+ * Form Styling
+ *
+ */
+ 
+/* All Inputs */
+
+input, textarea, select { font: 12px "Lucida Sans Unicode", "Lucida Grande", sans-serif; }
+ 
+/* Wrapped Inputs */
+
+.iw { border: 1px solid #b5b5b5; padding: 2px; }
+  .iw input[type=text],
+  .iw input[type=password],
+  .iw textarea { display: block; width: 100%; background: none; border: 0; padding: 0; }
+
+.iws { }
+  .iws select { display: block; width: 100%; }
+  
+/* Date Inputs */
+
+.date-picker input[type=text],
+.datetime-picker input[type=text] { border: 1px solid #b5b5b5; padding: 2px; }
+  
+/* Multi Select */
+
+ul.multi-select { border: 1px solid #B5B5B5; height: 100px; overflow: auto; }
+  ul.multi-select li { padding: 3px; }
+    ul.multi-select li:hover { background-color: #FDF9DD; }
+ 
+/* Tabular Form */
+
+.tabular-form { width: 100%; }
+  .tabular-form td { vertical-align: middle; padding: 8px 5px; }
+  .tabular-form label { display: block; text-align: right; font-weight: bold; }
+    .tabular-form label:after { content: ":"; }
+    
+  .tabular-form tr.heading th { font-weight: bold; font-size: 14px; padding: 8px; color: white; background: #303030 url(../../../images/zing.cms/admin/bg-list-data-header.gif) repeat-x top; text-shadow: black 2px 2px 0; } /* LM */
+    
+  .tabular-form tr.item td { border-bottom: 1px solid #e4e4e4; }
+   .tabular-form tr.item:nth-child(1) td { border-top: 1px solid #e4e4e4; }
+  
+  .tabular-form tr td:nth-child(2) { padding-right: 20px; }
+  
+  .tabular-form tr td:nth-child(3) { width: 30%; background: #fdf9dd; border-left: 3px solid #D46100; }
+    .tabular-form tr.with-errors td:nth-child(3) { background: #ffdddd; border-left-color: #770000; color: #770000; }
+  
+  .tabular-form tr.item.required label:before { content: "* "; }
+    .tabular-form tr.item.required label { color: #aa0000; }
+  .tabular-form tr.item.disabled label { color: #a0a0a0; }
+  
+  .tabular-form .note { margin-top: 3px; }
+
+
+
+ /* Search Bars */
+
+ .search-bar { background: black url(../../../images/zing.cms/admin/bg-footer.gif) repeat-x top; padding: 8px; text-align: right; color: white; }
+ .search-bar span.checkbox { }
+
+ /* Components */
+
+ table.detail th { background-color: #303030; color: white; }
+
+
+
+ /*.tab-bar#prefs li { float: right; }*/
+
+ /* Multi-Select */
+
+
+
+
+
+
+

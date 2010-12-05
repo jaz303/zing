@@ -64,8 +64,16 @@ function zing_export_environment($name, $env = null) {
     return $ENV;
 }
 
-function zing_load_config($name) {
+/**
+ * Load a named configuration file from the config/app directory.
+ *
+ * @param $name name of config file to load, excluding .php extension
+ * @param $extracts optional array of name/value pairs to make available to the
+ *        config file via extract(). Useful for passing builder objects.
+ */
+function zing_load_config($name, $extracts = null) {
     global $_ZING;
+    if ($extracts) extract($extracts);
     require ZING_CONFIG_DIR . '/app/' . $name . '.php';
 }
 
@@ -84,6 +92,20 @@ function zing_load_config($name) {
 function zing_class_path($class) {
     if (is_object($class)) $class = get_class($class);
     return strtolower(preg_replace('|([^^/])([A-Z])|', '$1_$2', str_replace('\\', '/', $class)));
+}
+
+/**
+ * Foo => foo
+ * FooBar => foo_bar
+ * namespace\Foo => foo
+ * ns1\ns2\FooBar => foo_bar
+ */
+function zing_class_name($class) {
+    if (is_object($class)) $class = get_class($class);
+    if (($p = strrpos($class, '\\')) !== false) {
+        $class = substr($class, $p + 1);
+    }
+    return strtolower(preg_replace('|([^^])([A-Z])|', '$1_$2', $class));
 }
 
 //
@@ -154,114 +176,9 @@ function zing_fix_file_uploads_recurse($n, $ty, $tm, $e, $s, &$target) {
 // (or you can use 'core:kick', which updates all cached stuff)
 
 function __autoload($class) {
-
-    // SUPERLOAD-BEGIN
-	static $map = array (
-	  'IllegalStateException' => 'vendor/base-php/inc/base.php',
-	  'UnsupportedOperationException' => 'vendor/base-php/inc/base.php',
-	  'IOException' => 'vendor/base-php/inc/base.php',
-	  'NotFoundException' => 'vendor/base-php/inc/base.php',
-	  'NoSuchMethodException' => 'vendor/base-php/inc/base.php',
-	  'SecurityException' => 'vendor/base-php/inc/base.php',
-	  'SyntaxException' => 'vendor/base-php/inc/base.php',
-	  'Persistable' => 'vendor/base-php/inc/base.php',
-	  'Callback' => 'vendor/base-php/inc/base.php',
-	  'Inflector' => 'vendor/base-php/inc/base.php',
-	  'Date' => 'vendor/base-php/inc/date.php',
-	  'Date_Time' => 'vendor/base-php/inc/date.php',
-	  'Errors' => 'vendor/base-php/inc/errors.php',
-	  'AbstractFile' => 'vendor/base-php/inc/file.php',
-	  'File' => 'vendor/base-php/inc/file.php',
-	  'UploadedFile' => 'vendor/base-php/inc/file.php',
-	  'UploadedFileError' => 'vendor/base-php/inc/file.php',
-	  'UnsupportedImageTypeException' => 'vendor/base-php/inc/image.php',
-	  'Image' => 'vendor/base-php/inc/image.php',
-	  'MIME' => 'vendor/base-php/inc/mime.php',
-	  'MoneyConversionException' => 'vendor/base-php/inc/money.php',
-	  'Money' => 'vendor/base-php/inc/money.php',
-	  'MoneyBank' => 'vendor/base-php/inc/money.php',
-	  'V' => 'vendor/base-php/inc/validation.php',
-	  'ISO_Country' => 'vendor/base-php/inc/iso/country.php',
-	  'ISO_Language' => 'vendor/base-php/inc/iso/language.php',
-	  'GDBException' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBQueryException' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBIntegrityConstraintViolation' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBForeignKeyViolation' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBUniqueViolation' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBCheckViolation' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDB' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBMySQL' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBResult' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBResultMySQL' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBQuery' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'GDBQueryJoin' => 'vendor/base-php/inc/gdb/gdb.php',
-	  'gdb\\Migration' => 'vendor/base-php/inc/gdb/migration.php',
-	  'gdb\\SchemaBuilder' => 'vendor/base-php/inc/gdb/schema_builder.php',
-	  'gdb\\TableDefinition' => 'vendor/base-php/inc/gdb/table_definition.php',
-	  'zing\\DoublePerformException' => 'framework/classes/controller.php',
-	  'zing\\Controller' => 'framework/classes/controller.php',
-	  'zing\\Dispatcher' => 'framework/classes/dispatcher.php',
-	  'zing\\FileUtils' => 'framework/classes/fs.php',
-	  'zing\\http\\Constants' => 'framework/classes/http.php',
-	  'zing\\http\\Exception' => 'framework/classes/http.php',
-	  'zing\\http\\Headers' => 'framework/classes/http.php',
-	  'zing\\http\\Request' => 'framework/classes/http.php',
-	  'zing\\http\\Query' => 'framework/classes/http.php',
-	  'zing\\http\\AbstractResponse' => 'framework/classes/http.php',
-	  'zing\\http\\Response' => 'framework/classes/http.php',
-	  'zing\\http\\FileResponse' => 'framework/classes/http.php',
-	  'zing\\http\\Session' => 'framework/classes/http.php',
-	  'zing\\routing\\RoutingException' => 'framework/classes/routing.php',
-	  'zing\\routing\\DuplicateRouteException' => 'framework/classes/routing.php',
-	  'zing\\routing\\Router' => 'framework/classes/routing.php',
-	  'zing\\view\\MissingViewException' => 'framework/classes/view.php',
-	  'zing\\view\\Base' => 'framework/classes/view.php',
-	  'zing\\view\\PHPHandler' => 'framework/classes/view.php',
-	  'zing\\sys\\Config' => 'framework/classes/sys/config.php',
-	  'zing\\sys\\CSS' => 'framework/classes/sys/css.php',
-	  'zing\\sys\\JS' => 'framework/classes/sys/js.php',
-	  'zing\\sys\\Utils' => 'framework/classes/sys/utils.php',
-	  'zing\\reporter\\ConsoleReporter' => 'framework/classes/reporter/console_reporter.php',
-	  'zing\\plugin\\DefaultLocator' => 'framework/classes/plugin/default_locator.php',
-	  'zing\\plugin\\Dependency' => 'framework/classes/plugin/dependency.php',
-	  'zing\\plugin\\Installer' => 'framework/classes/plugin/installer.php',
-	  'zing\\plugin\\Manager' => 'framework/classes/plugin/manager.php',
-	  'zing\\plugin\\Plugin' => 'framework/classes/plugin/plugin.php',
-	  'zing\\plugin\\InvalidPluginException' => 'framework/classes/plugin/stub.php',
-	  'zing\\plugin\\Stub' => 'framework/classes/plugin/stub.php',
-	  'zing\\plugin\\Utils' => 'framework/classes/plugin/utils.php',
-	  'zing\\mail\\MailSendException' => 'framework/classes/mail/mail.php',
-	  'zing\\mail\\Message' => 'framework/classes/mail/mail.php',
-	  'zing\\mail\\Transport' => 'framework/classes/mail/mail.php',
-	  'zing\\mail\\MailTransport' => 'framework/classes/mail/mail.php',
-	  'zing\\lang\\Introspector' => 'framework/classes/lang/introspector.php',
-	  'zing\\lang\\OptionParser' => 'framework/classes/lang/options.php',
-	  'zing\\lang\\Reflection' => 'framework/classes/lang/reflection.php',
-	  'zing\\helpers\\DebugHelper' => 'framework/classes/helpers/common.php',
-	  'zing\\helpers\\HTMLHelper' => 'framework/classes/helpers/common.php',
-	  'zing\\helpers\\FormHelper' => 'framework/classes/helpers/common.php',
-	  'zing\\helpers\\AssetHelper' => 'framework/classes/helpers/common.php',
-	  'zing\\generator\\DefaultLocator' => 'framework/classes/generator/default_locator.php',
-	  'zing\\generator\\Generator' => 'framework/classes/generator/generator.php',
-	  'zing\\generator\\GeneratorNotFoundException' => 'framework/classes/generator/manager.php',
-	  'zing\\generator\\Manager' => 'framework/classes/generator/manager.php',
-	  'zing\\db\\Migrator' => 'framework/classes/db/migration.php',
-	  'zing\\db\\MigrationLocator' => 'framework/classes/db/migration.php',
-	  'zing\\db\\Migration' => 'framework/classes/db/migration.php',
-	  'zing\\archive\\UnsupportedAlgorithmException' => 'framework/classes/archive/archive.php',
-	  'zing\\archive\\OperationFailedException' => 'framework/classes/archive/archive.php',
-	  'zing\\archive\\Support' => 'framework/classes/archive/archive.php',
-	  'zing\\archive\\ZipNative' => 'framework/classes/archive/archive.php',
-	  'zing\\archive\\ZipCliNix' => 'framework/classes/archive/archive.php',
-	  'U' => 'app/helpers/url.php',
-	  'ApplicationController' => 'app/controllers/application_controller.php',
-	  'TestController' => 'app/controllers/test_controller.php',
-	);
-	// SUPERLOAD-END
-    
-    if (isset($map[$class])) {
-        require ZING_ROOT . '/' . $map[$class];
+    global $ZING_AUTOLOAD_MAP;
+    if (isset($ZING_AUTOLOAD_MAP[$class])) {
+        require ZING_ROOT . '/' . $ZING_AUTOLOAD_MAP[$class];
     }
-    
 }
 ?>

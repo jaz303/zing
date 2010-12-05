@@ -66,9 +66,9 @@ class Dispatcher
         $compiled_routes    = ZING_COMPILED_DIR . '/zing.routing/recognizer.php';
 
         if (!file_exists($compiled_routes)
-            || ($_ZING['config.zing.routing.recompile']
-                && ($_ZING['config.zing.routing.recompile'] === true || filemtime($route_definitions) > filemtime($compiled_routes)))) {
-            zing\routing\Router::compile($route_definitions, $compiled_routes);
+            || ($GLOBALS['_ZING']['config.zing.routing.recompile']
+                && ($GLOBALS['_ZING']['config.zing.routing.recompile'] === true || filemtime($route_definitions) > filemtime($compiled_routes)))) {
+            \zing\routing\Router::compile($route_definitions, $compiled_routes);
         }
 
         require $compiled_routes;

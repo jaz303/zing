@@ -2,3 +2,4 @@
 # application. It is used by Superload to automagically generate a mapping
 # file.
 
+vendor/plugins/zing.cms/classes

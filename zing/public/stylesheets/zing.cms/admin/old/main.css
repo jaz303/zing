@@ -1,0 +1,31 @@
+@import url(common.css);
+@import url(default.css);
+@import url(asset.css);
+@import url(thickbox.css);
+@import url(boxy.css);
+
+.search-form { border: 1px solid #a0a0a0; padding: 10px; background: #f0f0f0 url(../../../images/admin/bg-light.gif) repeat-x top; margin: 0 0 10px 0; font-size: 11px; }
+	.search-form td { padding: 0; font-size: 11px; }
+	.search-form .left { text-align: left; }
+	.search-form .right { text-align: right; }
+	.search-form input.checkbox { margin-left: 8px; }
+	.search-form img { vertical-align: text-bottom; }
+	.search-form a { color: black; }
+
+.asset-folder-tree-wrapper { width: 170px; }
+.asset-browser-wrapper { }
+	
+.asset-folder-tree ul { margin: 0; padding: 5px; background: #F0F0F0 url(../../../images/admin/bg-subnav.gif) repeat-x top; font-size: 11px; overflow: auto; }
+	.asset-folder-tree li { margin: 0; padding: 3px 0 2px 20px; display: block; list-style-type: none; background-image: url(../../../images/icons/silk/folder.png); background-repeat: no-repeat; background-position: left top; line-height: 1; cursor: pointer; cursor: hand; }
+	.asset-folder-tree li.open { background-image: url(../../../images/icons/silk/folder_page.png); }
+	.asset-folder-tree ul ul { margin: 0; padding: 0; background: none; }
+	.asset-folder-tree a { color: black; }
+
+table.mini { font-size: 10px; }
+
+.one-of-two { float: left; width: 48%; margin-right: 7px; }
+.two-of-two { float: left; width: 48%; }
+
+table.details { font-size: 11px; width: 100%; }
+	table.details td,
+	table.details th { padding: 1px; }

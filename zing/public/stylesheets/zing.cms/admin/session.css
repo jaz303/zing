@@ -1,0 +1,89 @@
+body { background: black; }
+
+#session-form {
+	
+	position: absolute;
+	top: 100px; left: 50%;
+	width: 350px;
+	margin-left: -175px;
+	
+	border: 1px solid #353535;
+	border-bottom-color: #171717;
+	border-right-color: #171717;
+	
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	
+	-o-background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-webkit-background-size: 100% 100%;
+	background-size: 100% 100%;
+	
+	background: -moz-linear-gradient(top, #171717, #363636);
+	background: -webkit-gradient(linear, left top, left bottom, from(#171717), to(#363636));
+	
+	-webkit-box-reflect: below 5px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.7, transparent), to(white));
+	
+}
+
+#session-form > .inner {
+	
+	padding: 15px;
+	
+}
+
+#session-form h1 {
+	color: #6600FF; 
+	font-weight: bold;
+	font-size: 16px;
+	text-shadow: 0 0 5px black;
+	text-transform: lowercase;
+	margin-bottom: 10px;
+}
+
+label {
+	display: block;
+	color: white;
+	font-size: 11px;
+	margin: 0 0 4px 0;
+}
+
+input {
+	background-color: black;
+	color: white;
+	border: 1px solid #565656;
+	padding: 3px;
+}
+	
+input:focus,
+input[type=submit]:active {
+	background: #110050;
+	border: 1px solid #6600FF;
+	color: #6600FF;
+	-webkit-box-shadow: 0 0 7px #6600FF;
+	outline: none;
+}
+
+input[type=text],
+input[type=password] {
+	display: block;
+	margin-bottom: 10px;
+	width: 180px;
+	font-size: 12px;
+}
+
+input[type=submit] {
+	font-size: 10px; padding: 5px;
+}
+
+.links {
+	margin-top: 10px;
+	font-size: 11px;
+	color: white;
+}
+
+.links a { color: white; }
+
+.links label {
+	display: inline;
+}

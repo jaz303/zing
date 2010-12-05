@@ -1,0 +1,44 @@
+button  {
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 16px;
+	border-radius: 8px;
+	text-shadow: 0 1px 0 #ffffff;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f0f0f0), to(#b8b8b8));
+	border: 1px solid #b0b0b0;
+	padding: 3px 8px; 
+	color: #282828;
+}
+
+button.small {
+	font-size: 10px;
+	line-height: 10px;
+	border-radius: 5px;
+	padding: 4px 6px;
+}
+
+button.small img { height: 10px; }
+
+button:not([disabled]):active {
+	-webkit-box-shadow: inset 0px 3px 5px rgba(0, 0, 0, 0.5);
+}
+
+button.red {
+	background: -webkit-gradient(linear, left top, left bottom, from(#903530), to(#642027));
+	border-color: #461210;
+	text-shadow: 0 1px 0 #000000;
+	color: white;
+}
+
+button.blue {
+	background: -webkit-gradient(linear, left top, left bottom, from(#3547AC), to(#263E7E));
+	border-color: #101246;
+	text-shadow: 0 1px 0 #000000;
+	color: white;
+}
+
+button * { vertical-align: middle; }
+
+button[disabled] { opacity: 0.5;  }
+	
+.blackout { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); }

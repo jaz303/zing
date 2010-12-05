@@ -1,5 +1,5 @@
 Zing! - a barebones PHP 5.3 VC framework
-============================================
+========================================
 
 &copy; 2010 Jason Frame [ [jason@onehackoranother.com](mailto:jason@onehackoranother.com) / [@jaz303](http://twitter.com/jaz303) ]  
 Released under the MIT License.

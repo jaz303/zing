@@ -4,8 +4,6 @@
 
 $R->connect(':controller/:action/:id', array('action' => 'index', 'id' => null));
 
-// Here's an example namespaced route for setting up an "admin" area
-$R->with_options(array('namespace' => 'admin'), function($R) {
-    $R->connect('admin/:controller/:action/:id', array('action' => 'index', 'id' => null));
-});
+// CMS routes
+\zing\cms\routing\Router::draw_routes($R, 'admin', 'assets');
 ?>

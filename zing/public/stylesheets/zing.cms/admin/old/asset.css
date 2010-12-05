@@ -1,0 +1,22 @@
+
+
+#asset-browser-preview {
+	height: 300px;
+	background-color: #efefef;
+	float: right;
+	overflow: hidden;
+}
+
+#asset-browser-preview-inner {
+	padding: 10px;
+}
+
+#asset-browser-preview .thumbnail {
+	background-color: white;
+	background-position: center center;
+	background-repeat: no-repeat;
+	height: 120px;
+	margin: 10px auto;
+}
+
+#asset-browser-frame {  }

@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <title>Freefall</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <%=freefall_stylesheet_link_tags %>
+    <%=freefall_javascript_include_tags %>
+		<%=rich_text_editor_include_tags %>
+    <%=popup_calendar_include_tags %>
+    <link rel="shortcut icon" href="<%=image_path('admin/favicon.png') %>" />
+  </head>
+	<body>
+	  <div id='non-footer'>
+      <div id='header'>
+        <h1><%=@title %> <em><%=@subtitle %></em></h1>
+        <div id='info-bar'>
+          Module: <%= select_module_tag(:select_module, freefall_module, :class => 'link-to') %> | logged in as <strong><%= @admin.username %></strong>
+          <!--
+          <span id='help-actuator-wrapper'>
+            | <a id='help-actuator' href='#'><%=icon(:help) %> 
+            <span id='help-actuator-caption'>show help</span></a>
+          </span>
+          -->
+        </div>
+        <ul id='prefs' class='tab-bar'>
+          <!--<li><%= link_to "#{icon(:house)} Home", admin_url %></li>-->
+					<li><%= link_to "#{icon(:joystick)} Settings", :controller => '/admin/core/preferences' %></li>
+          <li><%= link_to "#{icon(:door_out)} Logout", :controller => '/admin/core/session', :action => 'logout' %></li>
+        </ul>
+        <ul id='sections' class='tab-bar'>
+          <% if available_sections.size > 0 -%>
+              <% for _as in available_sections -%>
+                <%= content_tag('li', icon_link_to(_as[:icon],
+                                                   _as[:caption],
+                                                   _as[:url]),
+                                :class => _as[:name] == current_section[:name] ? 'selected' : '') %>
+              <% end -%>
+            </ul>
+          <% end -%>
+        </ul>
+      </div>
+      <div id='sidebar'>
+  	    <div id='sidebar-wrapper'>
+  	      <%= yield :sidebar %>
+  	    </div>
+  	    <div id='help-wrapper'>
+  	      <div class='section'>
+  	        <h2>This is the help content</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  	      </div>
+  	    </div>
+  	  </div>
+  	  <div id='main'>
+  	    <div id='subnav'>
+          <%= yield :subnav %>
+          &nbsp;
+          <div style='clear:left'></div>
+  			</div>
+  	    <div id='content'>
+  	      <%= yield %>
+  	    </div>
+  	  </div>
+  	</div>
+    <div id='footer'>
+      <a href='<%=url_for(:controller => '/admin/core/dashboard', :action => 'about') %>' rel='boxy'>
+			  <strong>freefall</strong>
+			  <%= Freefall::Attribution.copyright %>
+			  <%= image_tag('admin/freefall-icon.png', :class => 'icon') %>
+			</a>
+		</div>
+    <div id='notifications'>
+		  <% flash.each do |k,v| -%>
+		  <div class='flash <%= k%>'><%= v %></div>
+		  <% end -%>      
+		</div>
+		<div id='activity-indicator'>
+      <%=image_tag('admin/global-indicator.gif') %>
+    </div>
+  </body>
+</html>

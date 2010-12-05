@@ -1,0 +1,14 @@
+{
+	"title": "Zing! CMS",
+	"version": "0.0.1",
+	"email": "cms-plugin@zingframework.com",
+	"url": "http://zingphp.com/cms",
+	"copyright": "2010 Jason Frame",
+	"authors": [
+		{
+			"name": "Jason Frame",
+			"email": "jason@onehackoranother.com",
+			"url": "http://onehackoranother.com"
+		}
+	]
+}

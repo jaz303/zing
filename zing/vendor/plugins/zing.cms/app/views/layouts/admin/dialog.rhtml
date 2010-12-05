@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title><%=@title || "Freefall" %></title>
+    <%=stylesheet_link_tag('admin/core/dialog') %>
+		<%=freefall_javascript_include_tags %>
+    <script type="text/javascript" charset="utf-8">
+      function showIndicator() { hideIndicator(); $('#activity-indicator').show(); }
+      function hideIndicator() { $('.indicator').hide(); }
+       
+      var indicatorTimerId = null; 
+       
+      function showSuccess(message) { 
+        $('#success-indicator').show().attr('title', message); 
+        if(indicatorTimerId) { clearTimeout(indicatorTimerId); }
+        indicatorTimerId = setTimeout(function() { $('#success-indicator').fadeOut(); }, ff.DEFAULT_FLASH_TIMEOUT);
+      }
+      function showError(message) { 
+        $('#error-indicator').show().attr('title', message);
+        if(indicatorTimerId) { clearTimeout(indicatorTimerId); }
+        indicatorTimerId = setTimeout(function() { $('#error-indicator').fadeOut(); }, ff.DEFAULT_FLASH_TIMEOUT);
+       } 
+       
+      var dialogHandlers = {};
+  
+      function registerHandler(name, f, enabled) {
+        dialogHandlers[name] = {func:f, enabled:enabled};
+      }
+      
+      function fireAction(action) {
+        if(dialogHandlers[action]) {
+          if(dialogHandlers[action]['enabled']) {
+            if (dialogHandlers[action]['func']()) {
+              closeDialog();
+            }
+          }
+        } else {
+          alert('No dialog handler registered for: ' + action);
+        }
+      }
+      
+      function disableAction(action) {
+        if(dialogHandlers[action]) {
+          dialogHandlers[action]['enabled'] = false;
+        }
+      }
+      
+      function enableAction(action) {
+        if(dialogHandlers[action]) {
+          dialogHandlers[action]['enabled'] = true;
+        }
+      }
+      
+      function closeDialog() { window.close(); }
+      
+      $(function() {
+        $('#error-indicator, #success-indicator').click(function() {
+          $(this).fadeOut();
+        });
+        
+        registerHandler('close', closeDialog, true);
+      });
+    </script>
+  </head>
+  <body id='asset-dialog'>
+    
+    <% c_class = '' %>
+    <% c_class << ' with-header' if @_dialog_header %>
+    <% c_class << ' with-footer' if @_dialog_footer %>
+    
+    <div id='centre' class='<%=c_class %>'>
+      <%=yield %>
+    </div>
+    
+    <% if @_dialog_header %>
+      <div id='header-wrapper'>
+        <table cellspacing='0' cellpadding='0' id='header'>
+          <tr><td>
+            <%=@_dialog_header %>
+            <%=image_tag('admin/dialog-indicator.gif', :id => 'activity-indicator', :class => 'indicator') %>
+            <%= icon(:tick,  :id => 'success-indicator', :class => 'indicator') %>
+            <%= icon(:cross, :id => 'error-indicator', :class => 'indicator') %>
+          </td></tr>
+        </table>
+      </div>
+    <% end %>
+    
+    <% if @_dialog_footer %>
+      <div id='footer-wrapper'>
+        <div id='footer'>
+          <%=@_dialog_footer %>
+        </div>
+      </div>
+    <% end %>
+    
+  </body>
+</html>

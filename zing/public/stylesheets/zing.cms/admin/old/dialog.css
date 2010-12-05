@@ -1,0 +1,85 @@
+@import url(common.css);
+
+body { margin: 0; padding: 0; }
+
+.option-toggler { display: none; margin: 0; padding: 0; background: #f0f0f0 url(../../../images/admin/bg-light.gif) repeat-x top; border-bottom: 1px solid #a0a0a0; font-size: 11px; }
+	.option-toggler > div { padding: 5px 10px; }
+
+#header-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: 33px; }
+#header { height: 33px; background: black url(../../../images/admin/bg-footer.gif) repeat-x top; font-size: 11px; width: 100%; color: white; }
+	#header td { padding: 0 10px; vertical-align: middle; border-bottom: 1px solid #262626; }
+	#header a { color: white; }
+	#header a:hover { text-decoration: underline; }
+	#header .actuator { font-weight: normal; }
+	#header .actuator img { opacity: 0.4; }
+	#header .actuator.active { font-weight: bold; }
+	#header .actuator.active img { opacity: 1; }
+	#header .actuator .caption { display: none; }
+	#header .actuator.active .caption { display: inline; }
+	#header select { font-size: 11px }
+	#header .actuator,
+	#header .spacer { margin-left: 10px; }
+	#header .actuator.first { margin-left: 0 }
+	#header h2 { border: none; margin: 0; }
+
+.indicator { position: absolute; top: 8px; right: 8px; display: none; }
+
+#centre { margin: 0;  }
+#centre.with-header { margin-top: 33px; }
+#centre.with-footer { margin-bottom: 39px; }
+#main { padding: 5px; }
+
+#footer-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; height: 40px; }
+#footer { height: 29px; padding: 5px; background: black url(../../../images/admin/bg-footer.gif) repeat-x top; border-top: 1px solid #262626; }
+#footer .buttons { text-align: right; margin: 0; }
+
+#asset-dialog #upload input.file { border: none; }
+#asset-dialog #upload input { font-size: 11px; }
+
+.asset-list { background-color: white; font-size: 11px; height: 290px; overflow: auto; }
+	.asset-list a { color: black; }
+	.asset-list table { background-color: white; }
+	.asset-list table tr.row1 { background-color: #e9e9e9; }
+	.asset-list table tr.row2 { background-color: white; }
+	.asset-list table tr.selected { background-color: #a2a2a2; color: white; }
+	.asset-list .asset { cursor: pointer; cursor: hand; }
+	.asset-list .folder-link { cursor: pointer; cursor: hand; }
+	.asset-list .filename { display: none; }
+	.asset-list .invalid { color: #a4a4a4; }
+	
+#main.compressed .asset-list { height: 260px; }	
+	
+#notifications { padding: 0 0 0 60px; position: absolute; left: 0; top: 0; width: 600px; }
+	
+div.flash { margin: 0; border-width: 0 1px 1px 1px; padding: 8px 8px 8px 30px; font-size: 11px; }
+	
+#layout-selector { width: 100%; }
+	#layout-selector tr { cursor: pointer; cursor: hand; }
+	#layout-selector tr.selected { background-color: #e0e0e0; }
+	#layout-selector td { padding: 5px; vertical-align: top; }
+	#layout-selector h3 { margin: 0 0 10px 0; }
+	#layout-selector .screenshot { vertical-align: middle; text-align: center; width: 200px; height: 150px; }
+	
+#embed-select { position: absolute; top: 33px; right: 0px; bottom: 40px; left: 0px; display: none; background: #f0f0f0 url(../../../images/admin/bg-light.gif) repeat-x top; z-index: 1000; padding: 0; margin: 0; }
+	#embed-select { padding: 20px; }
+  	#embed-select .asset-preview { width: 280px; height: 280px; overflow: auto; padding: 0; float: left; background-color: white; border: 1px solid #a0a0a0; }
+  	#embed-select .image-profile-select { margin: 0 0 0 292px; }
+	
+#image-detail { position: absolute; top: 33px; right: 0px; bottom: 40px; left: 0px; display: none; background: #f0f0f0 url(../../../images/admin/bg-light.gif) repeat-x top; z-index: 1000; padding: 0; margin: 0; }
+	#image-detail div.inner { padding: 20px;}
+	
+/* TODO: does this belong here? */	
+.site-map { border: 1px solid #a0a0a0; border-top: none; padding: 10px 10px 0 10px; background: #f0f0f0 url(../../../images/admin/bg-light.gif) repeat-x top; height: 320px; overflow: auto; }
+  .site-map li { list-style: none; }
+  .site-map div.row.selected { background: #f0f0f0 url(../../../images/admin/bg-light.gif) repeat-x top; }
+  .site-map .meta { font-size: 90%; color: #808080; }
+  .site-map .row { padding: 3px; position: relative; }
+  .site-map .actuator { width: 16px; height: 16px; float: left; margin-right: 5px; }
+  .site-map .actuator.parent { background-image: url(../../../images/icons/silk/control_play.png); }
+  .site-map .actuator.parent.open { background-image: url(../../../images/icons/silk/control_play_down.png); }
+  .site-map .page-info { float: left; cursor: pointer; }
+  .site-map ul.nested { padding-left: 21px; }
+
+/* IE7 */
+.site-map li { zoom: 1; }
+.site-map { zoom: 1; margin: 0; position: relative; }

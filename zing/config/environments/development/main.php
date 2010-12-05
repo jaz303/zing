@@ -7,7 +7,7 @@ $ENV['config.gdb'] = array(
     'host'      => '127.0.0.1',
     'username'  => 'root',
     'password'  => '',
-    'database'  => 'zing_app_development'
+    'database'  => 'zing_development'
 );
 
 /**

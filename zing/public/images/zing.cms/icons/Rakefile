@@ -1,0 +1,9 @@
+require 'fileutils'
+
+# convert all dashes to underscores in icon filenames so we can refer to them
+# easily using symbols
+task :underscore do
+  Dir['{fugue,fugue_24,fugue_32}/*-*.png'].each do |f|
+    FileUtils.mv(f, f.gsub('-', '_'))
+  end
+end
