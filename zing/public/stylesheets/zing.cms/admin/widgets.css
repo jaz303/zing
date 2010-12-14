@@ -1,10 +1,47 @@
+/* Standard Forms */
+
+.standard-form { }
+
+	.standard-form :focus { outline: none; }
+
+	.standard-form fieldset,
+	.standard-form .actions { padding: 15px; border-radius: 3px; }
+	.standard-form fieldset { background: #f0f0f0; padding-bottom: 5px; margin-bottom: 15px; }
+	.standard-form .actions { background: #f4f4f4; }
+
+	.standard-form legend { font-weight: bold; }
+
+	.standard-form label { font-weight: bold; font-size: 12px; display: block; margin: 0 0 5px 3px; color: #404040; }
+		.standard-form label.required { color: #000000 }
+
+	.standard-form .form-item { margin-bottom: 15px; }
+	.standard-form .full { float: left; width: 98%; }
+	.standard-form .half { float: left; width: 48%; margin-right: 2%; }
+	.standard-form .third { float: left; width: 31%; margin-right: 2%; }
+	.standard-form .quarter { float: left; width: 23%; margin-right: 2%; }
+	.standard-form .new-row { clear: left }
+
+	.standard-form .note,
+	.standard-form .errors { font-size: 90%; margin-top: 5px; padding-left: 3px; }
+	.standard-form .note { color: #606060; }
+	.standard-form .errors { color: #770000; }
+
+	.standard-form select { width: 100%; }
+	.standard-form .iw { border: 1px solid #cdcdcd; padding: 3px; border-radius: 3px; background: white; }
+	  .standard-form .iw input,
+	  .standard-form .iw textarea { display: block; width: 100%; border: 0; padding: 0; font-size: 12px; background: none; }
+	  .standard-form .iw input { }
+	  .standard-form .iw textarea { height: 80px; }
+	
+	.standard-form .with-errors .iw { border-color: #770000; background: #ffd8d8; }
+
 /* List Table */
 
 .table-list { width: 100%; font-size: 11px; border-collapse: separate; border-spacing: 2px; }
   .table-list th,
   .table-list td { padding: 5px; vertical-align: middle; }
-  .table-list th { text-align: left; }
-  .table-list td { text-align: left; }
+  .table-list th { text-align: left; font-weight: bold; }
+  .table-list td { text-align: left; font-weight: normal; }
   
 .table-list thead tr { }
   .table-list thead th {
@@ -13,6 +50,7 @@
   }
   
 .table-list tbody tr { }
+	.table-list tbody th { background: #d8d8d8; }
   .table-list tbody tr:nth-child(odd) td { background: #ebebeb; }
   .table-list tbody tr:nth-child(even) td { background: #f4f4f4; }
 
@@ -37,6 +75,12 @@
 }
 
 .table-list .empty { background: #ffdddd; color: #880000; text-align: center; }
+.table-list .numeric { text-align: right; }
+
+/* Date pickers */
+
+.date-picker input[type=text],
+.datetime-picker input[type=text] { border: 1px solid #b5b5b5; padding: 2px; }
 
 /* Tree */
 

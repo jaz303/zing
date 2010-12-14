@@ -3,6 +3,33 @@ namespace admin\cms\table_editing;
 
 class AbstractController extends \zing\cms\admin\BaseController
 {
+    /**
+     * The collection that was loaded from the database, if the current action
+     * is dealing with a collection.
+     *
+     * This is an associative array with the following keys:
+     *   rows           => array of row data
+     *   page           => page number of current page
+     *   per_page       => rows displayed on each page
+     *   page_count     => total number of pages
+     *   row_count      => total number of rows (across all pages)
+     */
+    protected $collection = null;
+    
+    /**
+     * The ID of the row that was loaded from the database, if the current
+     * action is dealing with a single row.
+     */
+    protected $id = null;
+    
+    /**
+     * The row that was loaded from the database, if the current action is
+     * dealing with a single row.
+     *
+     * This is an associative array, mapping field => value
+     */
+    protected $row = null;
+    
     protected function init() {
         parent::init();
         $this->table_name = $this->get_table_name();
@@ -24,10 +51,18 @@ class AbstractController extends \zing\cms\admin\BaseController
         if ($scope) {
             // TODO: support scopes!
         } else {
-            $this->collection = $this->find_all($page, $rpp);
+            $this->collection = &$this->find_all($page, $rpp);
         }
         
         $this->render('view', '/admin/cms/table_editing/index');
+        
+    }
+    
+    public function _create() {
+        
+        
+        
+        $this->render('view', '/admin/cms/table_editing/create');
         
     }
     
@@ -113,10 +148,37 @@ class AbstractController extends \zing\cms\admin\BaseController
         return "SELECT * FROM {$this->table_name}";
     }
     
-    public function find_all($page, $rpp) {
+    public function &find_all($page, $rpp) {
         $res = \GDB::instance()->q($this->sql_for_find_all());
         if ($rpp) $res->paginate($rpp, $page);
-        return $res;
+        return $this->collection_for_result($res);
+    }
+    
+    /**
+     * Converts a GDBResult into a collection suitable for use in the views
+     *
+     * @param $res GDBResult to convert to a collection array
+     * @return collection array
+     */
+    protected function &collection_for_result($res) {
+        
+        $collection = array(
+            'rows'          => $res->stack(),
+            'page'          => $page,
+            'per_page'      => $res->rpp(),
+            'page_count'    => $res->page_count(),
+            'row_count'     => $res->row_count()
+        );
+        
+        $ids = array();
+        foreach ($collection['rows'] as &$row) {
+            $ids[] = $row['id'];
+        }
+        
+        $this->after_find_collection($collection, $ids);
+        
+        return $collection;
+    
     }
     
     //
@@ -140,11 +202,64 @@ class AbstractController extends \zing\cms\admin\BaseController
         return true;
     }
     
+    //
+    // Form Definition
     
+    protected static $DEFAULT_TYPE_INPUTS = array(
+        'string'                => 'text_field',
+        'integer'               => 'text_field',
+        'float'                 => 'text_field',
+        'boolean'               => 'check_box',
+        'date'                  => 'date_field',
+        'date_time'             => 'date_time_field'
+    );
     
+    /**
+     * If you want the generated form to be split into logical sections, override
+     * this method to return an array of the form:
+     *
+     * group_id => array('title' => 'Group title', 'fields' => array('field_1', 'field_2', 'field_3'))
+     */
+    protected function admin_form_groups() { return null; }
     
+    //
+    // Overridable Callbacks
     
+    /**
+     * Post-process a single row after loading it from the DB.
+     * You can override this method to add/format the raw row data.
+     *
+     * @param $row row to process
+     */
+    protected function after_find(array &$row) { }
     
+    /**
+     * Post-process a collection after loading it from the DB.
+     * You can override this methods to add/format the raw row data.
+     * 
+     * @param $collection collection array
+     * @param $ids convenience array of row IDs, e.g. for retrieving associated rows in a single query
+     */
+    protected function after_find_collection(array &$collection, array $ids) { }
+    
+    protected function before_validate() { }
+    protected function before_validate_on_create() { }
+    protected function before_validate_on_update() { }
+    
+    protected function after_validate_on_update() { }
+    protected function after_validate_on_create() { }
+    protected function after_validate() { }
+    
+    protected function before_save() { }
+    protected function before_create() { }
+    protected function before_update() { }
+    
+    protected function after_update() { }
+    protected function after_create() { }
+    protected function after_save() { }
+    
+    protected function before_delete() { }
+    protected function after_delete() { }
     
 }
 ?>

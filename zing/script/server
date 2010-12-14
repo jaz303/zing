@@ -1,6 +1,30 @@
 #!/usr/bin/env php
 <?php
+require_once dirname(__FILE__) . '/boot_console.php';
 
+if ($_ZING['zing.server']['adapter'] != 'lighttpd') {
+	echo "Sorry, only lighttpd is supported at present.\n";
+	exit(1);
+}
 
+$lighty_path = $_ZING['zing.server']['path'];
+$php_path    = $_ZING['zing.server']['php-fcgi'];
 
+if (!$lighty_path) $lighty_path = \zing\sys\OS::find_executable('lighttpd');
+if ($lighty_path) {
+	echo "lighttpd found at $lighty_path\n";
+} else {
+	echo "lighttpd not found; try setting path manually.\n";
+	exit(1);
+}
+
+if (!$php_path) $php_path = \zing\sys\OS::find_executable('php-cgi');
+if ($lighty_path) {
+	echo "php-cgi found at $php_path\n";
+} else {
+	echo "php-cgi not found; try setting path manually.\n";
+	exit(1);
+}
+
+$port = 3000;
 ?>

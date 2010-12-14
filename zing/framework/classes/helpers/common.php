@@ -189,7 +189,7 @@ class FormHelper
         return HTMLHelper::empty_tag('input', $options);
     }
     
-    public static function textarea($name, $value = '', $options = array()) {
+    public static function text_area($name, $value = '', $options = array()) {
         $options['name'] = $name;
         return HTMLHelper::tag('textarea', $value, $options);
     }

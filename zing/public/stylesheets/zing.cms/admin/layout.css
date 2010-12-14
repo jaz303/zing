@@ -143,8 +143,7 @@ body.with-sidebar { background: url(/images/zing.cms/admin/bg-sidebar.gif) repea
 /* Footer */
 
 #footer { border-top: 1px solid #262626; color: white; font-size: 11px; line-height: 11px; }
-	#footer .freefall { color: #6600FF; font-weight: bold; }
-	#footer * { vertical-align: middle; }
+	#footer .zing { color: #6600FF; font-weight: bold; margin-right: 10px }
 	#footer {
 		-o-background-size: 100% 100%;
 		-moz-background-size: 100% 100%;

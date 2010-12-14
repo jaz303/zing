@@ -284,7 +284,7 @@ class PHPHandler extends Base
         if (isset($this->dynamic_helpers[$method])) {
             return call_user_func_array(array($this->dynamic_helpers[$method], $method), $args);
         } else {
-            throw new NoSuchMethodException("helper not found: $method");
+            throw new \NoSuchMethodException("helper not found: $method");
         }
     }
     

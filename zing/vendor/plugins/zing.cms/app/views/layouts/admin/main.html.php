@@ -32,8 +32,8 @@ $section_path = 'core.home.dashboard';
 					</h1>
 					
 					<div id='info-bar'>
-						Logged in as jaz303 |
-						<a href='#'>Logout</a> |
+						Logged in as <?= h($C->logged_in_admin()->get_username()) ?> |
+						<a href='/admin/sessions/logout'>Logout</a> |
 						Module: 
             <select class='x-link-select'>
               <? foreach ($admin_structure->available_modules($section_path) as $module) { ?>
@@ -98,7 +98,7 @@ $section_path = 'core.home.dashboard';
 	  
 	  <div id='footer'>
     	<div class='align-right'>
-    		<span class='freefall'><?= \zing\cms\Attribution::name() ?></span>
+    		<span class='zing'><?= \zing\cms\Attribution::name() ?></span>
         <?= \zing\cms\Attribution::copyright() ?>
     	  <?= i('zing.cms/admin/freefall-icon.png', array('class' => 'icon')) ?>
     	</div>

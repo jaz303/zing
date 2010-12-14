@@ -34,7 +34,7 @@ class Controller
     
     //
     // Fields with double leading underscores will not be copied to the view
-    // ($response isn't copied either, for that matter)
+    // ($response and $db aren't copied either, for that matter)
     
     protected $__auto_session           = true;
     protected $__performed              = false;
@@ -93,7 +93,18 @@ class Controller
         }
         unset($assigns['response']);
         unset($assigns['db']);
+        
         $assigns['controller'] = $this;
+        $assigns['C'] = $this;
+        
+        $self = $this;
+        if (!isset($assigns['session'])) {
+            // passing lambda to LazySession allows it to initialize controller session.
+            $assigns['session'] = new \zing\http\LazySession(function() use($self) {
+                return $self->session;
+            });
+        }
+        
         return $assigns;
     }
     
@@ -126,6 +137,10 @@ class Controller
     
     protected function flash($type, $message = null) {
         $this->session->flash($type, $message);
+    }
+    
+    protected function flash_now($type, $message = null) {
+        $this->session->flash_now($type, $message);
     }
     
     /**

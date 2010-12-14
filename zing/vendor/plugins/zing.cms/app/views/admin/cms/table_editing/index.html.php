@@ -13,7 +13,7 @@
     </tr>
   </thead>
   <? if (count($collection)) { ?>
-    <? $c = 0; foreach ($collection as $row) { ?>
+    <? $c = 0; foreach ($collection['rows'] as $row) { ?>
       <tr>
         <? foreach ($fields as $f) { ?>
           <td><?= $controller->format_list_value($f, $row[$f], $c++) ?></td>

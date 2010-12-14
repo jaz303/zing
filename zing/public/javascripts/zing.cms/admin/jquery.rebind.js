@@ -1,7 +1,7 @@
 // jQuery Rebind
 // (c) 2009 Jason Frame (jason@onehackoranother.com)
 //
-(function($) {
+(function($, context) {
 	
 	var rebinds = [];
 	function Rebind($) { this.$ = $; };
@@ -39,6 +39,6 @@
 		rebinds.push(fn);
 	};
 	
-	$(function() { Rebind.one(document); });
+	context.Rebind = Rebind;
 	
-})(jQuery);
+})(jQuery, this);

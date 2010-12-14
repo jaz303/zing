@@ -484,6 +484,10 @@ class Session implements \ArrayAccess
         $_SESSION['__flash_next'][] = array('type' => $type, 'message' => $message);
     }
     
+    public function flash_now($type, $message) {
+        $this->flash_now[] = array('type' => $type, 'message' => $message);
+    }
+    
     public function current_flash() {
         return $this->flash_now;
     }
@@ -507,5 +511,47 @@ class Session implements \ArrayAccess
     public function offsetUnset($k) {
         unset($_SESSION[$k]);
     }
+}
+
+/**
+ * LazySession exposes the same interface as session but delays initialisation until
+ * a session operation is actually requested.
+ */
+class LazySession implements \ArrayAccess
+{
+    private $lambda;
+    private $session = null;
+    
+    public function __construct($lambda = null) {
+        $this->lambda = $lambda;
+    }
+    
+    protected function init() {
+        if ($this->session === null) {
+            if ($this->lambda) {
+                $this->session = $this->lambda();
+            } else {
+                $this->session = new Session();
+            }
+        }
+    }
+    
+    public function __call($method, $args) {
+        $this->init();
+        return call_user_func_array(array($this->session, $method), $args);
+    }
+    
+    public function finalize() {
+        if ($this->session === null) {
+            return;
+        } else {
+            return $this->session->finalize();
+        }
+    }
+    
+    public function offsetExists($k) { $this->init(); return isset($this->session[$k]); }
+    public function offsetGet($k) { $this->init(); return $this->session[$k]; }
+    public function offsetSet($k, $v) { $this->init(); $this->session[$k] = $v; }
+    public function offsetUnset($k) { $this->init(); unset($this->session[$k]); }
 }
 ?>

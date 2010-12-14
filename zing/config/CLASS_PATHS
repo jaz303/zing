@@ -3,3 +3,4 @@
 # file.
 
 vendor/plugins/zing.cms/classes
+vendor/plugins/zing.cms/app/controllers
