@@ -2,29 +2,24 @@
 <?php
 require_once dirname(__FILE__) . '/boot_console.php';
 
-if ($_ZING['zing.server']['adapter'] != 'lighttpd') {
-	echo "Sorry, only lighttpd is supported at present.\n";
+$adapter_class = $_ZING['zing.server']['adapter'];
+
+try {
+	
+	$adapter = new $adapter_class;
+	
+	// TODO: port from command line
+	if (isset($_ZING['zing.server']['port'])) {
+		$adapter->set_port($_ZING['zing.server']['port']);
+	}
+	
+	fwrite(STDOUT, "Starting {$adapter->get_server_string()} on port {$adapter->get_port()}\n");
+	
+	$adapter->start();
+
+} catch (\Exception $e) {
+	fwrite(STDERR, "Error: " . get_class($e) . "\n");
+	fwrite(STDERR, $e->getMessage() . "\n");
 	exit(1);
 }
-
-$lighty_path = $_ZING['zing.server']['path'];
-$php_path    = $_ZING['zing.server']['php-fcgi'];
-
-if (!$lighty_path) $lighty_path = \zing\sys\OS::find_executable('lighttpd');
-if ($lighty_path) {
-	echo "lighttpd found at $lighty_path\n";
-} else {
-	echo "lighttpd not found; try setting path manually.\n";
-	exit(1);
-}
-
-if (!$php_path) $php_path = \zing\sys\OS::find_executable('php-cgi');
-if ($lighty_path) {
-	echo "php-cgi found at $php_path\n";
-} else {
-	echo "php-cgi not found; try setting path manually.\n";
-	exit(1);
-}
-
-$port = 3000;
 ?>
