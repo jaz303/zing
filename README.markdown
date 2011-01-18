@@ -20,7 +20,7 @@ Features (complete and planned)
 -------------------------------
 
   * Fast & efficient. Zing benchmarks at 1250 requests/sec in a test with APC enabled, sessions disabled and trivial controller/view logic. Enabling sessions with PHP's default handler slows things down considerably but I'm guessing this can easily be worked around with custom save handlers.
-  * `script/server` - fire up development servers instantly (Requires lighttpd) _complete_
+  * `script/server` - fire up development servers instantly (Requires lighttpd) _(complete)_
   * Rapid Rails-style router (matcher code is compiled to PHP) _(complete, but no globbing support yet)_
   * Database access with **no ORM** _(complete)_
   * Database migrations (yes, even for plugins) _(complete)_
@@ -47,8 +47,11 @@ Clone the repo and grab the submodules:
 Next step is to get a webserver on the go. The easiest way to play is to be using
 a Unix-y system (e.g. Linux, OS X) with [lighttpd](http://www.lighttpd.net/) and
 PHP FastCGI binary installed. Edit `zing/config/app/system.php`, setting the correct
-paths to the respective binaries and the desired port for your development server.
-Next just execute `script/server` from the console and you're in business.
+paths to the respective binaries<sup>*</sup> and the desired port for your development server.
+Now execute `script/server` from the console and you're in business.
+
+<sup>*</sup> This isn't strictly necessary; Zing will locate the binaries automatically
+if they're in your PATH or another standard-ish location.
 
 An Apache vhost is do-able too, albeit clunky. Something like this should do the
 trick, substituting the correct `$ZING_ROOT`:
