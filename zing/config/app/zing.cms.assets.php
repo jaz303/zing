@@ -1,3 +1,0 @@
-<?php
-$WARP->defaults();
-?>
