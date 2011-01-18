@@ -21,38 +21,53 @@ $.rebind(function(context) {
         }
     });
     
-    /*
+	/*
 	 * Datepickers
 	 *
 	 * Any element with class .date-picker or .datetime-picker will become a datepicker,
 	 * if the Calendar library has been included on the page.
 	 */
-    if (typeof Calendar != 'undefined') {
-        var calendarSeq = 0;
-	 	$('.datetime-picker, .date-picker').each(function() {
-	 	    
-	 	    var input   = $('input[type=hidden]', this)[0],
-	 	        display = $('input[type=text]', this)[0],
-	 	        button  = $('a', this)[0];
-	 	        
-            input.id    = 'dt-' + (calendarSeq++);
-            display.id  = 'dt-' + (calendarSeq++);
-            button.id   = 'dt-' + (calendarSeq++);
-            
-            var time    = $(this).is('.datetime-picker');
-	 	    
-	 	    Calendar.setup({
-	 			inputField: input.id,
-	 			displayArea: display.id,
-	 			button: button.id,
-	 			ifFormat: "%Y-%m-%dT%H:%M:%S",
-	 			daFormat: time ? config.datePicker.formatWithTime : config.datePicker.format,
-				firstDay: 1,
-	 			showsTime: time,
-	 			timeFormat: 24,
-	 			date: '2010-05-22T11:15:00'
-	 		});
-	 	});
+	if (typeof Calendar != 'undefined') {
+		var calendarSeq = 0;
+		$('.datetime-picker, .date-picker', context).each(function() {
+
+			var input		= $('input[type=hidden]', this)[0],
+				display		= $('input[type=text]', this)[0],
+				button		= $('a', this)[0];
+
+			input.id		= 'dt-' + (calendarSeq++);
+			display.id		= 'dt-' + (calendarSeq++);
+			button.id		= 'dt-' + (calendarSeq++);
+
+			var time		= $(this).is('.datetime-picker'),
+				date		= new Date();
+
+			var match;
+			if (match = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/.exec(input.value || '')) {
+				date.setYear(match[1]);
+				date.setMonth(match[2] - 1);
+				date.setDate(match[3]);
+				date.setHours(match[4]);
+				date.setMinutes(match[5]);
+				date.setSeconds(match[6]);
+			}
+
+			Calendar.setup({
+				inputField	: input.id,
+				displayArea	: display.id,
+				button		: button.id,
+				ifFormat	: "%Y-%m-%dT%H:%M:%S",
+				daFormat	: time ? config.datePicker.formatWithTime : config.datePicker.format,
+				firstDay	: 1,
+				showsTime	: time,
+				timeFormat	: 24,
+				date		: input.value
+			});
+
+			display.value = date.print(format);
+		});
+	}
+
 	}
     
     /*

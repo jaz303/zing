@@ -19,6 +19,9 @@ if (isset($_SERVER['ZING_ENV'])) {
 
 date_default_timezone_set('Europe/London');
 
+// Storage location for CMS assets
+$GLOBALS['_ZING']['zing.cms.asset_path'] = ZING_DATA_DIR . '/cms/assets';
+
 // SUPERLOAD-BEGIN
 $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'IllegalStateException' => 'vendor/base-php/inc/base.php',
@@ -113,6 +116,9 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'zing\\generator\\Generator' => 'framework/classes/generator/generator.php',
   'zing\\generator\\GeneratorNotFoundException' => 'framework/classes/generator/manager.php',
   'zing\\generator\\Manager' => 'framework/classes/generator/manager.php',
+  'zing\\dependency\\Dependency' => 'framework/classes/dependency/dependency.php',
+  'zing\\dependency\\Atom' => 'framework/classes/dependency/dependency.php',
+  'zing\\dependency\\Version' => 'framework/classes/dependency/version.php',
   'zing\\db\\Migrator' => 'framework/classes/db/migration.php',
   'zing\\db\\MigrationLocator' => 'framework/classes/db/migration.php',
   'zing\\db\\Migration' => 'framework/classes/db/migration.php',
@@ -129,6 +135,7 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'zing\\cms\\admin\\Structure' => 'vendor/plugins/zing.cms/classes/admin.php',
   'zing\\cms\\admin\\BaseController' => 'vendor/plugins/zing.cms/classes/admin.php',
   'zing\\cms\\Attribution' => 'vendor/plugins/zing.cms/classes/cms.php',
+  'zing\\cms\\Model' => 'vendor/plugins/zing.cms/classes/model.php',
   'zing\\cms\\routing\\Router' => 'vendor/plugins/zing.cms/classes/routing.php',
   'zing\\cms\\ZingUser' => 'vendor/plugins/zing.cms/classes/user.php',
   'zing\\cms\\FilterAbortException' => 'vendor/plugins/zing.cms/classes/utils.php',
@@ -155,10 +162,13 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'zing\\cms\\content\\AdminRowHandler' => 'vendor/plugins/zing.cms/classes/content/admin_row_handler.php',
   'zing\\cms\\content\\ModelSpecification' => 'vendor/plugins/zing.cms/classes/content/model_specification.php',
   'zing\\cms\\content\\Node' => 'vendor/plugins/zing.cms/classes/content/node.php',
-  'zing\\cms\\assets\\WarpConfig' => 'vendor/plugins/zing.cms/classes/assets/assets_controller.php',
-  'zing\\cms\\assets\\WarpSource' => 'vendor/plugins/zing.cms/classes/assets/assets_controller.php',
-  'zing\\cms\\assets\\WarpProfile' => 'vendor/plugins/zing.cms/classes/assets/assets_controller.php',
-  'zing\\cms\\assets\\AssetsController' => 'vendor/plugins/zing.cms/classes/assets/assets_controller.php',
+  'zing\\cms\\assets\\Asset' => 'vendor/plugins/zing.cms/classes/assets/asset.php',
+  'zing\\cms\\assets\\AssetFolder' => 'vendor/plugins/zing.cms/classes/assets/asset_folder.php',
+  'zing\\cms\\assets\\WarpConfig' => 'vendor/plugins/zing.cms/classes/assets/warping.php',
+  'zing\\cms\\assets\\WarpSource' => 'vendor/plugins/zing.cms/classes/assets/warping.php',
+  'zing\\cms\\assets\\WarpProfile' => 'vendor/plugins/zing.cms/classes/assets/warping.php',
+  'AssetsController' => 'vendor/plugins/zing.cms/app/controllers/assets_controller.php',
+  'admin\\AssetDialogController' => 'vendor/plugins/zing.cms/app/controllers/admin/asset_dialog_controller.php',
   'admin\\SessionsController' => 'vendor/plugins/zing.cms/app/controllers/admin/sessions_controller.php',
   'admin\\SystemController' => 'vendor/plugins/zing.cms/app/controllers/admin/system_controller.php',
   'admin\\UsersController' => 'vendor/plugins/zing.cms/app/controllers/admin/users_controller.php',

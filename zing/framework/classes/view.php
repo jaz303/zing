@@ -418,7 +418,8 @@ class PHPHandler extends Base
     }
     
     private function rewrite_function_call($function) {
-        foreach ($this->helpers as $helper_class) {
+        // FIXME: reverse helpers once before compiling
+        foreach (array_reverse($this->helpers) as $helper_class) {
             if ($helper_class[0] == '\\') {
                 $helper_class = substr($helper_class, 1);
             }

@@ -144,6 +144,13 @@ class BaseHelper
         $class = $selected ? 'selected' : '';
         return "<li style=\"$icon\" class=\"$class\"><a href=\"$url\">$caption</a></li>";
     }
+    
+    //
+    // Errors
+    
+    public static function error_messages($errors = null) {
+        return \zing\helpers\HTMLHelper::error_messages($errors, ':admin/errors');
+    }
 }
 
 class URLHelper
@@ -320,6 +327,10 @@ abstract class FormBuilder
                 $this->group->items[] = $input;
             } else {
                 $this->items[] = $input;
+            }
+            
+            if ($this->errors && $input_errors = $this->errors->on($raw_name)) {
+                $input->errors($input_errors);
             }
             
             return $input;

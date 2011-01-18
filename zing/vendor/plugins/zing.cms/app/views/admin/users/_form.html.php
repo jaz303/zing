@@ -1,7 +1,13 @@
+<?= error_messages($user) ?>
+
 <?php
-$builder = new \zing\cms\helpers\admin\StandardFormBuilder(admin_url(':users/edit/' . $user->get_id()), 'post');
+$url = $user->is_new_record() ? ':users/create' : (':users/edit/' . $user->get_id());
+$url = admin_url($url);
+
+$builder = new \zing\cms\helpers\admin\StandardFormBuilder($url, 'post');
 
 $builder->set_prefix('user');
+$builder->set_errors($user->errors());
 $builder->set_context($user, 'get');
 
 $builder->cancel_url(admin_url(':users'));

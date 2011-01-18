@@ -159,7 +159,7 @@ class Installer
         
     }
     
-    // TODO: this is unix only, plsfix
+    // FIXME: 'nix-specific
     private function copy_files_to_target() {
         $this->reporter->info("Copying files to target");
         `cp -R {$this->dir}/ {$this->target_dir()}`;

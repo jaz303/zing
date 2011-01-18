@@ -116,8 +116,11 @@ class HTMLHelper
         return self::link_to($html, "mailto:$address", $options);
     }
     
-    public static function error_messages($errors = null) {
-        return \zing\view\Base::active()->render_partial(':errors', array('errors' => $errors));
+    public static function error_messages($errors = null, $partial = ':errors') {
+        if (is_object($errors) && method_exists($errors, 'errors')) {
+            $errors = $errors->errors();
+        }
+        return \zing\view\Base::active()->render_partial($partial, array('errors' => $errors));
     }
     
     public static function flash_messages($messages = null) {

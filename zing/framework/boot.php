@@ -77,6 +77,10 @@ function zing_load_config($name, $extracts = null) {
     require ZING_CONFIG_DIR . '/app/' . $name . '.php';
 }
 
+function zing_config($name, $default = null) {
+    return isset($GLOBALS['_ZING'][$name]) ? $GLOBALS['_ZING'][$name] : $default;
+}
+
 /**
  * This is a bit of an oddball and nowhere seemed like the best place to put it.
  * It turns a qualified class name into a path and is primarily used by the default

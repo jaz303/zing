@@ -20,10 +20,31 @@ class UsersController extends \zing\cms\admin\BaseController
         $this->redirect_to($this->admin_users_url());
     }
     
+    public function _create() {
+        $this->user = new ZingUser;
+        if ($this->request->is_post()) {
+            $this->user->set_public_attributes($this->params['user']);
+            if ($this->user->is_valid()) {
+                $this->user->save();
+                $this->flash('success', 'User ' . $this->user->get_username() . ' created successfully');
+                $this->redirect_to($this->admin_users_url());
+            }
+        }
+    }
+    
     public function _edit() {
         $this->user = ZingUser::find($this->params['id']);
         if ($this->request->is_post()) {
-            
+            if (is_empty($this->params['user']['password'])) {
+                unset($this->params['user']['password']);
+                unset($this->params['user']['password_confirmation']);
+            }
+            $this->user->set_public_attributes($this->params['user']);
+            if ($this->user->is_valid()) {
+                $this->user->save();
+                $this->flash('success', 'User ' . $this->user->get_username() . ' updated successfully');
+                $this->redirect_to($this->admin_users_url());
+            }
         }
     }
     

@@ -152,10 +152,10 @@ class Request implements \ArrayAccess, \IteratorAggregate
     public static function rewire(&$array) {
         foreach (array_keys($array) as $k) {
             if ($k[0] == '@') {
-                $array[substr($k, 1)] = Date::from_request($array[$k]);
+                $array[substr($k, 1)] = \Date::from_request($array[$k]);
                 unset($array[$k]);
             } elseif ($k[0] == '$') {
-                $array[substr($k, 1)] = Money::from_request($array[$k]);
+                $array[substr($k, 1)] = \Money::from_request($array[$k]);
                 unset($array[$k]);
             } elseif (is_array($array[$k])) {
                 self::rewire($array[$k]);
@@ -222,15 +222,14 @@ class Request implements \ArrayAccess, \IteratorAggregate
     private $requested_with     = null;
     
     private $timestamp;
+    private $time               = null;
     
     private $client_ip;
     private $client_port;
     
-    public function url() {
+    public function url($force_port = false) {
         if ($this->url === null) {
-            $url = 'http';
-            if ($this->is_secure) $url .= 's';
-            $url .= '://';
+            $url = $this->is_secure ? 'https://' : 'http://';
             if ($this->username) {
                 $url .= $this->username;
                 if ($this->password) {
@@ -238,8 +237,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
                 }
                 $url .= '@';
             }
-            $url .= $this->host;
-            if ($this->port != 80) $url .= ':' . $this->port;
+            $url .= $this->host_and_port($force_port);
             $url .= $this->path;
             if (strlen($this->query_string)) {
                 $url .= '?' . $this->query_string;
@@ -255,13 +253,14 @@ class Request implements \ArrayAccess, \IteratorAggregate
     
     public function host() { return $this->host; }
     public function port() { return $this->port; }
+    public function canonical_port() { return $this->is_secure ? 443 : 80; }
     public function path() { return $this->path; }
     public function query() { return $this->query; }
     public function query_string() { return $this->query_string; }
     public function request_uri() { return $this->request_uri; }
     
-    public function host_and_port($force80 = false) {
-        return $this->host . (($this->port != 80 || $force80) ? (':' . $this->port) : '');
+    public function host_and_port($force_port = false) {
+        return $this->host . (($this->port != $this->canonical_port() || $force_port) ? (':' . $this->port) : '');
     }
     
     public function method() { return $this->method; }
@@ -276,12 +275,18 @@ class Request implements \ArrayAccess, \IteratorAggregate
     public function is_xhr() { return $this->requested_with == 'xmlhttprequest'; }
     
     public function timestamp() { return $this->timestamp; }
+    public function time() {
+        if ($this->time === null) $this->time = new \Date_Time($this->timestamp);
+        return $this->time;
+    }
     
     public function client_ip() { return $this->client_ip; }
     public function client_port() { return $this->client_port; }
     
     /**
      * Returns a reference to the request parameters array.
+     * Remember also to *assign* by reference if you wish to mutate the source
+     * array.
      *
      * @return a reference to the request parameters array.
      */

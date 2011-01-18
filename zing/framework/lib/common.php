@@ -49,8 +49,8 @@ function is_blank($value) {
 //     return preg_match('/^\s*-?\d+(\.\d+)?\s*$/', $value);
 // }
 
-function is_email($email, $use_dns = true) {
-    if (!preg_match('/^[^\s@]+@([a-z0-9-]+(\.[a-z0-9-]+))*$/i', $value, $matches)) {
+function is_email($email, $use_dns = false) {
+    if (!preg_match('/^[^\s@]+@([a-z0-9-]+(\.[a-z0-9-]+)+)$/i', $email, $matches)) {
 		return false;
 	} elseif ($use_dns) {
 	    $tmp = array();
@@ -67,10 +67,20 @@ function is_email($email, $use_dns = true) {
  * Convert value to integer or null
  *
  * @param $i value to make into an integer
- * @return null if $i is null, intval($i) otherwise
+ * @return null if $i is null, (int) $i otherwise
  */
 function int_or_null($i) {
     return $i === null ? null : (int) $i;
+}
+
+/**
+ * Convert value to float or null
+ *
+ * @param $f value to make into a float
+ * @return null if $f is null, (float) $f otherwise
+ */
+function float_or_null($f) {
+    return $f === null ? null : (float) $f;
 }
 
 /**

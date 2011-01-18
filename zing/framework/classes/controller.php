@@ -318,6 +318,13 @@ class Controller
         $this->set_response($response);
     }
     
+    protected function render_blob($blob) {
+        // TODO: check for filename + set (requires filename to be added to blob)
+        // TODO: delegate to render_file if $blob is a local file
+        $this->response->set_content_type($blob->mime_type());
+        $this->response->set_body($blob->data());
+    }
+    
     protected function render_html($html) {
         $this->response->set_content_type('text/html');
         $this->response->set_body($html);
