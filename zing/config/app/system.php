@@ -18,7 +18,7 @@ $_ZING['zing.generator.locator'] = 'zing\\generator\\DefaultLocator';
  * is a lot more fluid.
  */
 $_ZING['zing.server'] = array(
-    'adapter'       => 'zing\server\adapters\LighttpdAdapter',
+    'adapter'       => 'lighttpd',
     'path'          => null,        // path to server binary, will be guessed if null
     'php-fcgi'      => null,        // path to PHP FCGI binary, will be guessed if null
     'port'          => 3000,        // server port, will use adapter default if null

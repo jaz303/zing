@@ -2,11 +2,11 @@
 <?php
 require_once dirname(__FILE__) . '/boot_console.php';
 
-$adapter_class = $_ZING['zing.server']['adapter'];
-
 try {
 	
-	$adapter = new $adapter_class;
+	$adapter_name	= $_ZING['zing.server']['adapter'];
+	$adapter_class 	= \zing\server\adapters\AbstractAdapter::for_name($adapter_name);
+	$adapter		= new $adapter_class;
 	
 	// TODO: port from command line
 	if (isset($_ZING['zing.server']['port'])) {
@@ -17,6 +17,9 @@ try {
 	
 	$adapter->start();
 
+} catch (\zing\server\adapters\UnknownAdapterException $uae) {
+	fwrite(STDERR, "Unknown server adapter: $adapter_name\n");
+	exit(1);
 } catch (\Exception $e) {
 	fwrite(STDERR, "Error: " . get_class($e) . "\n");
 	fwrite(STDERR, $e->getMessage() . "\n");
