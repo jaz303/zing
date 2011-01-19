@@ -21,51 +21,8 @@ class LighttpdAdapter extends AbstractAdapter
     }
     
     public function start() {
-        
-        if (!extension_loaded('pcntl')) {
-            $prefix = (PHP_SHLIB_SUFFIX === 'dll') ? 'php_' : '';
-            if (!dl($prefix . 'pcntl.' . PHP_SHLIB_SUFFIX)) {
-                throw new \Exception("lighttpd adapter requires the pcntl extension\n");
-            }
-        }
-        
-        if (file_exists($this->config_path())) {
-            throw new \Exception("Temporary config file {$this->config_path()} exists\nIs there already a server on this port?");
-        }
-        
         file_put_contents($this->config_path(), $this->generate_config_file());
-        
-        //
-        // This is all completely dodgy and I'm not sure I've done it right
-        
-        $pid = pcntl_fork();
-        if ($pid == -1) {
-            throw new \Exception("couldn't fork!");
-        } elseif ($pid) {
-            pcntl_signal(SIGINT, array($this, 'handle_sigint'));
-            while ($this->running) {
-                pcntl_signal_dispatch();
-                sleep(0.2);
-            }
-            $status = null;
-            pcntl_waitpid($pid, &$status);
-        } else {
-            `{$this->path_lighttpd} -D -f {$this->config_path()}`;
-        }
-        
-        $this->cleanup();
-        
-    }
-    
-    public function handle_sigint() {
-        $this->running = false;
-        $this->cleanup();
-    }
-    
-    private function cleanup() {
-        if (file_exists($this->config_path())) {
-            unlink($this->config_path());
-        }
+        `{$this->path_lighttpd} -D -f {$this->config_path()}`;
     }
     
     private function locate_binaries() {
