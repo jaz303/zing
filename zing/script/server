@@ -2,6 +2,8 @@
 <?php
 require_once dirname(__FILE__) . '/boot_console.php';
 
+use zing\Console as C;
+
 try {
 	
 	$adapter_name	= $_ZING['zing.server']['adapter'];
@@ -13,16 +15,16 @@ try {
 		$adapter->set_port($_ZING['zing.server']['port']);
 	}
 	
-	fwrite(STDOUT, "Starting {$adapter->get_server_string()} on port {$adapter->get_port()}\n");
+	C::write("Starting {$adapter->get_server_string()} on port {$adapter->get_port()}");
 	
 	$adapter->start();
 
 } catch (\zing\server\adapters\UnknownAdapterException $uae) {
-	fwrite(STDERR, "Unknown server adapter: $adapter_name\n");
+	C::error("Unknown server adapter: $adapter_name");
 	exit(1);
 } catch (\Exception $e) {
-	fwrite(STDERR, "Error: " . get_class($e) . "\n");
-	fwrite(STDERR, $e->getMessage() . "\n");
+	C::error("Error: " . get_class($e));
+	C::error($e->getMessage());
 	exit(1);
 }
 ?>
