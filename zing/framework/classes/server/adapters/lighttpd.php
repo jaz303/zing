@@ -22,7 +22,13 @@ class LighttpdAdapter extends AbstractAdapter
     
     public function start() {
         file_put_contents($this->config_path(), $this->generate_config_file());
-        `{$this->path_lighttpd} -D -f {$this->config_path()}`;
+        
+        $exit_status;
+        system("{$this->path_lighttpd} -D -f {$this->config_path()}", $exit_status);
+        
+        if ($exit_status != 0) {
+            exit(1);
+        }
     }
     
     private function locate_binaries() {
