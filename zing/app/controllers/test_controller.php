@@ -9,8 +9,7 @@ class TestController extends ApplicationController
     
     protected function before() {
         \zing_load_config('zing.cms.admin');
-        $this->layout('admin/main');
-        $this->helper('\\zing\\cms\\helpers\\AdminHelper');
+        $this->layout('application');
         $this->title = "Test Title";
         $this->subtitle = "Test Subtitle";
         $this->admin_structure = \zing\cms\admin\Structure::instance();

@@ -24,7 +24,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   
   <?= stylesheet_collection('defaults') ?>
-  <?= javascript_include_tag('modernizer-1.7.min.js') ?>
+  <?= javascript_include_tag('modernizr-1.7.min.js') ?> 
 </head>
 
 <body>
@@ -34,7 +34,9 @@
 
     </header>
     <div id="main" role="main">
-      <?= $this->content_for('layout') ?>
+
+<?= $this->content_for('layout') ?>
+
     </div>
     <footer>
 
@@ -44,7 +46,7 @@
   <?= javascript_collection('defaults') ?>
 
   <!--[if lt IE 7 ]>
-    <?= javascript_include_tag('js/libs/dd_belatedpng.js') ?>
+    <?= javascript_include_tag('js/libs/dd_belatedpng.js') ?> 
     <script>DD_belatedPNG.fix('img, .png_bg');</script>
   <![endif]-->
 

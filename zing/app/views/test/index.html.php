@@ -27,12 +27,8 @@
   <?= check_box('moose', true) ?>
   <?= file_field('barz') ?>
 
-  <?= textarea('raaa', 'Here is some content to edit') ?>
+  <?= text_area('raaa', 'Here is some content to edit') ?>
 
 <?= end_form() ?>
 
 <?= pager(array('page_count' => 5, 'page' => 3)) ?>
-
-<?= start_context_menu() ?>
-  <?= context_menu_item('pencil', 'Foo', '#') ?>
-<?= end_context_menu() ?>
