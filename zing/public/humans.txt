@@ -1,0 +1,14 @@
+/* TEAM */
+  Role: Name
+  Email: you [at] example.com
+  Twitter: @...
+  From: Your Location
+
+/* THANKS */
+
+/* SITE */
+	Last update: Date
+	Language: English
+	Doctype: HTML5 with CSS3
+	Tools: Zing PHP Framework
+	IDE: Aptana Studio 3 and Notepad++
