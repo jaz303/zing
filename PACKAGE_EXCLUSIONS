@@ -1,0 +1,10 @@
+# Random cruft
+.DS_Store
+
+# Omit all git files from base package
+.git/
+.git*
+
+# Omit CMS files from base package
+zing.cms/
+zing.cms.*
