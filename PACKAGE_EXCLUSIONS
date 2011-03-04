@@ -8,3 +8,13 @@
 # Omit CMS files from base package
 zing.cms/
 zing.cms.*
+
+# Test/dev files
+app/admin_models/
+app/controllers/test_controller.php
+app/lib/*
+app/models/
+app/views/test/
+
+# Temporaries
+tmp/*
