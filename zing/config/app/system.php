@@ -1,13 +1,13 @@
 <?php
 /**
- * Class used to locate plugins
+ * Classes used to locate plugins
  */
-$_ZING['zing.plugin.locator'] = 'zing\\plugin\\DefaultLocator';
+$_ZING['zing.plugin.locators'][] = 'zing\plugin\DefaultLocator';
 
 /**
- * Class used to locate generators
+ * Classes used to locate generators
  */
-$_ZING['zing.generator.locator'] = 'zing\\generator\\DefaultLocator';
+$_ZING['zing.generator.locators'][] = 'zing\generator\DefaultLocator';
 
 /**
  * Development server

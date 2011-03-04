@@ -22,7 +22,7 @@ class Dependency
                     if (preg_match('/^(<|<=|=|>|>=|\!|~>)(' . Version::VERSION_CHUNKER . ')$/', $atom, $matches)) {
                         $group[] = new Atom($matches[1], new Version($matches[2]));
                     } else {
-                        throw new \IllegalArgumentException("invalid dependency atom: $atom");
+                        throw new \InvalidArgumentException("invalid dependency atom: $atom");
                     }
                 }
                 $this->groups[] = $group;
@@ -50,6 +50,14 @@ class Dependency
             return false;
         }
     }
+    
+    public function toString() {
+        return implode(', ', array_map(function($group) {
+            return implode(' ', array_map(function($atom) {
+                return $atom->toString();
+            }, $group));
+        }, $this->groups));
+    }
 }
 
 class Atom
@@ -74,6 +82,10 @@ class Atom
             case '~>':  return $v->is_same_minor_version($this->version);
             default:    throw new \IllegalArgumentException("invalid operator: $this->operator");
         }
+    }
+    
+    public function toString() {
+        return "{$this->operator}{$this->version->toString()}";
     }
 }
 ?>

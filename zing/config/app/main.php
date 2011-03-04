@@ -19,10 +19,14 @@ if (isset($_SERVER['ZING_ENV'])) {
 
 date_default_timezone_set('Europe/London');
 
-// Storage location for CMS assets
-$GLOBALS['_ZING']['zing.cms.asset_path'] = ZING_DATA_DIR . '/cms/assets';
 
-// SUPERLOAD-BEGIN
+// {begin:zing.cms.asset-path}
+$GLOBALS['_ZING']['zing.cms.asset_path'] = ZING_DATA_DIR . '/cms/assets';
+// {end:zing.cms.asset-path}
+
+
+
+// {begin:zing.autoload-map}
 $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'IllegalStateException' => 'vendor/base-php/inc/base.php',
   'UnsupportedOperationException' => 'vendor/base-php/inc/base.php',
@@ -39,6 +43,7 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'FileBlob' => 'vendor/base-php/inc/blob.php',
   'Date' => 'vendor/base-php/inc/date.php',
   'Date_Time' => 'vendor/base-php/inc/date.php',
+  'Time' => 'vendor/base-php/inc/date.php',
   'Errors' => 'vendor/base-php/inc/errors.php',
   'AbstractFile' => 'vendor/base-php/inc/file.php',
   'File' => 'vendor/base-php/inc/file.php',
@@ -88,10 +93,12 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'zing\\view\\MissingViewException' => 'framework/classes/view.php',
   'zing\\view\\Base' => 'framework/classes/view.php',
   'zing\\view\\PHPHandler' => 'framework/classes/view.php',
+  'zing\\sys\\AutoloadMapper' => 'framework/classes/sys/autoload_mapper.php',
   'zing\\sys\\Config' => 'framework/classes/sys/config.php',
   'zing\\sys\\CSS' => 'framework/classes/sys/css.php',
   'zing\\sys\\JS' => 'framework/classes/sys/js.php',
   'zing\\sys\\OS' => 'framework/classes/sys/os.php',
+  'zing\\sys\\SourceBlockWriter' => 'framework/classes/sys/source_block_writer.php',
   'zing\\sys\\Utils' => 'framework/classes/sys/utils.php',
   'zing\\server\\adapters\\UnknownAdapterException' => 'framework/classes/server/adapters/abstract.php',
   'zing\\server\\adapters\\AbstractAdapter' => 'framework/classes/server/adapters/abstract.php',
@@ -100,8 +107,12 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'zing\\plugin\\DefaultLocator' => 'framework/classes/plugin/default_locator.php',
   'zing\\plugin\\Dependency' => 'framework/classes/plugin/dependency.php',
   'zing\\plugin\\Installer' => 'framework/classes/plugin/installer.php',
+  'zing\\plugin\\PluginNotFoundException' => 'framework/classes/plugin/manager.php',
+  'zing\\plugin\\DuplicatePluginException' => 'framework/classes/plugin/manager.php',
   'zing\\plugin\\Manager' => 'framework/classes/plugin/manager.php',
   'zing\\plugin\\Plugin' => 'framework/classes/plugin/plugin.php',
+  'zing\\plugin\\GitSource' => 'framework/classes/plugin/sources.php',
+  'zing\\plugin\\GithubSource' => 'framework/classes/plugin/sources.php',
   'zing\\plugin\\InvalidPluginException' => 'framework/classes/plugin/stub.php',
   'zing\\plugin\\Stub' => 'framework/classes/plugin/stub.php',
   'zing\\plugin\\Utils' => 'framework/classes/plugin/utils.php',
@@ -136,46 +147,19 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'ApplicationController' => 'app/controllers/application_controller.php',
   'TestController' => 'app/controllers/test_controller.php',
   'Product' => 'app/admin_models/product.php',
-  'zing\\cms\\admin\\Structure' => 'vendor/plugins/zing.cms/classes/admin.php',
-  'zing\\cms\\admin\\BaseController' => 'vendor/plugins/zing.cms/classes/admin.php',
-  'zing\\cms\\Attribution' => 'vendor/plugins/zing.cms/classes/cms.php',
-  'zing\\cms\\Model' => 'vendor/plugins/zing.cms/classes/model.php',
-  'zing\\cms\\routing\\Router' => 'vendor/plugins/zing.cms/classes/routing.php',
-  'zing\\cms\\ZingUser' => 'vendor/plugins/zing.cms/classes/user.php',
-  'zing\\cms\\FilterAbortException' => 'vendor/plugins/zing.cms/classes/utils.php',
-  'zing\\cms\\Utils' => 'vendor/plugins/zing.cms/classes/utils.php',
-  'zing\\cms\\table_model\\Prototype' => 'vendor/plugins/zing.cms/classes/table_model/prototype.php',
-  'zing\\cms\\table_model\\Field' => 'vendor/plugins/zing.cms/classes/table_model/prototype.php',
-  'zing\\cms\\table_model\\BooleanField' => 'vendor/plugins/zing.cms/classes/table_model/prototype.php',
-  'zing\\cms\\table_model\\DateField' => 'vendor/plugins/zing.cms/classes/table_model/prototype.php',
-  'zing\\cms\\table_model\\DateTimeField' => 'vendor/plugins/zing.cms/classes/table_model/prototype.php',
-  'zing\\cms\\table_model\\NumericField' => 'vendor/plugins/zing.cms/classes/table_model/prototype.php',
-  'zing\\cms\\table_model\\FloatField' => 'vendor/plugins/zing.cms/classes/table_model/prototype.php',
-  'zing\\cms\\table_model\\IntegerField' => 'vendor/plugins/zing.cms/classes/table_model/prototype.php',
-  'zing\\cms\\table_model\\StringField' => 'vendor/plugins/zing.cms/classes/table_model/prototype.php',
-  'admin\\cms\\table_editing\\AbstractController' => 'vendor/plugins/zing.cms/classes/table_editing/admin_controller.php',
-  'zing\\cms\\table_editing\\Registry' => 'vendor/plugins/zing.cms/classes/table_editing/registry.php',
-  'zing\\cms\\helpers\\admin\\BaseHelper' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
-  'zing\\cms\\helpers\\admin\\URLHelper' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
-  'zing\\cms\\helpers\\admin\\AdminFormGroup' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
-  'zing\\cms\\helpers\\admin\\AdminFormInput' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
-  'zing\\cms\\helpers\\admin\\FormBuilder' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
-  'zing\\cms\\helpers\\admin\\StandardFormBuilder' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
-  'zing\\cms\\helpers\\admin\\AdminTabularFormBuilder' => 'vendor/plugins/zing.cms/classes/helpers/admin.php',
-  'zing\\cms\\content\\AdminListHandler' => 'vendor/plugins/zing.cms/classes/content/admin_list_view.php',
-  'zing\\cms\\content\\AdminRowHandler' => 'vendor/plugins/zing.cms/classes/content/admin_row_handler.php',
-  'zing\\cms\\content\\ModelSpecification' => 'vendor/plugins/zing.cms/classes/content/model_specification.php',
-  'zing\\cms\\content\\Node' => 'vendor/plugins/zing.cms/classes/content/node.php',
-  'zing\\cms\\assets\\Asset' => 'vendor/plugins/zing.cms/classes/assets/asset.php',
-  'zing\\cms\\assets\\AssetFolder' => 'vendor/plugins/zing.cms/classes/assets/asset_folder.php',
-  'zing\\cms\\assets\\WarpConfig' => 'vendor/plugins/zing.cms/classes/assets/warping.php',
-  'zing\\cms\\assets\\WarpSource' => 'vendor/plugins/zing.cms/classes/assets/warping.php',
-  'zing\\cms\\assets\\WarpProfile' => 'vendor/plugins/zing.cms/classes/assets/warping.php',
-  'AssetsController' => 'vendor/plugins/zing.cms/app/controllers/assets_controller.php',
-  'admin\\AssetDialogController' => 'vendor/plugins/zing.cms/app/controllers/admin/asset_dialog_controller.php',
-  'admin\\SessionsController' => 'vendor/plugins/zing.cms/app/controllers/admin/sessions_controller.php',
-  'admin\\SystemController' => 'vendor/plugins/zing.cms/app/controllers/admin/system_controller.php',
-  'admin\\UsersController' => 'vendor/plugins/zing.cms/app/controllers/admin/users_controller.php',
+  'lfo\\RecordNotFoundException' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
+  'lfo\\UnknownSerializationFormat' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
+  'lfo\\UnknownIndexException' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
+  'lfo\\QueryFailedException' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
+  'lfo\\RollbackException' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
+  'lfo\\Gateway' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
+  'lfo\\Query' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
+  'lfo\\Result' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
+  'lfo\\PHPSerializer' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
+  'lfo\\Object' => 'plugins/jaz303.little-fat-objects/classes/lfo_object.php',
+  'lfo\\ArrayObject' => 'plugins/jaz303.little-fat-objects/classes/lfo_object.php',
+  'lfo\\OpenArrayObject' => 'plugins/jaz303.little-fat-objects/classes/lfo_object.php',
 );
-// SUPERLOAD-END
+
+// {end:zing.autoload-map}
 ?>

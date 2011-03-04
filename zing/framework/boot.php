@@ -18,7 +18,7 @@ define('ZING_VIEW_DIR',         ZING_APP_DIR . '/views');
 define('ZING_CACHE_DIR',        ZING_TMP_DIR . '/cache');
 define('ZING_COMPILED_DIR',     ZING_TMP_DIR . '/compiled');
 define('ZING_VENDOR_DIR',       ZING_ROOT . '/vendor');
-define('ZING_PLUGIN_DIR',       ZING_VENDOR_DIR . '/plugins');
+define('ZING_PLUGIN_DIR',       ZING_ROOT . '/plugins');
 define('ZING_CONSOLE',          php_sapi_name() == 'cli');
 
 zing_core_lib('common');

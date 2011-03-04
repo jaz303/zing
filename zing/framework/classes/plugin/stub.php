@@ -11,35 +11,36 @@ class Stub
     private $directory;
     private $class_name;
     private $metadata;
-    private $plugin = null;
+    private $plugin         = null;
+    private $dependencies   = null;
     
     public function __construct($dir) {
         
         $this->directory = $dir;
         
-        $metadata_json = file_get_contents($this->directory . '/plugin.json');
-        if (!$metadata_json) {
-            throw new InvalidPluginException("couldn't load metadata");
+        $metadata_json = file_get_contents($this->directory . '/zing/plugin.json');
+        if ($metadata_json === false) {
+            throw new InvalidPluginException("Error loading plugin metadata");
         }
         
         $this->metadata = json_decode($metadata_json, true);
         if (!$this->metadata)  {
-            throw new InvalidPluginException("couldn't decode JSON metadata");
+            throw new InvalidPluginException("Error decoding JSON metadata");
         }
         
         if (!$this->metadata('id')) {
-            throw new InvalidPluginException("plugin ID is missing");
+            throw new InvalidPluginException("Plugin ID not found");
         }
         
         if (!Utils::is_valid_plugin_id($this->metadata('id'))) {
-            throw new InvalidPluginException("plugin ID is invalid");
+            throw new InvalidPluginException("Plugin ID is invalid");
         }
         
         if (!isset($this->metadata['version'])) {
-            throw new InvalidPluginException("plugin version is missing");
+            throw new InvalidPluginException("Plugin version is missing");
         }
         
-        $this->class_name = \zing\lang\Introspector::first_class_in_file($this->directory . '/plugin.php');
+        $this->class_name = \zing\lang\Introspector::first_class_in_file($this->directory . '/zing/plugin.php');
         if (!$this->class_name) {
             throw new InvalidPluginException("plugin primary class is missing");
         }
@@ -58,7 +59,6 @@ class Stub
     
     /**
      * Returns the string ID of this plugin (the basename of its directory)
-     * Technically this should be unique but that isn't currently enforced.
      *
      * @return unique string ID of this plugin
      */
@@ -73,11 +73,23 @@ class Stub
      * Returns the friendly title of this plugin
      */
     public function title() { return $this->metadata('title', $this->id()); }
+    
+    /**
+     * Returns an array of the authors of this plugin
+     */
+    public function authors() { return $this->metadata('authors', array()); }
 
     /**
-     * Returns an array of strings/dependency objects.
+     * Returns an array of Dependency objects.
      */
-    public function dependencies() { return $this->metadata('dependencies', array()); }
+    public function dependencies() {
+        if ($this->dependencies === null) {
+            $this->dependencies = array_map(function($string_dep) {
+                return new Dependency($string_dep);
+            }, $this->metadata('dependencies', array()));
+        }
+        return $this->dependencies;
+    }
     
     public function metadata($key = null, $default = null) {
         if ($key === null) {
@@ -89,7 +101,7 @@ class Stub
     
     public function load() {
         if (!class_exists($this->class_name)) {
-            require $this->directory . '/plugin.php';
+            require $this->directory . '/zing/plugin.php';
         }
     }
     

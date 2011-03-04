@@ -4,6 +4,7 @@
 
 $R->connect(':controller/:action/:id', array('action' => 'index', 'id' => null));
 
-// CMS routes
+// begin: cms-routes
 \zing\cms\routing\Router::draw_routes($R, 'admin', 'assets');
+// end: cms-routes
 ?>

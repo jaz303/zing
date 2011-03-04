@@ -1,6 +1,3 @@
 # This file defines directories containing classes to be autoloaded by the
-# application. It is used by Superload to automagically generate a mapping
-# file.
-
-vendor/plugins/zing.cms/classes
-vendor/plugins/zing.cms/app/controllers
+# application. It is used by the AutoloadMapper to automagically generate a
+# mapping file.

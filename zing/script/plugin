@@ -1,21 +1,17 @@
 #!/usr/bin/env php
 <?php
 require_once dirname(__FILE__) . '/boot_console.php';
+use zing\Console as C;
 
 array_shift($_SERVER['argv']);
 
-if ($_SERVER['argc'] == 0) {
-    echo "Usage: script/plugin action\n";
-    exit(1);
-}
-
-$action = array_shift($_SERVER['argv']);
+$action = empty($_SERVER['argv']) ? null : array_shift($_SERVER['argv']);
 
 switch ($action) {
     
     case 'list':
     
-        $manager = \zing\plugin\Manager::create_with_default_locator();
+        $manager = \zing\plugin\Manager::instance();
         
         $max_id = 0;
         $mav_ver = 0;
@@ -31,27 +27,76 @@ switch ($action) {
         }
         
         break;
+
+	case 'info':
+	
+		if (empty($_SERVER['argv'])) {
+			C::write("Usage: script/plugin info plugin_id");
+			exit(1);
+		}
+		
+		try {
+			$manager = \zing\plugin\Manager::instance();
+			$plugin_id = array_shift($_SERVER['argv']);
+			$plugin = $manager->plugin($plugin_id);
+			
+			C::write("Plugin ID: " . $plugin->id());
+			C::write("Name: " . $plugin->title());
+			C::write("Version: " . $plugin->version());
+			C::write("Primary class: " . get_class($plugin));
+			
+			C::write("Authors:");
+			$authors = $plugin->authors();
+			if (empty($authors)) {
+				C::write("  (unknown)");
+			} else {
+				foreach ($authors as $author) {
+					C::write("  {$author['name']} ({$author['email']})");
+				}
+			}
+			
+			$deps = $plugin->dependencies();
+			if (count($deps)) {
+				C::write("Dependencies:");
+				foreach ($deps as $dep) {
+					C::write("  " . $dep->toString());
+				}
+			}
+			
+		} catch (\zing\plugin\PluginNotFoundException $pnfe) {
+			C::write("Plugin not found: $plugin_id");
+			exit(1);
+		}
+		
+		break;
     
     case 'install':
+
+		$source = 'zing';
+		if (count($_SERVER['argv']) >= 2) {
+			$source = array_shift($_SERVER['argv']);
+		}
+		
+		if (empty($_SERVER['argv'])) {
+			C::write("Usage: script/plugin install [source] plugin_ref");
+			C::write("Supported sources: " . implode(', ', \zing\plugin\Installer::source_ids()));
+			exit(1);
+		} else {
+			$plugin = array_shift($_SERVER['argv']);
+		}
         
-        if (empty($_SERVER['argv'])) {
-            echo "Usage: script/plugin install plugin\n";
-            exit(1);
-        }
-        
-        $plugin     = array_shift($_SERVER['argv']);
-        $manager    = \zing\plugin\Manager::create_with_default_locator();
+        $manager    = \zing\plugin\Manager::instance();
         $reporter   = new \zing\reporter\ConsoleReporter;
         $installer  = new \zing\plugin\Installer($manager, $reporter);
-        
-        $installer->install($plugin);
+        $installer->install($source, $plugin);
         
         exit($installer->success() ? 0 : 1);
  
         break;
     
     default:
-        echo "unknown action - $action\n";
+  		
+		C::write("Usage: script/plugin [list|info|install]");
         exit(1);
 }
 ?>

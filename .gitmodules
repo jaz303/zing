@@ -1,6 +1,3 @@
-[submodule "zing/vendor/superload"]
-	path = zing/vendor/superload
-	url = git://github.com/jaz303/superload.git
 [submodule "zing/vendor/base-php"]
 	path = zing/vendor/base-php
 	url = git://github.com/jaz303/base-php.git

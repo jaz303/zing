@@ -55,5 +55,9 @@ class Version
     public function equals(Version $v) {
         return $this->compare_to($v) == 0;
     }
+    
+    public function toString() {
+        return "{$this->major}.{$this->minor}.{$this->patch}{$this->tag}";
+    }
 }
 ?>

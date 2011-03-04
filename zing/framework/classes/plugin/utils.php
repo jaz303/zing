@@ -4,7 +4,7 @@ namespace zing\plugin;
 class Utils
 {
     public static function is_plugin($dir) {
-        return file_exists($dir . '/plugin.php') && file_exists($dir . '/plugin.json');
+        return file_exists($dir . '/zing/plugin.php') && file_exists($dir . '/zing/plugin.json');
     }
     
     public static function is_valid_plugin_id($id) {

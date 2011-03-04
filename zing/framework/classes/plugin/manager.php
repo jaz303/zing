@@ -1,20 +1,21 @@
 <?php
 namespace zing\plugin;
 
+class PluginNotFoundException extends \Exception {}
+class DuplicatePluginException extends \Exception {}
+
 class Manager
 {
-    public static function create_with_default_locator() {
-        global $_ZING;
-        $locator_class = $_ZING['zing.plugin.locator'];
-        return new self(new $locator_class);
+    private static $instance = null;
+    
+    public static function instance() {
+        if (self::$instance === null) {
+            self::$instance = new self;
+        }
+        return self::$instance;
     }
     
-    private $locator;
     private $plugin_stubs = null;
-    
-    public function __construct($locator) {
-        $this->locator = $locator;
-    }
     
     public function is_plugin_installed($plugin_id) {
         $this->locate();
@@ -40,6 +41,9 @@ class Manager
     
     public function plugin($plugin_id) {
         $this->locate();
+        if (!isset($this->plugin_stubs[$plugin_id])) {
+            throw new PluginNotFoundException("plugin not found - $plugin_id");
+        }
         return $this->plugin_stubs[$plugin_id]->plugin();
     }
     
@@ -52,34 +56,21 @@ class Manager
         return $plugins;
     }
     
-    public function install(Stub $stub) {
-        
-        $plugin = $plugin_stub->plugin();
-        
-        if ($plugin->has_classes()) {
-            $relative_class_path = null;
-            \zing\sys\Config::add_class_path($relative_class_path);
-        }
-        
-        if ($plugin->has_files()) {
-            shell_exec("cp -R {$plugin->get_file_path()}/* " . ZING_ROOT);
-        }
-        
-        $cmd  = "cd " . ZING_ROOT . "; ";
-        $cmd .= "./script/phake core:regenerate_autoload_map";
-        shell_exec($cmd);
-        
-        $plugin->post_install();
-        
-    }
-    
     //
     //
     
     protected function locate() {
         if ($this->plugin_stubs === null) {
-            $this->plugin_stubs = $this->locator->locate_plugins();
-            ksort($this->plugin_stubs);
+            $this->plugin_stubs = array();
+            foreach ($GLOBALS['_ZING']['zing.plugin.locators'] as $locator_class) {
+                $locator = new $locator_class;
+                foreach ($locator->locate_plugins() as $stub) {
+                    if (isset($this->plugin_stubs[$stub->id()])) {
+                        throw new DuplicatePluginException("duplicate plugin - {$stub->id()}");
+                    }
+                    $this->plugin_stubs[$stub->id()] = $stub;
+                }
+            }
         }
     }
 }

@@ -9,6 +9,8 @@ class OS
         	'/sbin',
         	'/usr/bin',
         	'/usr/sbin',
+        	'/usr/local/bin',
+        	'/usr/local/sbin',
         	'/opt/bin',
         	'/opt/sbin',
         	'/opt/local/bin',

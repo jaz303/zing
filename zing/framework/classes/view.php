@@ -37,7 +37,7 @@ abstract class Base
     
     public static $javascript_collections = array(
         'defaults'          => array(':jquery', ':jquery-plugins', 'application.js'),
-        'jquery'            => array('jquery.min.js'),
+        'jquery'            => array('jquery-1.5.1.min.js'),
         'jquery-plugins'    => array()
     );
     

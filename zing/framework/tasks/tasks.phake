@@ -20,16 +20,25 @@ group('core', function() {
             return ($path[0] != '#' && strlen(trim($path)) > 0);
         });
         
-        $paths = array_merge($default_paths, $custom_paths);
+        $plugin_paths = array();
+        $plugin_manager = \zing\plugin\Manager::instance();
+        foreach ($plugin_manager->plugins() as $plugin) {
+            foreach ($plugin->class_paths() as $cp) {
+                $plugin_paths[] = $cp;
+            }
+        }
         
-        require $app_root . '/vendor/superload/superload.php';
-        $superload = new superload\Superload($app_root);
-        $superload->set_variable('$GLOBALS["ZING_AUTOLOAD_MAP"]');
+        $paths = array_merge($default_paths, $custom_paths, $plugin_paths);
+        
+        require $app_root . '/framework/classes/sys/autoload_mapper.php';
+        $mapper = new \zing\sys\AutoloadMapper;
+        $mapper->set_root($app_root);
+        $mapper->set_variable('$GLOBALS["ZING_AUTOLOAD_MAP"]');
         foreach ($paths as $p) {
-            $superload->add_rule($p);
+            $mapper->add_rule($p);
         }
     	
-    	$superload->write($config_dir . '/app/main.php', '');
+    	$mapper->write($config_dir . '/app/main.php', '');
 
     });
 

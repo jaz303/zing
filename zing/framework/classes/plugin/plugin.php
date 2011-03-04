@@ -11,9 +11,11 @@ abstract class Plugin
         $this->directory = $this->stub->directory();
     }
     
+    public function directory() { return $this->stub->directory(); }
     public function id() { return $this->stub->id(); }
     public function version() { return $this->stub->version(); }
     public function title() { return $this->stub->title(); }
+    public function authors() { return $this->stub->authors(); }
     public function dependencies() { return $this->stub->dependencies(); }
     public function metadata($key = null, $default = null) { return $this->stub->metadata($key, $default); }
 
@@ -30,19 +32,32 @@ abstract class Plugin
      */
     public function has_exported($thing) { return method_exists($this, "get_$thing"); }
     
-    public function get_class_paths() { return array($this->directory . '/classes'); }
-    public function get_file_path() { return $this->directory . '/files'; }
-    public function get_migration_path() { return $this->directory . '/db/migrations'; }
+    public function candidate_class_paths() { return 'classes'; }
+    public function candidate_file_path() { return 'files'; }
+    public function candidate_migration_path() { return 'db/migrations'; }
     
-    public function has_classes() {
-        foreach ($this->get_class_paths() as $path) {
-            if (is_dir($path)) return true;
+    public function class_paths() {
+        $out = array();
+        foreach ((array) $this->candidate_class_paths() as $ccp) {
+            $ccp = $this->directory . DIRECTORY_SEPARATOR . $ccp;
+            if (is_dir($ccp)) $out[] = $ccp;
         }
-        return false;
+        return $out;
     }
     
-    public function has_files() { return is_dir($this->get_file_path()); }
-    public function has_migrations() { return is_dir($this->get_migration_path()); }
+    public function file_path() {
+        $cfp = $this->directory . DIRECTORY_SEPARATOR . $this->candidate_file_path();
+        return is_dir($cfp) ? $cfp : null;
+    }
+    
+    public function migration_path() {
+        $cmp = $this->directory . DIRECTORY_SEPARATOR . $this->candidate_migration_path();
+        return is_dir($cmp) ? $cmp : null;
+    }
+    
+    public function has_classes() { return count($this->class_paths()) > 0; }
+    public function has_files() { return $this->file_path() !== null; }
+    public function has_migrations() { return $this->migration_path() !== null; }
     
     /**
      * Perform any post-install tasks here

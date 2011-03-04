@@ -3,37 +3,26 @@ namespace zing\plugin;
 
 class Dependency
 {
+    private $string;
+    private $plugin_id;
+    private $dependency;
+    
     /**
-     *
-     *
-     * @param $plugins array of Plugin instances for which to resolve load order
-     * @return array of Plugin instances, in an order suitable for loading
-     * @throws UnsatisfiedDependencyException if a dependency is not present
-     * @throws CyclicDependencyException if two plugins report that they must be
-     *         loaded before each other
+     * @param $string e.g. "zing.cms >=1.0.0 <1.1.0"
      */
-    public static function resolve_load_order(array $plugins) {
+    public function __construct($string) {
+        $this->string = trim($string);
+        $chunks = preg_split('/\s+/', $this->string);
+        $this->plugin_id = array_shift($chunks);
+        if (!Utils::is_valid_plugin_id($this->plugin_id)) {
+            throw new \InvalidArgumentException("{$this->plugin_id} is not a valid plugin ID");
+        }
         
+        $this->dependency = new \zing\dependency\Dependency(implode(' ', $chunks));
     }
     
-    public function __construct($id, $version_operator = null, $version = null) {
-        
-    }
-    
-    public function get_name() {
-        
-    }
-    
-    public function get_version_operator() {
-        
-    }
-    
-    public function get_version() {
-        
-    }
-    
-    public function should_load_before() {
-        
+    public function toString() {
+        return $this->plugin_id . ' ' . $this->dependency->toString();
     }
 }
 ?>

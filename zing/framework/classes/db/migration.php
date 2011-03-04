@@ -135,7 +135,7 @@ class MigrationLocator
     }
 }
 
-// superload-ignore
+// zing-autoload-ignore
 class MigrationList
 {
     private $migrations = array();
@@ -157,7 +157,7 @@ class MigrationList
     }
 }
 
-// superload-ignore
+// zing-autoload-ignore
 class MigrationStub
 {
     public $source;
