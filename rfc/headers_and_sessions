@@ -1,0 +1,32 @@
+* Zing currently uses an HTTP response class to buffer all output headers and then send
+  them in one go.
+
+* Various PHP functions (notably session_start()) output headers directly.
+  If we use such functions we need to immediately undo their effect (via header_remove()),
+  then stash the sent headers and later append them to the response object.
+  
+* Through output buffering and the various header_* functions, PHP already offers good
+  functionality for managing response headers in a reliable way.
+  
+Idea:
+-----
+
+Rather than buffering header arrays in the Response's Headers object, the Response should
+output all headers directly using header() and make use of PHP's own buffering facilities.
+Modifications would be possible via a thin OO-wrapper around PHP's header_* fucntions.
+
+Pros:
+-----
+
+ * No longer any need to work around PHP functions that output their own headers
+ * Less functionality to be tested - PHP core can be assumed to work
+ * Overall, less code
+
+Cons:
+-----
+
+ * Less "pure" from an OO point of view; the Response class would essentially
+   become a singleton and rely on global storage (i.e. PHP's header buffer)
+ * Possibly impedes testability
+ * Becomes possible to output headers from anywhere in the application
+   (but surely this was already possible before, only it went undetected?)
