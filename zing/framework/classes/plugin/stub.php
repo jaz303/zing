@@ -78,6 +78,21 @@ class Stub
      * Returns an array of the authors of this plugin
      */
     public function authors() { return $this->metadata('authors', array()); }
+    
+    /**
+     * Returns the copyright notice for this plugin
+     */
+    public function copyright() { return $this->metadata('copyright'); }
+    
+    /**
+     * Returns the URL of this plugin's homepage
+     */
+    public function url() { return $this->metadata('url'); }
+    
+    /**
+     * Returns the primary contact email for this plugin
+     */
+    public function email() { return $this->metadata('email'); }
 
     /**
      * Returns an array of Dependency objects.

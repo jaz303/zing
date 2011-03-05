@@ -45,13 +45,36 @@ switch ($action) {
 			C::write("Version: " . $plugin->version());
 			C::write("Primary class: " . get_class($plugin));
 			
+			$extra_fields = array(
+				'copyright'		=> 'Copyright',
+				'url'			=> 'URL',
+				'email'			=> 'Email'
+			);
+			
+			foreach ($extra_fields as $field => $label) {
+				if ($value = $plugin->$field()) {
+					C::write($label . ': ' . $value);
+				}
+			}
+			
 			C::write("Authors:");
 			$authors = $plugin->authors();
 			if (empty($authors)) {
 				C::write("  (unknown)");
 			} else {
 				foreach ($authors as $author) {
-					C::write("  {$author['name']} ({$author['email']})");
+					$author_line  = "  ";
+					$author_line .= isset($author['name']) ? $author['name'] : '(unknown)';
+					
+					$author_contact = array();
+					if (isset($author['email'])) $author_contact[] = $author['email'];
+					if (isset($author['twitter'])) $author_contact[] = $author['twitter'];
+					
+					if (count($author_contact)) {
+						$author_line .= ' (' . implode(', ', $author_contact) . ')';
+					}
+					
+					C::write($author_line);
 				}
 			}
 			

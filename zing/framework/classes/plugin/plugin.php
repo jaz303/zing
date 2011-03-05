@@ -16,6 +16,9 @@ abstract class Plugin
     public function version() { return $this->stub->version(); }
     public function title() { return $this->stub->title(); }
     public function authors() { return $this->stub->authors(); }
+    public function copyright() { return $this->stub->copyright(); }
+    public function url() { return $this->stub->url(); }
+    public function email() { return $this->stub->email(); }
     public function dependencies() { return $this->stub->dependencies(); }
     public function metadata($key = null, $default = null) { return $this->stub->metadata($key, $default); }
 
