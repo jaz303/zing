@@ -23,6 +23,8 @@ date_default_timezone_set('Europe/London');
 $GLOBALS['_ZING']['zing.cms.asset_path'] = ZING_DATA_DIR . '/cms/assets';
 // {end:zing.cms.asset-path}
 
+
+
 // {begin:zing.autoload-map}
 $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'IllegalStateException' => 'vendor/base-php/inc/base.php',
@@ -81,6 +83,7 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'zing\\http\\AbstractResponse' => 'framework/classes/http.php',
   'zing\\http\\Response' => 'framework/classes/http.php',
   'zing\\http\\FileResponse' => 'framework/classes/http.php',
+  'zing\\http\\Cookies' => 'framework/classes/http.php',
   'zing\\http\\Session' => 'framework/classes/http.php',
   'zing\\http\\LazySession' => 'framework/classes/http.php',
   'zing\\routing\\RoutingException' => 'framework/classes/routing.php',
