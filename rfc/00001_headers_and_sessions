@@ -1,3 +1,7 @@
+Created: 2011-03-05
+Author: Jason Frame (jason@onehackoranother.com, @jaz303)
+Status: Open
+
 * Zing currently uses an HTTP response class to buffer all output headers and then send
   them in one go.
 
