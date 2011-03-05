@@ -196,7 +196,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         $r->client_port     = $_SERVER['REMOTE_PORT'];
         
         $r->params          = $_POST + $_GET; // POST takes precedence
-        $r->cookies         = new Cookies($_COOKIE);
+        $r->cookies_array   = $_COOKIE;
         
         self::rewire($r->params);
         
@@ -204,7 +204,9 @@ class Request implements \ArrayAccess, \IteratorAggregate
     }
     
     private $params             = array();
+    
     private $cookies            = null;
+    private $cookies_array      = array();
     
     private $auth_type          = null;
     private $username           = '';
@@ -299,7 +301,21 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @return Cookies object
      */
-    public function cookies() { return $this->cookies; }
+    public function cookies() {
+        if ($this->cookies === null) {
+            $this->cookies = new Cookies($this->cookies_array);
+        }
+        return $this->cookies;
+    }
+    
+    /**
+     * Returns true if the Cookies object has been initialised.
+     *
+     * @return true if Cookies have been initialised, false otherwise.
+     */
+    public function are_cookies_initialised() {
+        return $this->cookies !== null;
+    }
     
     //
     // A bit hacky - exists so we can merge route parameters
