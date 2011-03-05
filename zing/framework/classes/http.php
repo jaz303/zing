@@ -196,6 +196,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         $r->client_port     = $_SERVER['REMOTE_PORT'];
         
         $r->params          = $_POST + $_GET; // POST takes precedence
+        $r->cookies         = new Cookies($_COOKIE);
         
         self::rewire($r->params);
         
@@ -203,6 +204,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
     }
     
     private $params             = array();
+    private $cookies            = null;
     
     private $auth_type          = null;
     private $username           = '';
@@ -291,6 +293,13 @@ class Request implements \ArrayAccess, \IteratorAggregate
      * @return a reference to the request parameters array.
      */
     public function &params() { return $this->params; }
+    
+    /**
+     * Returns this request's Cookies object.
+     *
+     * @return Cookies object
+     */
+    public function cookies() { return $this->cookies; }
     
     //
     // A bit hacky - exists so we can merge route parameters
@@ -461,6 +470,104 @@ class FileResponse extends AbstractResponse
         fpassthru($fd);
         fclose($fd);
     }
+}
+
+class Cookies implements \ArrayAccess, \IteratorAggregate
+{
+    private $cookies        = array();
+    private $cookie_headers = array();
+    
+    public function __construct($cookie_array) {
+        foreach ($cookie_array as $k => $v) $this->cookies[$k] = $v;
+    }
+    
+    public function get_headers() {
+        return $this->cookie_headers;
+    }
+    
+    public function get($key, $default = null) {
+        return isset($this->cookies[$key]) ? $this->cookies[$key] : $default;
+    }
+    
+    /**
+     * Set a cookie
+     *
+     * @param $key name of cookie
+     * @param $value cookie value; pass null to unset cookie
+     * @param $expire expiry time; can be either 0 (session cookie), false (expire in 1 year), Date instance or UNIX timestamp
+     * @param $path
+     * @param $domain
+     * @param $secure
+     * @param $http_only
+     */
+    public function set($key, $value, $expire = 0, $path = '/', $domain = null, $secure = false, $http_only = false) {
+        
+        // PHP allows cookie to be set via an assoc array
+        // This is supported, but to *remove* these cookies, you need to pass in an array with
+        // the same keys, values all nulled out
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                $this->set("{$key}[$k]", $value, $expire, $path, $domain, $secure, $http_only);
+            }
+            return;
+        }
+        
+        if ($value === null) {
+            $remove         = true;
+            $value          = '';
+            $expire_time    = 0;
+        } else {
+            $remove         = false;
+            $value          = is_object($value) ? $value->toString() : $value;
+            if ($expire === false) { // 1 year expiry
+                $expire_time = time() + 86400 * 365;
+            } elseif (!$expire) { // session cookie
+                $expire_time = null;
+            } else {
+                $expire_time = is_object($expire) ? $expire->timestamp() : (int) $expire;
+            }
+        }
+        
+        $header = $key . '=' . urlencode($value);
+        
+        if ($expire_time !== null) {
+            $header .= "; Expires=" . date('D, d-M-Y H:i:s e', $expire_time);
+        }
+        
+        if ($domain)    $header .= "; Domain={$domain}";
+        if ($secure)    $secure .= "; Secure";
+        if ($http_only) $http_only .= "; HttpOnly";
+        
+        $this->cookie_headers[$key] = $header;
+        
+        if ($remove) {
+            unset($this->cookies[$key]);
+        } else {
+            $this->cookies[$key] = $value;
+        }
+        
+    }
+    
+    public function set_with_options($key, $value, $options = array()) {
+        $this->set($key,
+                   $value,
+                   isset($options['path']) ? $expire['path'] : '/',
+                   isset($options['domain']) ? $expire['domain'] : null,
+                   isset($options['secure']) ? $expire['secure'] : false,
+                   isset($options['http_only']) ? $expire['http_only'] : false,
+                   isset($options['expire']) ? $expire['expire'] : 0);
+    }
+    
+    public function remove($key) {
+        $this->set($key, null);
+    }
+    
+    public function offsetExists($k) { return isset($this->cookies[$k]); }
+    public function offsetGet($k) { return $this->get($k); }
+    public function offsetSet($k, $v) { $this->set($k, $v); }
+    public function offsetUnset($k) { $this->unset($k); }
+    
+    public function getIterator() { return new \ArrayIterator($this->cookies); }
 }
 
 /**

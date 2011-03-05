@@ -20,5 +20,32 @@ class TestController extends ApplicationController
         $this->errors->add('foo', 'is not a bar');
         $this->errors->add_to_base('blah blah blah');
     }
+    
+    public function _set() {
+        foreach ($_GET as $k => $v) {
+            $this->request->cookies()->set($k, $v);
+        }
+        $this->render('text', 'OK');
+    }
+    
+    public function _get() {
+        
+    }
+    
+    public function _clear() {
+        foreach ($_GET as $k => $v) {
+            $this->request->cookies()->remove($k);
+        }
+        $this->render('text', 'OK');
+    }
+    
+    public function _dump() {
+        $cookies = $this->request->cookies();
+        $out = '';
+        foreach ($cookies as $k => $v) {
+            $out .= "$k = $v\n";
+        }
+        $this->render('text', $out);
+    }
 }
 ?>

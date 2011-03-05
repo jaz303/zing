@@ -261,6 +261,12 @@ class Controller
             $this->session->finalize();
         }
         
+        // FIXME: having to manually merge the resultant headers of any cookie operation
+        // into the response headers doesn't feel right.
+        foreach ($this->request->cookies()->get_headers() as $cookie_header) {
+            $this->response->add_header('Set-Cookie', $cookie_header);
+        }
+        
         return $this->response;
     
     }
