@@ -588,8 +588,6 @@ class Cookies implements \ArrayAccess, \IteratorAggregate
 
 /**
  * Session handling
- * This will have to do for now, ultimately things will have to change as this
- * thing outputs headers itself.
  *
  * In order to future proof against changes, it's recommended that you don't
  * ever instantiate a Session instance yourself as the constructor parameters
@@ -598,9 +596,21 @@ class Cookies implements \ArrayAccess, \IteratorAggregate
 class Session implements \ArrayAccess
 {
     private $flash_now;
+    private $headers        = array();
     
     public function __construct() {
         session_start();
+        
+        // Undo PHP's own headers and stash for later
+        foreach (headers_list() as $header_line) {
+            $pos = strpos($header_line, ':');
+            $header = substr($header_line, 0, $pos);
+            if ($header == 'Set-Cookie' || $header == 'Expires' || $header == 'Cache-Control' || $header == 'Pragma') {
+                header_remove($header);
+                $this->headers[$header] = substr($header_line, $pos + 2);
+            }
+        }
+        
         $this->flash_now = array();
         if (isset($_SESSION['__flash_next'])) {
             $this->flash_now = $_SESSION['__flash_next'];
@@ -620,7 +630,10 @@ class Session implements \ArrayAccess
         return $this->flash_now;
     }
     
-    public function finalize() {
+    public function finalize($response) {
+        foreach ($this->headers as $k => $v) {
+            $response->add_header($k, $v);
+        }
         session_commit();
     }
     
@@ -669,11 +682,11 @@ class LazySession implements \ArrayAccess
         return call_user_func_array(array($this->session, $method), $args);
     }
     
-    public function finalize() {
+    public function finalize($response) {
         if ($this->session === null) {
             return;
         } else {
-            return $this->session->finalize();
+            return $this->session->finalize($response);
         }
     }
     

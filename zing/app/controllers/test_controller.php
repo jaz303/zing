@@ -28,8 +28,9 @@ class TestController extends ApplicationController
         $this->render('text', 'OK');
     }
     
-    public function _get() {
-        
+    public function _session() {
+        $this->session['foo'] += 1;
+        $this->render('text', $this->session['foo']);
     }
     
     public function _clear() {

@@ -258,7 +258,7 @@ class Controller
         $this->invoke_filter_chain('after');
         
         if (isset($this->session)) {
-            $this->session->finalize();
+            $this->session->finalize($this->response);
         }
         
         if ($this->request->are_cookies_initialised()) {
