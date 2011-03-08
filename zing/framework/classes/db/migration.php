@@ -175,7 +175,7 @@ class MigrationList implements \IteratorAggregate, \Countable
         $out = array();
         list($timestamp, $name) = $this->resolve_timestamp_and_name($timestamp_or_name);
         foreach (array_reverse($this->migrations) as $migration) {
-            if (strcmp($source, $migration->source) != 0) {
+            if ($source && strcmp($source, $migration->source) != 0) {
                 continue;
             }
             if (!$migration->is_applied()) {

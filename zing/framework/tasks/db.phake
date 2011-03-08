@@ -28,9 +28,12 @@ function require_version($app) {
 }
 
 group("db", function() {
+    desc("Run all pending migrations");
     task("migrate", "db:migrate:run_outstanding_migrations");
     
     group("migrate", function() {
+        
+        desc("List all migrations");
         task("list", "environment", function() {
             $table = new \zing\console\Table;
             $table->add_header('Source');
@@ -56,22 +59,34 @@ group("db", function() {
             }
         });
         
+        desc("Force-apply a single migration");
         task("apply", "environment", function($app) {
             $migration = migrator()->find_one(maybe_source($app), require_version($app));
             $migration->up();
             C::write("Applied: {$migration->toString()}");
         });
         
+        desc("Force-unapply a single migration");
         task("unapply", "environment", function($app) {
             $migration = migrator()->find_one(maybe_source($app), require_version($app));
             $migration->down();
             C::write("Unapplied: {$migration->toString()}");
         });
         
-        task("redo", "environment", "unapply", "apply");
+        desc("Unapply and reply a single migration");
+        task("redo", "environment", function($app) {
+            $migration = migrator()->find_one(maybe_source($app), require_version($app));
+            if ($migration->is_applied()) {
+                $migration->down();
+                C::write("Unapplied: {$migration->toString()}");
+            }
+            $migration->up();
+            C::write("Applied: {$migration->toString()}");
+        });
         
+        desc("Rollback all migrations to a given version");
         task("rollback", "environment", function($app) {
-            foreach (array_reverse(migrator()->find_applied_migrations_after(require_source($app), require_version($app))) as $migration) {
+            foreach (array_reverse(migrator()->find_applied_migrations_after(maybe_source($app), require_version($app))) as $migration) {
                 $migration->down();
                 C::write("Unapplied: {$migration->toString()}");
             }
