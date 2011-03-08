@@ -38,7 +38,7 @@ group("db", function() {
             $table = new \zing\console\Table;
             $table->add_header('Source');
             $table->add_header('Timestamp');
-            $table->add_header('Name');
+            $table->add_header('Name (* = pending)');
             foreach (migrator()->get_migrations() as $migration_stub) {
                 $table->add_row(array($migration_stub->source,
                                       $migration_stub->timestamp,
@@ -73,7 +73,7 @@ group("db", function() {
             C::write("Unapplied: {$migration->toString()}");
         });
         
-        desc("Unapply and reply a single migration");
+        desc("Unapply then reapply a single migration");
         task("redo", "environment", function($app) {
             $migration = migrator()->find_one(maybe_source($app), require_version($app));
             if ($migration->is_applied()) {
