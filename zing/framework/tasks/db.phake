@@ -1,12 +1,81 @@
 <?php
+namespace zing\tasks\db;
+
+use \zing\Console as C;
+
+function migrator() {
+    return new \zing\db\Migrator;
+}
+
+function maybe_source($app) {
+    return isset($app['source']) ? $app['source'] : null;
+}
+
+function require_source($app) {
+    if (!isset($app['source'])) {
+        C::error("Required argument 'source' missing!");
+        exit(1);
+    }
+    return trim($app['source']);
+}
+
+function require_version($app) {
+    if (!isset($app['version'])) {
+        C::error("Required argument 'version' missing!");
+        exit(1);
+    }
+    return $app['version'];
+}
+
 group("db", function() {
-    task("migrate", "environment", function() {
-        $migrator = new zing\db\Migrator;
-        if ($migrator->has_outstanding_migrations()) {
-            $migrator->run_outstanding_migrations();
-        } else {
-            echo "Migrating: nothing to do!\n";
-        }
+    task("migrate", "db:migrate:run_outstanding_migrations");
+    
+    group("migrate", function() {
+        task("list", "environment", function() {
+            $table = new \zing\console\Table;
+            $table->add_header('Source');
+            $table->add_header('Timestamp');
+            $table->add_header('Name');
+            foreach (migrator()->get_migrations() as $migration_stub) {
+                $table->add_row(array($migration_stub->source,
+                                      $migration_stub->timestamp,
+                                      $migration_stub->migration_name . ($migration_stub->is_applied() ? '' : ' *')));
+            }
+            C::out($table);
+        });
+        
+        task("run_outstanding_migrations", "environment", function($app) {
+            $migrator = migrator();
+            if ($migrator->has_outstanding_migrations()) {
+                foreach ($migrator->get_outstanding_migrations() as $migration) {
+                    $migration->up();
+                    C::write("Applied: {$migration->toString()}");
+                }
+            } else {
+                C::write("Migrating: nothing to do!");
+            }
+        });
+        
+        task("apply", "environment", function($app) {
+            $migration = migrator()->find_one(maybe_source($app), require_version($app));
+            $migration->up();
+            C::write("Applied: {$migration->toString()}");
+        });
+        
+        task("unapply", "environment", function($app) {
+            $migration = migrator()->find_one(maybe_source($app), require_version($app));
+            $migration->down();
+            C::write("Unapplied: {$migration->toString()}");
+        });
+        
+        task("redo", "environment", "unapply", "apply");
+        
+        task("rollback", "environment", function($app) {
+            foreach (array_reverse(migrator()->find_applied_migrations_after(require_source($app), require_version($app))) as $migration) {
+                $migration->down();
+                C::write("Unapplied: {$migration->toString()}");
+            }
+        });
     });
 });
 ?>

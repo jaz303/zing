@@ -1,6 +1,9 @@
 <?php
 namespace zing\db;
 
+class AmbiguousMigrationException extends \Exception {}
+class MigrationNotFoundException extends \Exception {}
+
 class Migrator
 {
     public static function application_migration_dir() {
@@ -8,37 +11,66 @@ class Migrator
     }
     
     protected $db;
-    protected $migrations = null;
+    protected $migrations           = null;
+    protected $applied_migrations;
     
     public function __construct() {
         $this->db = \GDB::instance();
+        $this->create_migration_table();
     }
     
-    public function has_outstanding_migrations() {
-        $this->preflight();
-        return $this->migrations()->has_outstanding();
+    //
+    // Public interface
+    
+    public function get_migrations() { return $this->migrations(); }
+    public function has_outstanding_migrations() { return $this->migrations()->has_outstanding(); }
+    public function get_outstanding_migrations() { return $this->migrations()->outstanding(); }
+    
+    public function find_one($source, $timestamp_or_name) {
+        return $this->migrations()->find_one($source, $timestamp_or_name);
     }
     
-    public function run_outstanding_migrations() {
-        $this->preflight();
-        foreach ($this->migrations()->outstanding() as $ms) {
-            $ms->up();
-            $this->migration_applied($ms);
-        }
+    public function find_applied_migrations_after($source, $timestamp_or_name) {
+        return $this->migrations()->find_applied_migrations_after($source, $timestamp_or_name);
     }
+    
+    //
+    //
+    
+    public function is_applied(MigrationStub $ms) {
+        return $this->db->q("
+            SELECT 1 FROM zing_migration WHERE migration_source = {s} AND migration_id = {i}
+        ", $ms->source, $ms->timestamp)->first_row() != false;
+    }
+    
+    public function mark_as_applied(MigrationStub $ms) {
+        $this->db->x("
+            REPLACE INTO zing_migration
+                (migration_source, migration_id)
+            VALUES
+                ({s}, {i})
+        ", $ms->source, $ms->timestamp);
+    }
+    
+    public function mark_as_unapplied(MigrationStub $ms) {
+        $this->db->x("
+            DELETE FROM zing_migration
+            WHERE
+                migration_source = {s} AND
+                migration_id = {i}
+        ", $ms->source, $ms->timestamp);
+    }
+    
+    //
+    //
     
     protected function migrations() {
         if ($this->migrations === null) {
-            $locator = new MigrationLocator;
-            $locator->set_applied_migrations($this->applied_migrations());
+            $locator = new MigrationLocator($this);
             $this->migrations = $locator->locate_migrations();
             $this->migrations->sort();
         }
         return $this->migrations;
-    }
-    
-    protected function preflight() {
-        $this->create_migration_table();
     }
     
     protected function create_migration_table() {
@@ -51,32 +83,6 @@ class Migrator
             $schema->create_table($def);
         }
     }
-    
-    protected function applied_migrations() {
-        $applied = array();
-        foreach ($this->db->q("SELECT * FROM zing_migration") as $row) {
-            $applied["{$row['migration_source']}_{$row['migration_id']}"] = true;
-        }
-        return $applied;
-    }
-    
-    protected function migration_applied(MigrationStub $ms) {
-        $this->db->x("
-            INSERT INTO zing_migration
-                (migration_source, migration_id)
-            VALUES
-                ({s}, {i})
-        ", $ms->source, $ms->timestamp);
-    }
-    
-    protected function migration_unapplied(MigrationStub $ms) {
-        $this->db->x("
-            DELETE FROM zing_migration
-            WHERE
-                migration_source = {s} AND
-                migration_id = {i}
-        ", $ms->source, $ms->timestamp);
-    }
 }
 
 /**
@@ -88,13 +94,10 @@ class Migrator
  */
 class MigrationLocator
 {
-    protected $applied_migrations;
+    private $migrator;
     
-    /**
-     * Sets the array of applied migrations.
-     */
-    public function set_applied_migrations(array $applied_migrations) {
-        $this->applied_migrations = $applied_migrations;
+    public function __construct(Migrator $migrator) {
+        $this->migrator = $migrator;
     }
     
     /**
@@ -105,12 +108,12 @@ class MigrationLocator
         foreach ($this->sources() as $source => $path) {
             foreach (glob($path . '/*.php') as $file) {
                 if (preg_match('|/(\d+)_(\w+)\.php$|', $file, $matches)) {
-                    $stub = new MigrationStub;
+                    $stub = new MigrationStub($this->migrator);
                     $stub->source           = $source;
                     $stub->path             = $file;
                     $stub->timestamp        = (int) $matches[1];
                     $stub->migration_name   = $matches[2];
-                    $stub->applied          = isset($this->applied_migrations["{$stub->source}_{$stub->timestamp}"]);
+                    $stub->class_name       = \zing\lang\Introspector::first_class_in_file($file);
                     $list->add($stub);
                 }
             }
@@ -118,25 +121,20 @@ class MigrationLocator
         return $list;
     }
     
-    // Returns a list of all migration sources
     protected function sources() {
-        
         $sources = array('app' => Migrator::application_migration_dir());
-        
-        $plugin_manager = \zing\plugin\Manager::create_with_default_locator();
+        $plugin_manager = \zing\plugin\Manager::instance();
         foreach ($plugin_manager->plugins() as $plugin) {
             if ($plugin->has_migrations()) {
-                $sources["plugin.{$plugin->id()}"] = $plugin->get_migration_path();
+                $sources["plugin.{$plugin->id()}"] = $plugin->migration_path();
             }
          }
-         
          return $sources;   
-         
     }
 }
 
 // zing-autoload-ignore
-class MigrationList
+class MigrationList implements \IteratorAggregate, \Countable
 {
     private $migrations = array();
     
@@ -152,32 +150,106 @@ class MigrationList
         return count($this->outstanding()) > 0;
     }
     
+    public function find_one($source, $timestamp_or_name) {
+        $out = array();
+        list($timestamp, $name) = $this->resolve_timestamp_and_name($timestamp_or_name);
+        foreach ($this->migrations as $migration) {
+            if ($source && strcmp($migration->source, $source) != 0) {
+                continue;
+            }
+            if (($timestamp !== null && $migration->timestamp == $timestamp) ||
+                ($name !== null && $migration->migration_name == $name)) {
+                $out[] = $migration;
+            }
+        }
+        if (empty($out)) {
+            throw new MigrationNotFoundException;
+        } elseif (count($out) > 1) {
+            throw new AmbiguousMigrationException;
+        } else {
+            return $out[0];
+        }
+    }
+    
+    public function find_applied_migrations_after($source, $timestamp_or_name) {
+        $out = array();
+        list($timestamp, $name) = $this->resolve_timestamp_and_name($timestamp_or_name);
+        foreach (array_reverse($this->migrations) as $migration) {
+            if (strcmp($source, $migration->source) != 0) {
+                continue;
+            }
+            if (!$migration->is_applied()) {
+                continue;
+            }
+            if (($timestamp !== null && $migration->timestamp <= $timestamp) ||
+                ($name !== null && $migration->migration_name == $name)) {
+                break;
+            }
+            $out[] = $migration;
+        }
+        return array_reverse($out);
+    }
+    
     public function outstanding() {
-        return array_filter($this->migrations, function($i) { return !$i->applied; });
+        return array_filter($this->migrations, function($i) { return !$i->is_applied(); });
+    }
+    
+    public function getIterator() {
+        return new \ArrayIterator($this->migrations);
+    }
+    
+    public function count() {
+        return count($this->migrations);
+    }
+    
+    private function resolve_timestamp_and_name($timestamp_or_name) {
+        $timestamp = $name = null;
+        if (preg_match('/^\d+$/', $timestamp_or_name)) {
+            $timestamp = (int) $timestamp_or_name;
+        } else {
+            $name = $timestamp_or_name;
+        }
+        return array($timestamp, $name);
     }
 }
 
 // zing-autoload-ignore
 class MigrationStub
 {
-    public $source;
-    public $path;
-    public $timestamp;
-    public $migration_name;
-    public $applied;
+    private $migrator;
+    
+    public $source;             // 'app' or plugin ID
+    public $path;               // full path to plugin file
+    public $timestamp;          // timestamp
+    public $migration_name;     // name
+    public $class_name;         // class name
+    
+    public function __construct(Migrator $migrator) {
+        $this->migrator = $migrator;
+    }
     
     public function up() {
         $this->create()->up();
+        $this->migrator->mark_as_applied($this);
     }
     
     public function down() {
         $this->create()->down();
+        $this->migrator->mark_as_unapplied($this);
     }
     
     public function create() {
         require_once $this->path;
-        $migration_class = \Inflector::camelize($this->migration_name) . 'Migration';
+        $migration_class = $this->class_name;
         return new $migration_class;
+    }
+    
+    public function is_applied() {
+        return $this->migrator->is_applied($this);
+    }
+    
+    public function toString() {
+        return "{$this->timestamp} {$this->migration_name} ({$this->source})";
     }
 }
 
