@@ -23,6 +23,7 @@ date_default_timezone_set('Europe/London');
 $GLOBALS['_ZING']['zing.cms.asset_path'] = ZING_DATA_DIR . '/cms/assets';
 // {end:zing.cms.asset-path}
 
+
 // {begin:zing.autoload-map}
 $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'IllegalStateException' => 'vendor/base-php/inc/base.php',
@@ -147,18 +148,6 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'ApplicationController' => 'app/controllers/application_controller.php',
   'TestController' => 'app/controllers/test_controller.php',
   'Product' => 'app/admin_models/product.php',
-  'lfo\\RecordNotFoundException' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
-  'lfo\\UnknownSerializationFormat' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
-  'lfo\\UnknownIndexException' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
-  'lfo\\QueryFailedException' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
-  'lfo\\RollbackException' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
-  'lfo\\Gateway' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
-  'lfo\\Query' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
-  'lfo\\Result' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
-  'lfo\\PHPSerializer' => 'plugins/jaz303.little-fat-objects/classes/lfo.php',
-  'lfo\\Object' => 'plugins/jaz303.little-fat-objects/classes/lfo_object.php',
-  'lfo\\ArrayObject' => 'plugins/jaz303.little-fat-objects/classes/lfo_object.php',
-  'lfo\\OpenArrayObject' => 'plugins/jaz303.little-fat-objects/classes/lfo_object.php',
   'zing\\cms\\admin\\Structure' => 'plugins/zing.cms/classes/admin.php',
   'zing\\cms\\admin\\BaseController' => 'plugins/zing.cms/classes/admin.php',
   'zing\\cms\\Attribution' => 'plugins/zing.cms/classes/cms.php',
