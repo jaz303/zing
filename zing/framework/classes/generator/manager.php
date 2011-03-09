@@ -5,40 +5,54 @@ class GeneratorNotFoundException extends \Exception {}
 
 class Manager
 {
-    public static function create_with_default_locator() {
-        global $_ZING;
-        $locator_class = $_ZING['zing.generator.locator'];
-        return new self(new $locator_class);
-    }
+    //
+    // Singleton
     
-    private $generators = array();
+    private static $instance = null;
     
-    public function __construct($locator) {
-        $this->generators = $locator->locate_generators();
-    }
-    
-    public function directory() {
-        $directory = array();
-        foreach (array_keys($this->generators) as $generator_name) {
-            $directory[$generator_name] = $this->create($generator_name)->description();
+    public static function instance() {
+        if (self::$instance === null) {
+            self::$instance = new self;
         }
-        ksort($directory);
-        return $directory;
+        return self::$instance;
     }
     
-    public function create($name) {
-        
+    //
+    //
+    
+    private $generators = null;
+    
+    public function __construct() {
+        $this->locate_generators();
+    }
+    
+    public function get_generator($name) {
         if (!isset($this->generators[$name])) {
             throw new GeneratorNotFoundException;
+        } else {
+            return $this->generators[$name];
         }
-        
-        $generator_file     = $this->generators[$name]['file'];
-        $generator_class    = $this->generators[$name]['class'];
-        
-        require_once $generator_file;
-        
-        return new $generator_class(dirname($generator_file));
+    }
     
+    public function generators() {
+        return $this->generators;
+    }
+
+    private function locate_generators() {
+        if ($this->generators === null) {
+            $this->generators = array();
+            foreach ($GLOBALS['_ZING']['zing.generator.locators'] as $locator_class) {
+                $locator = new $locator_class;
+                foreach ($locator->locate_generators() as $generator) {
+                    require_once $generator['file'];
+                    $generator_class = $generator['class'];
+                    $instance = new $generator_class;
+                    $instance->set_directory(dirname($generator['file']));
+                    $instance->set_name($generator['name']);
+                    $this->generators[$instance->name()] = $instance;
+                }
+            }
+        }
     }
 }
 ?>

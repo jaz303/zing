@@ -3,28 +3,34 @@ namespace zing\generator;
 
 abstract class Generator
 {
-    protected $__directory;
-    protected $dir;
+    private $__name;
+    private $__directory;
+    
+    public function name() { return $this->__name; }
+    public function directory() { return $this->__directory; }
+    public function description() { return "(untitled generator)"; }
+    
+    /**
+     * @param $name name for this generator
+     */
+    public function set_name($name) {
+        $this->__name = $name;
+    }
     
     /**
      * @param $directory root directory for this generator
      */
-    public function __construct($directory) {
+    public function set_directory($directory) {
         $this->__directory = $directory;
-        $this->dir = $directory;
     }
     
-    public function generate(array $args) {
+    public function invoke(array $args) {
         $this->parse_args($args);
         $this->copy_manifest();
         $this->after_copy();
         foreach ($this->tasks() as $task) {
             \zing\sys\Utils::invoke_task($task);
         }
-    }
-    
-    public function description() {
-        return "(untitled generator)";
     }
     
     /**

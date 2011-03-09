@@ -23,7 +23,6 @@ date_default_timezone_set('Europe/London');
 $GLOBALS['_ZING']['zing.cms.asset_path'] = ZING_DATA_DIR . '/cms/assets';
 // {end:zing.cms.asset-path}
 
-
 // {begin:zing.autoload-map}
 $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'IllegalStateException' => 'vendor/base-php/inc/base.php',
@@ -69,6 +68,14 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'gdb\\Migration' => 'vendor/base-php/inc/gdb/migration.php',
   'gdb\\SchemaBuilder' => 'vendor/base-php/inc/gdb/schema_builder.php',
   'gdb\\TableDefinition' => 'vendor/base-php/inc/gdb/table_definition.php',
+  'phake\\Builder' => 'vendor/phake/lib/builder.php',
+  'phake\\OptionParser' => 'vendor/phake/lib/option_parser.php',
+  'phake\\TaskNotFoundException' => 'vendor/phake/lib/phake.php',
+  'phake\\TaskCollisionException' => 'vendor/phake/lib/phake.php',
+  'phake\\Utils' => 'vendor/phake/lib/phake.php',
+  'phake\\Application' => 'vendor/phake/lib/phake.php',
+  'phake\\Node' => 'vendor/phake/lib/phake.php',
+  'phake\\Task' => 'vendor/phake/lib/phake.php',
   'zing\\Console' => 'framework/classes/console.php',
   'zing\\DoublePerformException' => 'framework/classes/controller.php',
   'zing\\Controller' => 'framework/classes/controller.php',
