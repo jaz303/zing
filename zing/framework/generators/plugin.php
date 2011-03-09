@@ -4,7 +4,7 @@ namespace zing\generator;
 class PluginGenerator extends \zing\generator\Generator
 {
     public function description() {
-        return "create a skeleton plugin";
+        return "Create a skeleton plugin";
     }
     
     protected function parse_args(array $args) {

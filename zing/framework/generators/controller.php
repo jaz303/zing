@@ -4,7 +4,7 @@ namespace zing\generator;
 class ControllerGenerator extends \zing\generator\Generator
 {
     public function description() {
-        return "create a new controller extending zing\\Controller";
+        return "Create a new controller extending zing\\Controller";
     }
     
     protected function parse_args(array $args) {

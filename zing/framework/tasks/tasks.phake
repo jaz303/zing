@@ -12,6 +12,7 @@ group('core', function() {
         
         $default_paths = array(
             'vendor/base-php/inc',
+            'vendor/phake/lib',
             'framework/classes',
             'app'
         );

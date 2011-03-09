@@ -38,6 +38,7 @@ abstract class Plugin
     public function candidate_class_paths() { return 'classes'; }
     public function candidate_file_path() { return 'files'; }
     public function candidate_migration_path() { return 'db/migrations'; }
+    public function candidate_generator_path() { return 'generators'; }
     
     public function class_paths() {
         $out = array();
@@ -58,9 +59,15 @@ abstract class Plugin
         return is_dir($cmp) ? $cmp : null;
     }
     
+    public function generator_path() {
+        $cgp = $this->directory . DIRECTORY_SEPARATOR . $this->candidate_generator_path();
+        return is_dir($cgp) ? $cgp : null;
+    }
+    
     public function has_classes() { return count($this->class_paths()) > 0; }
     public function has_files() { return $this->file_path() !== null; }
     public function has_migrations() { return $this->migration_path() !== null; }
+    public function has_generators() { return $this->generator_path() !== null; }
     
     /**
      * Perform any post-install tasks here

@@ -1,43 +1,49 @@
 #!/usr/bin/env php
 <?php
 require_once dirname(__FILE__) . '/boot_console.php';
+use zing\Console as C;
 
-$manager = zing\generator\Manager::create_with_default_locator();
+array_shift($_SERVER['argv']);
 
-if ($_SERVER['argc'] == 1) {
-    
-    echo "\n";
-    echo "Installed Generators\n";
-    echo "--------------------\n";
-    
-    $directory = $manager->directory();
-    
-    $max = 0;
-    foreach (array_keys($directory) as $name) {
-        if (strlen($name) > $max) $max = strlen($name);
-    }
-    
-    foreach ($manager->directory() as $name => $description) {
-        echo str_pad($name, $max + 4) . $description . "\n";
-    }
-    
-} elseif ($_SERVER['argc'] > 1) {
-    
-    try {
-        
-        $generator_name = $_SERVER['argv'][1];
-        $generator_args = array_slice($_SERVER['argv'], 2);
-        $generator      = $manager->create($generator_name);
-        
-        $generator->generate($generator_args);
-    
-    } catch (zing\generator\GeneratorNotFoundException $gnfe) {
-        echo "Error: generator '$generator_name' is not installed\n";
-        die(1);
-    } catch (Exception $e) {
-        echo "Error: " . get_class($e) . "\n";
-        echo $e->getTraceAsString() . "\n";
-    }
+$action		= empty($_SERVER['argv']) ? 'list' : array_shift($_SERVER['argv']);
+$manager	= zing\generator\Manager::instance();
 
+switch ($action) {
+	
+	case 'list':
+	
+		$table = new \zing\console\Table;
+		$table->add_header('Generator');
+		$table->add_header('Description');
+		
+		foreach ($manager->generators() as $generator) {
+			$table->add_row(array($generator->name(),
+								  $generator->description()));
+		}
+		
+		C::write($table);
+		
+		break;
+		
+	default:
+	
+		try {
+			
+			$generator_name		= $action;
+			$generator_args		= phake\Utils::parse_args($_SERVER['argv']);
+			$generator			= $manager->get_generator($generator_name);
+			
+			$generator->invoke($generator_args);
+			
+		} catch (zing\generator\GeneratorNotFoundException $gnfe) {
+			C::error("Error: generator '$generator_name' not found");
+			exit(1);
+		} catch (Exception $e) {
+			C::exception($e);
+			exit(1);
+		}
+	
+		break;
+	
 }
 ?>
