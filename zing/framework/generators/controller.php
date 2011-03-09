@@ -13,23 +13,34 @@ class ControllerGenerator extends \zing\generator\Generator
             throw new \InvalidArgumentException("Usage: script/generate controller controller_name [action_list]");
         }
         
-        $controller_path    = str_replace('.', '\\', array_shift($args));
-        $controller_parts   = explode('\\', $controller_path);
-        $controller_name    = array_pop($controller_parts);
-        $namespace          = implode('\\', $controller_parts);
+        // foo\bar\baz
+        $controller_path        = str_replace('.', '\\', array_shift($args));
         
-        $file_stem = trim(str_replace('\\', '/', $controller_path), '/');
+        // array('foo', 'bar', 'baz')
+        $controller_parts       = explode('\\', $controller_path);
+        
+        // baz
+        $controller_name        = array_pop($controller_parts);
+        
+        // foo\bar
+        $namespace              = implode('\\', $controller_parts);
+        
+        // foo/bar/baz
+        $file_stem              = trim(str_replace('\\', '/', $controller_path), '/');
+        
+        // Baz
+        $this->class_prefix     = \Inflector::camelize($controller_name);
         
         $this->controller_file  = 'app/controllers/' . $file_stem . '_controller.php';
         $this->helper_file      = 'app/helpers/' . $file_stem . '_helper.php';
         $this->view_dir         = 'app/views/' . $file_stem . '/';
         
-        $this->class_prefix = \Inflector::camelize($controller_name);
-        
         if ($namespace) {
             $this->namespace_declaration = "namespace $namespace;";
+            $this->namespace_prefix = "$namespace\\";
         } else {
             $this->namespace_declaration = "";
+            $this->namespace_prefix = "";
         }
         
         $this->actions = array();
@@ -51,8 +62,8 @@ class ControllerGenerator extends \zing\generator\Generator
     
     protected function manifest() {
         $manifest = array(
-            $this->controller_file  => $this->__directory . '/templates/controller_template.php',
-            $this->helper_file      => $this->__directory . '/templates/helper_template.php',
+            $this->controller_file  => $this->relative_path('/templates/controller_template.php'),
+            $this->helper_file      => $this->relative_path('/templates/helper_template.php'),
             $this->view_dir         => true
         );
         foreach ($this->actions as $action) {

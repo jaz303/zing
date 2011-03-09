@@ -25,7 +25,7 @@ class MigrationGenerator extends \zing\generator\Generator
     protected function manifest() {
         return array(
             ('db/migrations/' . $this->utc_timestamp . '_' . $this->migration_name . '.php')
-                => $this->__directory . '/templates/migration_template.php'
+                => $this->relative_path('/templates/migration_template.php')
         );
     }
 }

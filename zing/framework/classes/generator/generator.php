@@ -63,7 +63,11 @@ abstract class Generator
             } else {
                 $target = ZING_ROOT . '/' . ltrim($target, '/');
                 mkdir_p(dirname($target));
-                file_put_contents($target, $this->render_template($source));
+                if ($this->is_file_templated($source, $target)) {
+                    file_put_contents($target, $this->render_template($source));
+                } else {
+                    file_put_contents($target, file_get_contents($source));
+                }
             }
         }
     }
@@ -100,6 +104,18 @@ abstract class Generator
         ob_start();
         eval('?>' . $__source__);
         return ob_get_clean();
+    }
+    
+    protected function relative_path($file) {
+        return $this->__directory . '/' . $file;
+    }
+    
+    protected function is_file_templated($source, $target) {
+        return $this->is_extension_templated(\AbstractFile::extension_for($target));
+    }
+    
+    protected function is_extension_templated($extension) {
+        return in_array($extension, array('php', 'htm', 'html', 'css', 'js', 'txt', 'json'));
     }
 }
 ?>

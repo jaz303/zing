@@ -1,5 +1,13 @@
 {
 	"id": <%= json_encode($plugin_id) %>,
-	"version": "0.0.1",
-	"title": <%= json_encode($plugin_title) %>
+	"title": <%= json_encode($plugin_title) %>,
+	"authors": [
+	  { "name": "Your Name",
+	    "email": "you@yourdomain.com",
+	    "twitter": "@you",
+	    "url": "http://yoursite.com"
+	  }
+	],
+	"homepage": "http://pluginhomepage.com",
+	"version": "0.0.1"
 }

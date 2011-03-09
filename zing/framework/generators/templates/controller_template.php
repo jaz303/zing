@@ -7,7 +7,7 @@ class <%= $class_prefix %>Controller extends \zing\Controller
     
     protected function init() {
         parent::init();
-        $this->helper('<%= $class_prefix %>Helper');
+        $this->helper('<%= $namespace_prefix %><%= $class_prefix %>Helper');
     }
 <% foreach ($this->actions as $action) { %>
     
