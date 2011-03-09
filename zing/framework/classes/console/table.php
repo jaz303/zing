@@ -44,7 +44,7 @@ class Table
         return $out . "|\n";
     }
     
-    public function toString() {
+    public function __toString() {
         return $this->render();
     }
     

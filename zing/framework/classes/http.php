@@ -534,7 +534,7 @@ class Cookies implements \ArrayAccess, \IteratorAggregate
             $expire_time    = 0;
         } else {
             $remove         = false;
-            $value          = is_object($value) ? $value->toString() : $value;
+            $value          = is_object($value) ? $value->__toString() : $value;
             if ($expire === false) { // 1 year expiry
                 $expire_time = time() + 86400 * 365;
             } elseif (!$expire) { // session cookie

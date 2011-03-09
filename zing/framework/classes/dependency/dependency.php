@@ -51,10 +51,10 @@ class Dependency
         }
     }
     
-    public function toString() {
+    public function __toString() {
         return implode(', ', array_map(function($group) {
             return implode(' ', array_map(function($atom) {
-                return $atom->toString();
+                return $atom->__toString();
             }, $group));
         }, $this->groups));
     }
@@ -84,8 +84,8 @@ class Atom
         }
     }
     
-    public function toString() {
-        return "{$this->operator}{$this->version->toString()}";
+    public function __toString() {
+        return "{$this->operator}{$this->version->__toString()}";
     }
 }
 ?>

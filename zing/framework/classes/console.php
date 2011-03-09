@@ -7,12 +7,12 @@ class Console
     public static function error($line) { self::err($line . "\n"); }
     
     public static function out($line) {
-        if (is_object($line)) $line = $line->toString();
+        if (is_object($line)) $line = $line->__toString();
         fwrite(STDOUT, $line);
     }
     
     public static function err($line) {
-        if (is_object($line)) $line = $line->toString();
+        if (is_object($line)) $line = $line->__toString();
         fwrite(STDERR, $line);
     }
 }

@@ -21,8 +21,8 @@ class Dependency
         $this->dependency = new \zing\dependency\Dependency(implode(' ', $chunks));
     }
     
-    public function toString() {
-        return $this->plugin_id . ' ' . $this->dependency->toString();
+    public function __toString() {
+        return $this->plugin_id . ' ' . $this->dependency->__toString();
     }
 }
 ?>

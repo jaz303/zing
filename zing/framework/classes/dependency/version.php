@@ -56,7 +56,7 @@ class Version
         return $this->compare_to($v) == 0;
     }
     
-    public function toString() {
+    public function __toString() {
         return "{$this->major}.{$this->minor}.{$this->patch}{$this->tag}";
     }
 }

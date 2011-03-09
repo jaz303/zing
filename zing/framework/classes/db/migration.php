@@ -248,7 +248,7 @@ class MigrationStub
         return $this->migrator->is_applied($this);
     }
     
-    public function toString() {
+    public function __toString() {
         return "{$this->timestamp} {$this->migration_name} ({$this->source})";
     }
 }

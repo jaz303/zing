@@ -82,7 +82,7 @@ switch ($action) {
 			if (count($deps)) {
 				C::write("Dependencies:");
 				foreach ($deps as $dep) {
-					C::write("  " . $dep->toString());
+					C::write("  " . $dep->__toString());
 				}
 			}
 			
