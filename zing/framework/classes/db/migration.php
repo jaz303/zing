@@ -292,6 +292,10 @@ class Migration
         $this->builder->drop_table($name);
     }
     
+    protected function rename_table($existing_name, $new_name) {
+        $this->builder->rename_table($existing_name, $new_name);
+    }
+    
     protected function add_column($table, $column_name, $type, $options = array()) {
         $this->builder->add_column($table, $column_name, $type, $options);
     }
