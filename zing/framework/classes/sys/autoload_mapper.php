@@ -90,7 +90,7 @@ class AutoloadMapper
                     } elseif ($token[0] == T_CLASS || $token[0] == T_INTERFACE) {
                         $state = 'c1';
                     } elseif ($token[0] == T_COMMENT || $token[0] == T_DOC_COMMENT) {
-                        if (strpos($token[1], 'zing-autoload-ignore') !== false) {
+                        if (strpos($token[1], '@zing.autoload-ignore') !== false) {
                             $skip_next = true;
                         }
                     }

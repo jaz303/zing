@@ -143,7 +143,7 @@ class Router
     }
 }
 
-// zing-autoload-ignore
+// @zing.autoload-ignore
 abstract class Node
 {
     protected $parent   = null;
@@ -209,7 +209,7 @@ abstract class Node
     protected abstract function find_default_dynamic_path(array $options);
 }
 
-// zing-autoload-ignore
+// @zing.autoload-ignore
 class StaticNode extends Node
 {
     private $segment;
@@ -255,7 +255,7 @@ class StaticNode extends Node
     }
 }
 
-// zing-autoload-ignore
+// @zing.autoload-ignore
 class DynamicNode extends Node
 {
     private $capture;
@@ -314,7 +314,7 @@ class DynamicNode extends Node
     }
 }
 
-// zing-autoload-ignore
+// @zing.autoload-ignore
 class Compilation
 {
     private $static_routes      = array();

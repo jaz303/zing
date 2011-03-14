@@ -133,7 +133,7 @@ class MigrationLocator
     }
 }
 
-// zing-autoload-ignore
+// @zing.autoload-ignore
 class MigrationList implements \IteratorAggregate, \Countable
 {
     private $migrations = array();
@@ -213,7 +213,7 @@ class MigrationList implements \IteratorAggregate, \Countable
     }
 }
 
-// zing-autoload-ignore
+// @zing.autoload-ignore
 class MigrationStub
 {
     private $migrator;
@@ -253,7 +253,63 @@ class MigrationStub
     }
 }
 
-class Migration extends \gdb\Migration
+class Migration
 {
+    protected $db;
+    protected $builder;
+    
+    protected function get_database_instance() {
+        return \GDB::instance('default');
+    }
+    
+    public function __construct() {
+        $this->db = $this->get_database_instance();
+        $this->builder = $this->db->new_schema_builder();
+    }
+    
+    public function up() {
+        throw new \UnsupportedOperationException;
+    }
+    
+    public function down() {
+        throw new \UnsupportedOperationException;
+    }
+    
+    //
+    //
+    
+    protected function create_table($name, $options, $block = null) {
+        if ($block === null) {
+            $block = $options;
+            $options = array();
+        }
+        $table = new \gdb\TableDefinition($name, $options);
+        $block($table);
+        $this->builder->create_table($table);
+    }
+    
+    protected function drop_table($name) {
+        $this->builder->drop_table($name);
+    }
+    
+    protected function add_column($table, $column_name, $type, $options = array()) {
+        $this->builder->add_column($table, $column_name, $type, $options);
+    }
+    
+    protected function remove_column($table, $column_name) {
+        $this->builder->remove_column($table, $column_name);
+    }
+    
+    protected function rename_column($table, $existing_column_name, $new_column_name) {
+        $this->builder->rename_column($table, $existing_column_name, $new_column_name);
+    }
+    
+    protected function add_index($table, $column_names, $options = array()) {
+        $this->builder->add_index($table, $column_names, $options);
+    }
+    
+    public function remove_index($table, $index_name) {
+        $this->builder->remove_index($table, $index_name);
+    }
 }
 ?>
