@@ -2,7 +2,9 @@
 
 <?php
 $show_sidebar = true; // TODO: dynamic
-$section_path = 'core.home.dashboard';
+$section_path = $C->section_path();
+
+$this->render_partial_if_exists('common');
 ?>
 
 <html>
@@ -33,18 +35,19 @@ $section_path = 'core.home.dashboard';
 					
 					<div id='info-bar'>
 						Logged in as <?= h($C->logged_in_admin()->get_username()) ?> |
-						<a href='/admin/sessions/logout'>Logout</a> |
+						<a href='<?= admin_logout_url() ?>'>Logout</a> |
 						Module: 
             <select class='x-link-select'>
-              <? foreach ($admin_structure->available_modules($section_path) as $module) { ?>
-                <option value='<?= admin_url($module['url']) ?>'><?= $module['name'] ?></option>
+              <? foreach ($admin_structure->available_modules() as $module) { ?>
+                <option value='<?= $module->url ?>' <?= $module->contains($section_path) ? 'selected="selected"' : '' ?>><?= $module->name ?></option>
               <? } ?>
             </select>
 		      </div>
 					
 					<ul id='sections'>
-					  <? foreach ($admin_structure->available_sections($section_path) as $section) { ?>
-              <li><a href='<?= $section['url'] ?>'><?= icon($section['icon']) ?> <?= $section['title'] ?></a></li>
+					  <? $module = $admin_structure->module_for($section_path); ?>
+					  <? foreach ($module->children as $section) { ?>
+              <li class='<?= $section->contains($section_path) ? 'selected' : '' ?>'><a href='<?= $section->url ?>'><?= icon($section->icon) ?> <?= $section->name ?></a></li>
             <? } ?>
 					</ul>
 				</div>

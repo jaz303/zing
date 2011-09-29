@@ -1,0 +1,1 @@
+<?= $this->render_partial('/admin/cms/editables/editables_list') ?>
