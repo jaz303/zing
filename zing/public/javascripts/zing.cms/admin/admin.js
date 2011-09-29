@@ -5,21 +5,21 @@ $.rebind(function(context) {
 	
 	var config = zing.cms.config.admin;
     
-    /*
-     * Select boxes as navigation
-     */ 
-    $('select.x-link-select', context).change(function() {
-        document.location.href = this.options[this.selectedIndex].value;
-    });
+  /*
+   * Select boxes as navigation
+   */ 
+  $('select.x-link-select', context).change(function() {
+      document.location.href = this.options[this.selectedIndex].value;
+  });
     
-    /*
-     * Multi-select boxes
-     */
-    $('ul.multi-select', context).click(function(evt) {
-        if (evt.target.nodeName.toLowerCase() == 'li') {
-            $('input[type=checkbox],input[type=radio]', evt.target).click();
-        }
-    });
+  /*
+   * Multi-select boxes
+   */
+  $('ul.multi-select', context).click(function(evt) {
+    if (evt.target.nodeName.toLowerCase() == 'li') {
+      $('input[type=checkbox],input[type=radio]', evt.target).click();
+    }
+  });
     
 	/*
 	 * Datepickers
@@ -31,16 +31,19 @@ $.rebind(function(context) {
 		var calendarSeq = 0;
 		$('.datetime-picker, .date-picker', context).each(function() {
 
-			var input		= $('input[type=hidden]', this)[0],
-				display		= $('input[type=text]', this)[0],
-				button		= $('a', this)[0];
+			var input		  = $('input[type=hidden]', this)[0],
+				  display		= $('input[type=text]', this)[0],
+				  button		= $('a', this)[0];
 
 			input.id		= 'dt-' + (calendarSeq++);
-			display.id		= 'dt-' + (calendarSeq++);
+			display.id	= 'dt-' + (calendarSeq++);
 			button.id		= 'dt-' + (calendarSeq++);
+			
+			console.log(input);
 
 			var time		= $(this).is('.datetime-picker'),
-				date		= new Date();
+				  date		= new Date(),
+				  format  = (time ? config.datePicker.formatWithTime : config.datePicker.format);
 
 			var match;
 			if (match = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/.exec(input.value || '')) {
@@ -55,48 +58,43 @@ $.rebind(function(context) {
 			Calendar.setup({
 				inputField	: input.id,
 				displayArea	: display.id,
-				button		: button.id,
-				ifFormat	: "%Y-%m-%dT%H:%M:%S",
-				daFormat	: time ? config.datePicker.formatWithTime : config.datePicker.format,
-				firstDay	: 1,
-				showsTime	: time,
+				button		  : button.id,
+				ifFormat	  : "%Y-%m-%dT%H:%M:%S",
+				daFormat	  : format,
+				firstDay	  : 1,
+				showsTime	  : time,
 				timeFormat	: 24,
-				date		: input.value
+				date		    : input.value
 			});
 
 			display.value = date.print(format);
 		});
 	}
-
-	}
     
-    /*
-     * TinyMCE
-     */
-    if (typeof $.fn.tinymce == 'function') {
-        $('textarea.tinymce').each(function() {
-            var optionSets = ['common'];
-            
-            $.each(this.className.split(/\s+/), function() {
-                if (this.match(/^tinymce-options-(.*?)$/)) optionSets.push(RegExp.$1);
-            });
+  /*
+   * TinyMCE
+   */
+  if (typeof($.fn.tinymce) == 'function') {
+    $('textarea.tinymce').each(function() {
+      var optionSets = ['common'];
+      
+      $.each(this.className.split(/\s+/), function() {
+          if (this.match(/^tinymce-options-(.*?)$/)) optionSets.push(RegExp.$1);
+      });
 
-            if (optionSets.length == 1) {
-                $.each(config.tinyMCE.defaultOptionSets, function() { optionSets.push(this); });
-            }
+      if (optionSets.length == 1) {
+          $.each(config.tinyMCE.defaultOptionSets, function() { optionSets.push(this); });
+      }
 
-            var options = {};
-            $.each(optionSets, function() {
-                $.extend(options, config.tinyMCE.optionSets[this] || {});
-            });
+      var options = {};
+      $.each(optionSets, function() {
+          $.extend(options, config.tinyMCE.optionSets[this] || {});
+      });
 
-			options.script_url = '/javascripts/zing.cms/tiny_mce/tiny_mce.js',
-			
-            $(this).tinymce(options);
-
-        });
-    }
-    
+      options.script_url = '/javascripts/zing.cms/tiny_mce/tiny_mce.js',
+      $(this).tinymce(options);
+    });
+  }
 });
 
 //

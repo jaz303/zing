@@ -1,9 +1,11 @@
 <?php
 /**
- * Define editable tables here
+ * Define editables here
  */
-$GLOBALS['_ZING']['zing.cms.tables'] = array(
-    'product' => array('title' => 'Products', 'icon' => 'block'),
+$GLOBALS['_ZING']['zing.cms.editables'] = array(
+    'articles'          => array('title' => 'Articles', 'icon' => 'newspaper'),
+    'commissioners'     => array('title' => 'Commissioners', 'icon' => 'user_black'),
+    'artists'           => array('title' => 'Artists', 'icon' => 'user_green')
 );
 
 /**

@@ -243,7 +243,7 @@ class StaticNode extends Node
             $c->push_static_segment($this->segment, $this->method, $this->endpoint);
         }
         foreach ($this->children as $child) {
-            $child->compile($c, $state);
+            $child->compile($c);
         }
         if ($this->parent) {
             $c->pop();
@@ -293,7 +293,7 @@ class DynamicNode extends Node
     public function compile(Compilation $c) {
         $c->push_dynamic_segment($this->capture, $this->requirement, $this->method, $this->endpoint);
         foreach ($this->children as $child) {
-            $child->compile($c, $state);
+            $child->compile($c);
         }
         $c->pop();
     }

@@ -4,6 +4,6 @@ require 'fileutils'
 # easily using symbols
 task :underscore do
   Dir['{fugue,fugue_24,fugue_32}/*-*.png'].each do |f|
-    FileUtils.mv(f, f.gsub('-', '_'))
+    FileUtils.mv(f, f.gsub('-', '_').gsub(/_+/, '_'))
   end
 end

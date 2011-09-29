@@ -118,6 +118,28 @@ function trim_to_null($str, $len = null) {
     $str = trim_to($str, $len ? $len : strlen($str));
     return strlen($str) ? $str : null;
 }
+
+/**
+ * Returns the object ID represented by $thing
+ * If input is null, null is returned.
+ * For object instances, we first look for a method `get_id()`.
+ * All other inputs are cast to an integer and returned.
+ *
+ */
+function object_id($thing) {
+    if ($thing === null) {
+        return null;
+    } elseif (is_object($thing)) {
+        if (method_exists($thing, 'get_id')) {
+            return $thing->get_id();
+        } else {
+            return $thing->id;
+        }
+    } else {
+        return (int) $thing;
+    }
+}
+
 //
 // Support
 

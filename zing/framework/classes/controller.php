@@ -5,11 +5,15 @@ class DoublePerformException extends \Exception {}
 
 /**
  * This is Zing!'s default controller implementation. There's no reason you
- * have to extend this, the only requirement placed on a controller is that
- * it implements an invoke(zing\http\Request $request, $action_name) method
- * that returns a zing\http\Response object or similar (there are a few
- * extra required methods if you wish to integrate with the standard view
- * classes)
+ * have to extend this, the only requirements placed on a controller are
+ * that is must:
+ *
+ *   * implement an invoke(zing\http\Request $request, $action_name) method
+ *     that returns a zing\http\Response object (or compatible alternative)
+ *   * have a no-argument constructor
+ *
+ * (there are a few extra required methods if you wish to integrate with
+ * the standard view classes)
  */
 class Controller
 {
@@ -398,6 +402,10 @@ class Controller
         $view_name = \zing\view\Base::resolve_relative_view_path($view_name, $this->controller_path);
         $view_paths = \zing\view\Base::candidate_views_for($view_name);
         
+        if (count($view_paths) == 0) {
+            throw new \Exception("no template found for view '$view_name'");
+        }
+        
         $template_types = array();
         foreach ($view_paths as $vp) {
             $base = basename($vp[1]);
@@ -443,8 +451,8 @@ class Controller
      * @todo implement content negotiation and provide hooks for extending
      *       to facilitate support for mobile devices etc.
      */
-    protected function negotiate_template_type($candidates) {
-        return $candidates[0];
+    protected function negotiate_template_type(array $candidates) {
+        return empty($candidates) ? null : $candidates[0];
     }
 }
 ?>

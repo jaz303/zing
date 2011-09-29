@@ -50,7 +50,7 @@ abstract class Base
      *
      */
     public static function candidate_views_for($view, $template_type = null, $handler_ext = null) {
-        // TODO: this is an optimisation point
+        // !OPTIMIZE: this is an optimisation point
         // In production mode, memo the candidate views for any given input
         if ($template_type && $handler_ext) {
             $view_file = "$view.$template_type.$handler_ext";
@@ -203,6 +203,17 @@ class PHPHandler extends Base
         return $this->render_file($file, $locals);
     }
     
+    public function render_partial_if_exists($partial, $locals = array()) {
+        try {
+            $partial = preg_replace('/(^|\/|:)(\w+)$/', '$1_$2', $partial);
+            $partial = self::resolve_relative_view_path($partial, dirname($this->view));
+            $file    = self::find_first_view_for($partial, $this->template_type, 'php');
+            return $this->render_file($file, $locals);
+        } catch (MissingViewException $mve) {
+            return '';
+        }
+    }
+    
     /**
      * Render a template and return the output.
      *
@@ -341,6 +352,7 @@ class PHPHandler extends Base
     private function rewrite_source($source) {
         $this->reset($source);
         $skip = false;
+        $out = '';
         while (($tok = $this->next()) !== null) {
             if ($skip) {
                 $out .= $this->token_string($tok);

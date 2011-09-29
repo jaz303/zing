@@ -118,7 +118,7 @@ function zing_class_name($class) {
 
 if (ZING_CONSOLE) {
     zing_load_config('system');
-    echo "Zing! Console initialised, environment: " . ZING_ENV . "\n";
+    echo "Zing! Console initialised (environment=" . ZING_ENV . ", php=" . phpversion() . ")\n";
     return;
 }
 

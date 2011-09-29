@@ -20,24 +20,24 @@
 
 /* Error */
 
-.flash.error { border-color: #770000; color: #770000; background-color: #ffdddd; background-image: url('../../../images/icons/fugue/exclamation_red.png'); }
+.flash.error { border-color: #770000; color: #770000; background-color: #ffdddd; background-image: url('../../../images/zing.cms/icons/fugue/exclamation_red.png'); }
 	.flash.error a { color: #770000; }
 
 /* Success */
 	
-.flash.success { border-color: #007700; color: #007700; background-color: #ddffdd; background-image: url('../../../images/icons/fugue/tick.png'); }
+.flash.success { border-color: #007700; color: #007700; background-color: #ddffdd; background-image: url('../../../images/zing.cms/icons/fugue/tick.png'); }
 	.flash.success a { color: #007700; }
 
 /* Notice, Info */
 
 .flash.notice,
-.flash.info { border-color: #000077; color: #000077; background-color: #ddddff; background-image: url('../../../images/icons/fugue/information.png'); }
+.flash.info { border-color: #000077; color: #000077; background-color: #ddddff; background-image: url('../../../images/zing.cms/icons/fugue/information.png'); }
 	.flash.notice,
 	.flash.info a { color: #000077; }
 	
 /* Alert, Warning */
 
 .flash.warning,
-.flash.alert { border-color: #D46100; color: #D46100; background-color: #FDF9DD; background-image: url('../../../images/icons/fugue/exclamation.png'); }
+.flash.alert { border-color: #D46100; color: #D46100; background-color: #FDF9DD; background-image: url('../../../images/zing.cms/icons/fugue/exclamation.png'); }
 	.flash.warning a,
 	.flash.alert a { color: #D46100; }

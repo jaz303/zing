@@ -39,7 +39,7 @@ group('core', function() {
             $mapper->add_rule($p);
         }
     	
-    	$mapper->write($config_dir . '/app/main.php', '');
+    	$mapper->write($config_dir . '/app/autoload.php', '');
 
     });
 

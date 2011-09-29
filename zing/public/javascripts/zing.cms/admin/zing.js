@@ -103,13 +103,19 @@ jQuery(function ($) {
      *
      * <a href="/users/5" data-confirm="Are you sure?" data-method="delete" rel="nofollow">Delete</a>
      */
-    $('a[data-method]:not([data-remote])').live('click.zing', function (e){
+    $('a[data-method]:not([data-remote])').live('click.zing', function (e) {
         var link = $(this),
             href = link.attr('href'),
             method = link.attr('data-method'),
             form = $('<form method="post" action="'+href+'"></form>'),
             metadata_input = '<input name="_method" value="'+method+'" type="hidden" />';
-
+            
+        if (method.toLowerCase() == 'get') {
+          return;
+        } else {
+          e.preventDefault();
+        }
+            
         if (csrf_param !== undefined && csrf_token !== undefined) {
             metadata_input += '<input name="'+csrf_param+'" value="'+csrf_token+'" type="hidden" />';
         }
@@ -118,7 +124,6 @@ jQuery(function ($) {
             .append(metadata_input)
             .appendTo('body');
 
-        e.preventDefault();
         form.submit();
     });
 
