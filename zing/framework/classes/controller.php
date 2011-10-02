@@ -367,6 +367,16 @@ class Controller
         $this->response->set_body($text);
     }
     
+    protected function render_status($status, $html = true) {
+        $this->response->set_status($status);
+        $status_string = $status . ' ' . \zing\http\Constants::text_for_status($status);
+        if ($html) {
+            $this->render_html("<html><body><h1>$status_string</h1></body></html>");
+        } else {
+            $this->render_text($status_string);
+        }
+    }
+    
     /**
      * Renders a view
      *
