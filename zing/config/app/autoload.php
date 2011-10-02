@@ -1,5 +1,9 @@
 <?php
 
+
+
+
+
 // {begin:zing.autoload-map}
 $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'IllegalStateException' => 'vendor/base-php/inc/base.php',
@@ -54,6 +58,9 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'phake\\Application' => 'vendor/phake/lib/phake.php',
   'phake\\Node' => 'vendor/phake/lib/phake.php',
   'phake\\Task' => 'vendor/phake/lib/phake.php',
+  'CFRuntime_Exception' => 'vendor/amazon_aws/sdk-1.4.3/sdk.class.php',
+  'CFRuntime' => 'vendor/amazon_aws/sdk-1.4.3/sdk.class.php',
+  'CFLoader' => 'vendor/amazon_aws/sdk-1.4.3/sdk.class.php',
   'zing\\Console' => 'framework/classes/console.php',
   'zing\\DoublePerformException' => 'framework/classes/controller.php',
   'zing\\Controller' => 'framework/classes/controller.php',
@@ -140,8 +147,8 @@ $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'zing\\cms\\FilterAbortException' => 'plugins/zing.cms/classes/utils.php',
   'zing\\cms\\Utils' => 'plugins/zing.cms/classes/utils.php',
   'AssetsController' => 'plugins/zing.cms/classes/controllers/assets_controller.php',
-  'admin\\AssetDialogController' => 'plugins/zing.cms/classes/controllers/admin/asset_dialog_controller.php',
   'admin\\SessionsController' => 'plugins/zing.cms/classes/controllers/admin/sessions_controller.php',
+  'admin\\AssetDialogController' => 'plugins/zing.cms/classes/controllers/admin/core/asset_dialog_controller.php',
   'admin\\core\\DashboardController' => 'plugins/zing.cms/classes/controllers/admin/core/dashboard_controller.php',
   'admin\\core\\SystemController' => 'plugins/zing.cms/classes/controllers/admin/core/system_controller.php',
   'admin\\core\\UsersController' => 'plugins/zing.cms/classes/controllers/admin/core/users_controller.php',

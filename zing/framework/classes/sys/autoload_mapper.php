@@ -17,8 +17,12 @@ class AutoloadMapper
             }
         }
         
+        if (is_dir($path)) {
+            $path = rtrim($path, '/') . '/';
+        }
+        
         $this->rules[] = array(
-            'path'          => rtrim($path, '/') . '/',
+            'path'          => $path,
             'extensions'    => (array) $extensions
         );
     }
@@ -26,22 +30,27 @@ class AutoloadMapper
     public function files() {
         $files = array();
         foreach ($this->rules as $rule) {
-            $stack = array($this->root . $rule['path']);
-            $extensions = $rule['extensions'];
-            while (count($stack)) {
-                $dir = array_pop($stack);
-                if (!($dh = @opendir($dir))) continue;
-                while (($file = readdir($dh)) !== false) {
-                    if ($file[0] == '.') continue;
-                    $extension = (($p = strrpos($file, '.')) !== false) ? substr($file, $p + 1) : '';
-                    $path = $dir . $file;
-                    if (is_dir($path)) {
-                        $stack[] = $path . '/';
-                    } elseif (in_array($extension, $extensions)) {
-                        $files[] = $path;
+            $this_path = $this->root . $rule['path'];
+            if (is_file($this_path)) {
+                $files[] = $this_path;
+            } elseif (is_dir($this_path)) {
+                $stack = array($this_path);
+                $extensions = $rule['extensions'];
+                while (count($stack)) {
+                    $dir = array_pop($stack);
+                    if (!($dh = @opendir($dir))) continue;
+                    while (($file = readdir($dh)) !== false) {
+                        if ($file[0] == '.') continue;
+                        $extension = (($p = strrpos($file, '.')) !== false) ? substr($file, $p + 1) : '';
+                        $path = $dir . $file;
+                        if (is_dir($path)) {
+                            $stack[] = $path . '/';
+                        } elseif (in_array($extension, $extensions)) {
+                            $files[] = $path;
+                        }
                     }
+                    closedir($dh);
                 }
-                closedir($dh);
             }
         }
         return $files;

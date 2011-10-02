@@ -13,6 +13,7 @@ group('core', function() {
         $default_paths = array(
             'vendor/base-php/inc',
             'vendor/phake/lib',
+            'vendor/amazon_aws/sdk-1.4.3/sdk.class.php',
             'framework/classes',
             'app'
         );
