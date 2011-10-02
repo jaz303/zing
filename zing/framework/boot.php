@@ -182,9 +182,14 @@ function zing_fix_file_uploads_recurse($n, $ty, $tm, $e, $s, &$target) {
 // (or you can use 'core:kick', which updates all cached stuff)
 
 function zing_autoload($class) {
+    // First attempt Zing's class => file map
     global $ZING_AUTOLOAD_MAP;
     if (isset($ZING_AUTOLOAD_MAP[$class])) {
         require ZING_ROOT . '/' . $ZING_AUTOLOAD_MAP[$class];
+    
+    // Otherwise delegate to AWS autoloader
+    } else {
+        \CFLoader::autoloader($class);
     }
 }
 ?>

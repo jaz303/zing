@@ -4,6 +4,7 @@
 
 
 
+
 // {begin:zing.autoload-map}
 $GLOBALS["ZING_AUTOLOAD_MAP"] = array (
   'IllegalStateException' => 'vendor/base-php/inc/base.php',

@@ -1579,4 +1579,5 @@ class CFLoader
 }
 
 // Register the autoloader.
-spl_autoload_register(array('CFLoader', 'autoloader'));
+// Removed - Zing autoloader delegates to CFLoader instead
+//spl_autoload_register(array('CFLoader', 'autoloader'));
