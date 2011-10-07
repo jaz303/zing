@@ -34,27 +34,14 @@ class Dispatcher
             }
 
             $controller = new $controller_class;
-            $response   = $controller->invoke($request, $route['action']);
-
-            // Controller can elect not to return a response - in this case the controller
-            // should have sent any response itself.
-            if ($response) {
-                $response->set_header('X-Powered-By', ZING_SIGNATURE);
-                $response->send();
-            }
+            $this->maybe_send($controller->invoke($request, $route['action']));
             
         } catch (\Exception $exception) {
             if ($GLOBALS['_ZING']['config.zing.exception_reports']) {
                 header("Content-Type: text/html");
                 require ZING_ROOT . '/framework/templates/exception_report.php';
             } else {
-                if ($exception instanceof \zing\http\Exception) {
-                    // display error template for http status code, if present
-                } elseif ($exception instanceof \NotFoundException) {
-                    // display error template for 404 status code, if present
-                } else {
-                    // display error template for 500 status code, if present
-                }
+                $this->maybe_send($GLOBALS['_ZING']['zing.exception_handler']($request, $exception));
             }
         }
         
@@ -73,6 +60,15 @@ class Dispatcher
 
         require $compiled_routes;
         
+    }
+    
+    private function maybe_send($response) {
+        // A controller can elect not to return a response - in this case the controller
+        // must send any response itself.
+        if ($response) {
+            $response->set_header('X-Powered-By', ZING_SIGNATURE);
+            $response->send();
+        }
     }
 }
 ?>

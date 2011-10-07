@@ -465,4 +465,39 @@ class Controller
         return empty($candidates) ? null : $candidates[0];
     }
 }
+
+class ErrorController
+{
+    protected $exception = null;
+    
+    public function set_exception(\Exception $e) { $this->exception = $e; }
+    
+    public function invoke(\zing\http\Request $request, $action = 'error') {
+        $exception  = $this->exception;
+        $status     = 500;
+        
+        if ($exception) {
+            if ($exception instanceof \NotFoundError) {
+                $status = 404;
+            } elseif ($exception instanceof \zing\http\Exception) {
+                $status = $exception->get_status();
+            }
+        }
+        
+        ob_start();
+        
+        if (file_exists(ZING_VIEW_DIR . "/error/{$status}.html.php")) {
+            require ZING_VIEW_DIR . "/error/{$status}.html.php";
+        } else {
+            require ZING_VIEW_DIR . "/error/generic.html.php";
+        }
+        
+        $response = new \zing\http\Response;
+        $response->set_status($status);
+        $response->set_content_type("text/html");
+        $response->set_body(ob_get_clean());
+        
+        return $response;
+    }
+}
 ?>

@@ -21,16 +21,21 @@ date_default_timezone_set('Europe/London');
 
 require dirname(__FILE__) . '/autoload.php';
 
+//
+// Exception handler
+// Handles all exceptions which propagate to the dispatcher
+// Default behaviour searches for a status-specific template:
+// NotFoundException                -> app/views/errors/404.html.php
+// zing\http\Exception              -> app/views/errors/{status}.html.php
+// Exception                        -> app/views/errors/500.html.php
+//
+$GLOBALS['_ZING']['zing.exception_handler'] = function($request, $exception) {
+    $controller = new \zing\ErrorController();
+    $controller->set_exception($exception);
+    return $controller->invoke($request, 'error');
+};
+
 // {begin:zing.cms.asset-path}
 $GLOBALS['_ZING']['zing.cms.asset_path'] = ZING_DATA_DIR . '/cms/assets';
 // {end:zing.cms.asset-path}
-
-class RandomActs
-{
-    public static $ARTICLE_TYPES = array(
-        1 => 'Article Type 1',
-        2 => 'Article Type 2',
-        3 => 'Article Type 3'
-    );
-}
 ?>

@@ -1,0 +1,13 @@
+For performance reasons errors are not rendered through the usual view subsystem
+and are instead simply included() with output buffering. This means there are no
+layouts, partials, helpers etc.
+
+The following variables are available:
+
+$request        User request, possibly modified by earlier controller
+$exception      Exception which caused this error
+$status         HTTP status code being returned
+
+If you need more control over your errors, a custom handler can be created, even
+on a per-environment basis. See $GLOBALS['_ZING']['zing.exception_handler'] in
+config/app/main.php .
