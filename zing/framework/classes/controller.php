@@ -38,7 +38,7 @@ class Controller
     
     //
     // Fields with double leading underscores will not be copied to the view
-    // ($response and $db aren't copied either, for that matter)
+    // ($response, $db and $logger aren't copied either, for that matter)
     
     protected $__auto_session           = true;
     protected $__performed              = false;
@@ -97,6 +97,7 @@ class Controller
         }
         unset($assigns['response']);
         unset($assigns['db']);
+        unset($assigns['logger']);
         
         $assigns['controller'] = $this;
         $assigns['C'] = $this;
@@ -113,7 +114,7 @@ class Controller
     }
     
     //
-    // Lazy loading for sessions and default DB connection
+    // Lazy loading for sessions, default DB connection and logger
     
     public function __get($k) {
         switch ($k) {
@@ -123,6 +124,9 @@ class Controller
             case 'db':
                 $this->db = \GDB::instance();
                 return $this->db;
+            case 'logger':
+                $this->logger = \zing\Logger::instance();
+                return $this->logger;
             default:
                 return null;
         }
