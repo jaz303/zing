@@ -595,10 +595,40 @@ class Cookies implements \ArrayAccess, \IteratorAggregate
  */
 class Session implements \ArrayAccess
 {
+    /**
+     * Returns the session name/key, e.g. PHPSESSID
+     * Not currently configurable from within Zing; use PHP config directive
+     * 'session.name' instead.
+     *
+     * @return returns the session name
+     */
+    public static function session_name() {
+        return session_name();
+    }
+    
+    private static $injected_session_id = null;
+    
+    /**
+     * Hackily inject a session ID ahead of time.
+     * Use this method to specify a session ID manually when the session cookie
+     * is not available. Must be called before a session has been started!
+     * Its primary purpose is to support libraries like SWFUpload as Flash does
+     * not send cookies.
+     *
+     * @param $session_id session ID to inject
+     */
+    public static function inject_session_id($session_id) {
+        self::$injected_session_id = $session_id;
+    }
+    
     private $flash_now;
     private $headers        = array();
     
     public function __construct() {
+        if (self::$injected_session_id) {
+            session_id(self::$injected_session_id);
+        }
+        
         session_start();
         
         // Undo PHP's own headers and stash for later
@@ -616,6 +646,14 @@ class Session implements \ArrayAccess
             $this->flash_now = $_SESSION['__flash_next'];
             $_SESSION['__flash_next'] = array();
         }
+    }
+    
+    public function id() {
+        return session_id();
+    }
+    
+    public function name() {
+        return self::session_name();
     }
     
     public function flash($type, $message) {
@@ -656,7 +694,8 @@ class Session implements \ArrayAccess
 
 /**
  * LazySession exposes the same interface as session but delays initialisation until
- * a session operation is actually requested.
+ * a session operation is actually requested. Useful for exposing sessions to views
+ * without paying the cost of instantiating an unused session.
  */
 class LazySession implements \ArrayAccess
 {
